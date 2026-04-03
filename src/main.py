@@ -50,7 +50,7 @@ def draw_ui():
     SCREEN.blit(text, (10, 10))
     
     # 防御塔列表
-    tower_list = TowerFactory.list_ towers()
+    tower_list = TowerFactory.list_towers()
     for i, tower in enumerate(tower_list):
         info = TowerFactory.get_info(tower)
         t_text = font.render(f"{i+1}.{tower} 💰{info['cost']}", True, YELLOW)
@@ -79,7 +79,7 @@ def draw_game():
     # 绘制怪物
     for monster in state.monsters:
         color_map = {"green": GREEN, "yellow": YELLOW, "orange": ORANGE, "red": RED, "purple": PURPLE}
-        color = color_map.get(monster.颜色, GRAY)
+        color = color_map.get(monster.monster_type, GRAY)
         x = int(100 + monster.position * 600)
         pygame.draw.circle(SCREEN, color, (x, 300), 12)
     
