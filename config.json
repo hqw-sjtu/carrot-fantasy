@@ -1,0 +1,198 @@
+{
+  "screen": {
+    "SCREEN_WIDTH": 800,
+    "SCREEN_HEIGHT": 600
+  },
+  "colors": {
+    "WHITE": [255, 255, 255],
+    "BLACK": [0, 0, 0],
+    "GREEN": [0, 255, 0],
+    "RED": [255, 0, 0],
+    "BLUE": [0, 0, 255],
+    "YELLOW": [255, 255, 0],
+    "ORANGE": [255, 165, 0],
+    "PURPLE": [128, 0, 128],
+    "CYAN": [0, 255, 255],
+    "GRAY": [128, 128, 128],
+    "sky_blue": [135, 206, 235],
+    "grass_dark": [0, 100, 0],
+    "grass_light": [50, 205, 50],
+    "path_brown": [139, 69, 19],
+    "path_light": [160, 120, 90]
+  },
+  "path": {
+    "start": [100, 300],
+    "end": [700, 300],
+    "width": 100
+  },
+  "towers": {
+    "箭塔": {
+      "cost": 50,
+      "upgrade_cost": 40,
+      "damage": 10,
+      "range": 2.0,
+      "attack_speed": 1.0,
+      "color": "BLUE"
+    },
+    "炮塔": {
+      "cost": 100,
+      "upgrade_cost": 80,
+      "damage": 30,
+      "range": 1.5,
+      "attack_speed": 0.5,
+      "color": "RED"
+    },
+    "魔法塔": {
+      "cost": 150,
+      "upgrade_cost": 120,
+      "damage": 50,
+      "range": 2.5,
+      "attack_speed": 0.3,
+      "color": "PURPLE"
+    },
+    "减速塔": {
+      "cost": 80,
+      "upgrade_cost": 60,
+      "damage": 5,
+      "range": 2.5,
+      "attack_speed": 1.0,
+      "color": "CYAN",
+      "slow_factor": 0.5
+    }
+  },
+  "monsters": {
+    "green": {
+      "health": 50,
+      "speed": 1.0,
+      "reward": 10,
+      "color": "GREEN"
+    },
+    "yellow": {
+      "health": 80,
+      "speed": 1.5,
+      "reward": 15,
+      "color": "YELLOW"
+    },
+    "orange": {
+      "health": 120,
+      "speed": 2.0,
+      "reward": 25,
+      "color": "ORANGE"
+    },
+    "red": {
+      "health": 200,
+      "speed": 2.5,
+      "reward": 40,
+      "color": "RED"
+    },
+    "purple": {
+      "health": 500,
+      "speed": 3.0,
+      "reward": 100,
+      "color": "PURPLE"
+    }
+  },
+  "waves": [
+    {
+      "monsters": [
+        {"type": "green", "count": 10, "interval": 1.0}
+      ],
+      "delay": 5
+    },
+    {
+      "monsters": [
+        {"type": "green", "count": 15, "interval": 0.8}
+      ],
+      "delay": 5
+    },
+    {
+      "monsters": [
+        {"type": "green", "count": 10, "interval": 1.0},
+        {"type": "yellow", "count": 3, "interval": 1.5}
+      ],
+      "delay": 6
+    },
+    {
+      "monsters": [
+        {"type": "green", "count": 8, "interval": 1.0},
+        {"type": "yellow", "count": 5, "interval": 1.2}
+      ],
+      "delay": 6
+    },
+    {
+      "monsters": [
+        {"type": "green", "count": 5, "interval": 1.0},
+        {"type": "yellow", "count": 8, "interval": 1.0},
+        {"type": "orange", "count": 3, "interval": 1.5}
+      ],
+      "delay": 7
+    },
+    {
+      "monsters": [
+        {"type": "yellow", "count": 10, "interval": 0.8},
+        {"type": "orange", "count": 5, "interval": 1.2}
+      ],
+      "delay": 7
+    },
+    {
+      "monsters": [
+        {"type": "orange", "count": 5, "interval": 1.0},
+        {"type": "red", "count": 5, "interval": 1.2}
+      ],
+      "delay": 8
+    },
+    {
+      "monsters": [
+        {"type": "red", "count": 8, "interval": 0.8},
+        {"type": "orange", "count": 3, "interval": 1.0}
+      ],
+      "delay": 8
+    },
+    {
+      "monsters": [
+        {"type": "yellow", "count": 10, "interval": 0.8},
+        {"type": "orange", "count": 8, "interval": 0.8},
+        {"type": "red", "count": 5, "interval": 1.0}
+      ],
+      "delay": 10
+    },
+    {
+      "monsters": [
+        {"type": "orange", "count": 5, "interval": 0.6},
+        {"type": "red", "count": 10, "interval": 0.6},
+        {"type": "purple", "count": 2, "interval": 2.0}
+      ],
+      "delay": 15
+    }
+  ],
+  "bullet": {
+    "speed": 300,
+    "radius": 5
+  },
+  "ui": {
+    "info_panel": {
+      "x": 10,
+      "y": 10,
+      "width": 150,
+      "height": 580
+    },
+    "money_display": {
+      "x": 20,
+      "y": 20
+    },
+    "lives_display": {
+      "x": 20,
+      "y": 50
+    },
+    "wave_display": {
+      "x": 20,
+      "y": 80
+    },
+    "tower_buttons": {
+      "x": 650,
+      "y": 10,
+      "width": 140,
+      "height": 580
+    }
+  }
+}

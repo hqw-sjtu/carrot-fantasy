@@ -10,10 +10,13 @@ class Monster:
         self.health = health
         self.max_health = health
         self.speed = speed
+        self.original_speed = speed  # 原始速度，用于减速后恢复
         self.reward = reward
         self.monster_type = monster_type
         self.position = 0  # 0-1 表示在路径上的位置
         self.frozen = 0  # 冰冻时间(帧)
+        self.slow_timer = 0  # 减速持续时间(秒)
+        self.slow_factor = 1.0  # 当前减速因子(1.0=无减速)
         self.alive = True
         self.x = 100  # 屏幕坐标
         self.y = 300
@@ -25,12 +28,30 @@ class Monster:
             self.alive = False
         return self.health <= 0
     
+    def apply_slow(self, slow_factor, duration):
+        """应用减速效果 - 多个减速效果叠加时取最大值"""
+        if slow_factor < self.slow_factor:  # 取最大减速效果
+            self.slow_factor = slow_factor
+            self.speed = self.original_speed * slow_factor
+        self.slow_timer = max(self.slow_timer, duration)  # 延长的减速持续时间
+
     def slow(self, duration):
-        """减速效果"""
+        """减速效果（兼容旧接口）"""
         self.frozen = duration
         
+    def update(self, dt):
+        """更新减速计时器"""
+        if self.slow_timer > 0:
+            self.slow_timer -= dt
+            if self.slow_timer <= 0:
+                # 减速结束，恢复原始速度
+                self.slow_timer = 0
+                self.slow_factor = 1.0
+                self.speed = self.original_speed
+
     def move(self, dt):
         """移动"""
+        self.update(dt)  # 更新减速状态
         if self.frozen > 0:
             self.frozen -= 1
             return False  # 被冰冻，无法移动

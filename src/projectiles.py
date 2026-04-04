@@ -8,12 +8,13 @@ import pygame
 class Projectile:
     """子弹类"""
     
-    def __init__(self, x, y, target, damage, speed=5):
+    def __init__(self, x, y, target, damage, speed=5, slow_factor=1.0):
         self.x = x
         self.y = y
         self.target = target
         self.damage = damage
         self.speed = speed
+        self.slow_factor = slow_factor  # 减速因子 (1.0=无减速)
         self.active = True
         self.hit_effect = 0  # 命中特效持续时间
         self.hit_x = 0
@@ -47,6 +48,9 @@ class Projectile:
         """命中目标"""
         if self.target and self.target.alive:
             self.target.take_damage(self.damage)
+            # 应用减速效果 (持续3秒)
+            if self.slow_factor < 1.0:
+                self.target.apply_slow(self.slow_factor, 3.0)
         self.active = False
         
     def draw(self, screen):

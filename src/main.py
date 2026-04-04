@@ -1,44 +1,41 @@
 import pygame
-pygame.init()
-pygame.font.init()
+from src.config_loader import load_config, get_config
+from src.state_machine import GameStateMachine
 from src.towers import TowerFactory
 from src.monsters import MonsterFactory
-from src.levels import LEVELS
 from src.projectiles import Projectile
 from src.waves import WaveManager
+from src.tower_placement import TowerPlacement
+from src.ui_panel import UIPanel
 
-# 屏幕设置
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("保卫萝卜 - Carrot Fantasy v0.2")
+# 加载配置
+config = load_config()
+SCREEN_WIDTH = config['screen']['SCREEN_WIDTH']
+SCREEN_HEIGHT = config['screen']['SCREEN_HEIGHT']
 
 # 颜色
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GREEN = (34, 139, 34)
-LIGHT_GREEN = (144, 238, 144)
-ORANGE = (255, 165, 0)
-YELLOW = (255, 215, 0)
-RED = (220, 20, 60)
-BLUE = (30, 144, 255)
-PURPLE = (128, 0, 128)
-GRAY = (128, 128, 128)
+WHITE = tuple(config['colors']['WHITE'])
+BLACK = tuple(config['colors']['BLACK'])
+GREEN = tuple(config['colors']['GREEN'])
+RED = tuple(config['colors']['RED'])
+BLUE = tuple(config['colors']['BLUE'])
+YELLOW = tuple(config['colors']['YELLOW'])
+ORANGE = tuple(config['colors']['ORANGE'])
+PURPLE = tuple(config['colors']['PURPLE'])
+GRAY = tuple(config['colors']['GRAY'])
+SKY_BLUE = tuple(config['colors']['sky_blue'])
+GRASS_DARK = tuple(config['colors']['grass_dark'])
+GRASS_LIGHT = tuple(config['colors']['grass_light'])
+PATH_BROWN = tuple(config['colors']['path_brown'])
+PATH_LIGHT_BROWN = tuple(config['colors']['path_light'])
 
-# 背景美化颜色
-SKY_BLUE = (135, 206, 235)
-LIGHT_SKY_BLUE = (176, 224, 230)
-GRASS_DARK = (0, 100, 0)
-GRASS_LIGHT = (50, 205, 50)
-PATH_BROWN = (139, 69, 19)
-PATH_LIGHT_BROWN = (160, 120, 90)
-FLOWER_PINK = (255, 182, 193)
-FLOWER_YELLOW = (255, 255, 0)
-STONE_GRAY = (105, 105, 105)
-SUNLIGHT_YELLOW = (255, 255, 200)
-SUNLIGHT_YELLOW_ALPHA = (255, 255, 200, 64)  # 带透明度的暖黄色
+pygame.init()
+SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("保卫萝卜 - Carrot Fantasy v0.3")
 
-# 游戏状态
+# 全局游戏状态
+state = GameState()
+
 class GameState:
     def __init__(self):
         self.money = 200
@@ -47,45 +44,39 @@ class GameState:
         self.level = 1
         self.towers = []
         self.monsters = []
-        self.projectiles = []  # 所有子弹
+        self.projectiles = []
+        self.selected_tower = None
         self.game_over = False
-        self.wave_manager = WaveManager()  # 波次管理器
+        self.wave_manager = WaveManager()
+        self.wave_complete = False
+        
+    def reset(self):
+        self.money = 200
+        self.lives = 10
+        self.wave = 0
+        self.level = 1
+        self.towers = []
+        self.monsters = []
+        self.projectiles = []
+        self.selected_tower = None
+        self.game_over = False
+        self.wave_complete = False
+        self.wave_manager = WaveManager()
 
-state = GameState()
-
-def draw_ui():
-    """绘制美化UI"""
-    # 顶部信息栏背景框
-    ui_bg = pygame.Surface((300, 100), pygame.SRCALPHA)
-    ui_bg.fill((0, 0, 0, 128))  # 半透明黑色背景
-    SCREEN.blit(ui_bg, (5, 5))
-    
-    # 信息栏边框
-    pygame.draw.rect(SCREEN, YELLOW, (5, 5, 300, 100), 2)
-    
-    font = pygame.font.Font(None, 28)
-    info = f"💰 {state.money}  |  ❤️ {state.lives}  |  🌊 第{state.wave}波  |  📺 {state.level}关"
-    text = font.render(info, True, WHITE)
-    SCREEN.blit(text, (15, 15))
-    
-    # 防御塔列表
-    tower_list = TowerFactory.list_towers()
-    for i, tower in enumerate(tower_list):
-        info = TowerFactory.get_info(tower)
-        t_text = font.render(f"{i+1}.{tower} 💰{info['cost']}", True, YELLOW)
-        SCREEN.blit(t_text, (10, 40 + i * 20))
-
-def draw_gradient_sky():
+def draw_gradient_sky(screen, colors, screen_width, screen_height):
     """绘制渐变天空"""
+    sky_blue = colors.get('sky_blue', (135, 206, 235))
+    white = colors.get('WHITE', (255, 255, 255))
+    
     for y in range(0, 300):  # 天空部分高度
         # 计算渐变比例
         ratio = y / 300.0
         # 从浅蓝色到白色渐变
-        r = int(SKY_BLUE[0] * (1 - ratio) + WHITE[0] * ratio)
-        g = int(SKY_BLUE[1] * (1 - ratio) + WHITE[1] * ratio)
-        b = int(SKY_BLUE[2] * (1 - ratio) + WHITE[2] * ratio)
+        r = int(sky_blue[0] * (1 - ratio) + white[0] * ratio)
+        g = int(sky_blue[1] * (1 - ratio) + white[1] * ratio)
+        b = int(sky_blue[2] * (1 - ratio) + white[2] * ratio)
         color = (r, g, b)
-        pygame.draw.line(SCREEN, color, (0, y), (SCREEN_WIDTH, y))
+        pygame.draw.line(screen, color, (0, y), (screen_width, y))
 
 def draw_grass_texture():
     """绘制草地纹理"""
@@ -244,7 +235,10 @@ def main():
     """主循环"""
     clock = pygame.time.Clock()
     running = True
-    selected_tower = None
+    
+    # 初始化系统
+    tower_placement = TowerPlacement(config)
+    ui_panel = UIPanel(config)
     
     # 初始化波次
     state.wave_manager.start_wave(0)
@@ -258,11 +252,24 @@ def main():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
-                    selected_tower = TowerFactory.list_towers()[0]
+                    tower_placement.select_tower(TowerFactory.list_towers()[0])
                 elif event.key == pygame.K_2:
-                    selected_tower = TowerFactory.list_towers()[1]
+                    tower_placement.select_tower(TowerFactory.list_towers()[1])
                 elif event.key == pygame.K_3:
-                    selected_tower = TowerFactory.list_towers()[2]
+                    tower_placement.select_tower(TowerFactory.list_towers()[2])
+                elif event.key == pygame.K_U:
+                    # 切换升级模式
+                    if tower_placement.upgrade_mode:
+                        tower_placement.upgrade_mode = False
+                        tower_placement.selected_tower_obj = None
+                        state.selected_tower = None
+                    else:
+                        # 如果已有选中塔，进入升级模式
+                        if state.selected_tower:
+                            tower_placement.select_tower_for_upgrade(state.selected_tower)
+                        else:
+                            # 如果没有选中塔，先显示提示信息
+                            print("请先选择要升级的防御塔")
                 elif event.key == pygame.K_ESCAPE:
                     running = False
                 elif event.key == pygame.K_SPACE:
@@ -270,6 +277,97 @@ def main():
                     if state.wave_manager.has_more_waves():
                         state.wave_manager.start_wave(state.wave_manager.get_next_wave_index())
                         state.wave += 1
+        
+        # 处理鼠标事件
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    tower_placement.select_tower(TowerFactory.list_towers()[0])
+                elif event.key == pygame.K_2:
+                    tower_placement.select_tower(TowerFactory.list_towers()[1])
+                elif event.key == pygame.K_3:
+                    tower_placement.select_tower(TowerFactory.list_towers()[2])
+                elif event.key == pygame.K_U:
+                    # 切换升级模式
+                    if tower_placement.upgrade_mode:
+                        tower_placement.upgrade_mode = False
+                        tower_placement.selected_tower_obj = None
+                        state.selected_tower = None
+                    else:
+                        # 如果已有选中塔，进入升级模式
+                        if state.selected_tower:
+                            tower_placement.select_tower_for_upgrade(state.selected_tower)
+                        else:
+                            # 如果没有选中塔，先显示提示信息
+                            print("请先选择要升级的防御塔")
+                elif event.key == pygame.K_ESCAPE:
+                    running = False
+                elif event.key == pygame.K_SPACE:
+                    # 跳过当前波次
+                    if state.wave_manager.has_more_waves():
+                        state.wave_manager.start_wave(state.wave_manager.get_next_wave_index())
+                        state.wave += 1
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                # 处理防御塔放置或升级
+                placed = tower_placement.handle_event(event, state)
+                
+                if placed:
+                    # 放置模式：创建防御塔
+                    if tower_placement.get_selected_tower():
+                        x, y = event.pos
+                        tower_type = tower_placement.get_selected_tower()
+                        
+                        # 创建防御塔
+                        tower = TowerFactory.create_tower(tower_type, x, y, config)
+                        state.towers.append(tower)
+                        
+                        # 扣除金币
+                        tower_info = config.get('towers', {}).get(tower_type, {})
+                        cost = tower_info.get('cost', 0)
+                        state.money -= cost
+                        
+                        # 重置选择状态
+                        tower_placement.select_tower(None)
+                        
+                    # 升级模式：升级防御塔
+                    elif tower_placement.upgrade_mode and tower_placement.selected_tower_obj:
+                        tower = tower_placement.selected_tower_obj
+                        
+                        # 检查是否可以升级
+                        if tower.can_upgrade():
+                            upgrade_cost = tower.get_upgrade_cost()
+                            
+                            # 检查金币是否足够
+                            if state.money >= upgrade_cost:
+                                # 升级防御塔
+                                tower.upgrade()
+                                state.money -= upgrade_cost
+                                
+                                # 重置升级模式
+                                tower_placement.upgrade_mode = False
+                                tower_placement.selected_tower_obj = None
+                                
+                                # 更新选中塔状态
+                                if state.selected_tower == tower:
+                                    state.selected_tower = tower
+                            else:
+                                print("金币不足，无法升级")
+                        else:
+                            print("防御塔已达到最大等级")
+                
+                # 检查是否点击了防御塔进行选择
+                else:
+                    x, y = event.pos
+                    for tower in state.towers:
+                        dx = tower.x - x
+                        dy = tower.y - y
+                        if (dx*dx + dy*dy) ** 0.5 < 15:  # 点击防御塔范围内
+                            state.selected_tower = tower
+                            break
+                    else:
+                        state.selected_tower = None
         
         # 更新波次系统
         state.wave_manager.update(dt, state)
@@ -300,6 +398,18 @@ def main():
         
         # 绘制
         draw_game()
+        
+        # 绘制UI面板
+        ui_panel.draw(SCREEN, state)
+        
+        # 绘制防御塔放置预览
+        tower_placement.draw_placement_preview(SCREEN, state)
+        
+        # 绘制游戏状态
+        if tower_placement.upgrade_mode:
+            font = pygame.font.Font(None, 32)
+            upgrade_text = font.render("升级模式: 点击要升级的防御塔", True, (255, 255, 0))
+            SCREEN.blit(upgrade_text, (SCREEN_WIDTH//2 - 140, 20))
         
         if state.game_over:
             font = pygame.font.Font(None, 48)

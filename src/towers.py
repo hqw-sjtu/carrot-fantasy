@@ -1,29 +1,46 @@
 import pygame
+from src.config_loader import get_config
+
 """ 
 保卫萝卜 - 防御塔系统
 """ 
 
 class Tower:
     """防御塔基类"""
+    max_level = 3
     
-    def __init__(self, name, damage, range, cost, attack_speed, x=0, y=0):
+    def __init__(self, name, damage, range, cost, attack_speed, x=0, y=0, slow_factor=1.0):
         self.name = name
         self.damage = damage
         self.range = range
         self.cost = cost
-        self.attack_speed = attack_speed  # 每秒攻击次数
+        self.attack_speed = attack_speed
+        self.slow_factor = slow_factor  # 减速因子
         self.level = 1
         self.target = None
         self.x = x
         self.y = y
-        self.cooldown = 0  # 攻击冷却
-        self.projectiles = []  # 发射的子弹
+        self.cooldown = 0
+        self.projectiles = []
         
+    def get_upgrade_cost(self):
+        """获取升级费用"""
+        config = get_config()
+        tower_config = config.get('towers', {}).get(self.name, {})
+        return tower_config.get('upgrade_cost', self.cost // 2)
+    
+    def can_upgrade(self):
+        """检查是否可以升级"""
+        return self.level < self.max_level
+    
     def upgrade(self):
         """升级防御塔"""
+        if not self.can_upgrade():
+            return None
         self.level += 1
         self.damage *= 1.3
         self.range *= 1.1
+        self.attack_speed *= 1.1
         return self.level
     
     def find_target(self, monsters):
@@ -54,7 +71,7 @@ class Tower:
             if target:
                 # 创建子弹
                 from src.projectiles import Projectile
-                p = Projectile(self.x, self.y, target, self.damage)
+                p = Projectile(self.x, self.y, target, self.damage, slow_factor=self.slow_factor)
                 projectiles.append(p)
                 self.cooldown = 1 / self.attack_speed
     
@@ -85,7 +102,8 @@ class TowerFactory:
         if name not in cls.TOWERS:
             return None
         stats = cls.TOWERS[name]
-        return Tower(name, stats["damage"], stats["range"], stats["cost"], stats["speed"])
+        slow_factor = stats.get("slow", 1.0)  # 获取减速因子
+        return Tower(name, stats["damage"], stats["range"], stats["cost"], stats["speed"], slow_factor=slow_factor)
     
     @classmethod
     def list_towers(cls):
