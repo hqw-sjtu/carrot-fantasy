@@ -14,10 +14,15 @@ class Monster:
         self.monster_type = monster_type
         self.position = 0  # 0-1 表示在路径上的位置
         self.frozen = 0  # 冰冻时间(帧)
+        self.alive = True
+        self.x = 100  # 屏幕坐标
+        self.y = 300
         
     def take_damage(self, damage):
         """受到伤害"""
         self.health -= damage
+        if self.health <= 0:
+            self.alive = False
         return self.health <= 0
     
     def slow(self, duration):
