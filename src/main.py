@@ -1,7 +1,9 @@
 import pygame
+import os
+pygame.mixer.init()
 from src.config_loader import load_config, get_config
 from src.state_machine import GameStateMachine
-from src.towers import TowerFactory
+from src.towers import TowerFactory, set_sound_player
 from src.monsters import MonsterFactory
 from src.projectiles import Projectile
 from src.waves import WaveManager
@@ -22,6 +24,7 @@ BLUE = tuple(config['colors']['BLUE'])
 YELLOW = tuple(config['colors']['YELLOW'])
 ORANGE = tuple(config['colors']['ORANGE'])
 PURPLE = tuple(config['colors']['PURPLE'])
+CYAN = tuple(config['colors']['CYAN'])
 GRAY = tuple(config['colors']['GRAY'])
 SKY_BLUE = tuple(config['colors']['sky_blue'])
 GRASS_DARK = tuple(config['colors']['grass_dark'])
@@ -30,8 +33,29 @@ PATH_BROWN = tuple(config['colors']['path_brown'])
 PATH_LIGHT_BROWN = tuple(config['colors']['path_light'])
 
 pygame.init()
+
+# 尝试加载音效（可选）
+SHOOT_SOUND_PATH = '/usr/share/sounds/pygame/stereo/player_shot.wav'
+try:
+    shoot_sound = pygame.mixer.Sound(SHOOT_SOUND_PATH) if os.path.exists(SHOOT_SOUND_PATH) else None
+except:
+    shoot_sound = None
+
+def play_sound(sound):
+    if sound:
+        try:
+            sound.play()
+        except:
+            pass
+
+# 设置全局音效播放器
+set_sound_player(lambda: play_sound(shoot_sound))
+
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("保卫萝卜 - Carrot Fantasy v0.3")
+
+# 死亡特效列表
+death_effects = []  # [(x, y, timer, color), ...]
 
 # 全局游戏状态
 state = GameState()
@@ -189,9 +213,21 @@ def draw_game():
     # 绘制防御塔
     for tower in state.towers:
         color = BLUE if "箭" in tower.name else (RED if "炮" in tower.name else PURPLE)
+        if "减速" in tower.name:
+            color = CYAN
         pygame.draw.circle(SCREEN, color, (int(tower.x), int(tower.y)), 15)
-        # 绘制攻击范围(可选)
-        # pygame.draw.circle(SCREEN, (255,255,255), (int(tower.x), int(tower.y)), int(tower.range*50), 1)
+        # 绘制等级星标
+        for i in range(tower.level):
+            star_x = int(tower.x - 8 + i * 8)
+            pygame.draw.circle(SCREEN, YELLOW, (star_x, int(tower.y) - 20), 3)
+        # 选中时显示攻击范围
+        if hasattr(state, 'selected_tower') and state.selected_tower == tower:
+            range_radius = int(tower.range * 50)
+            # 半透明范围圈
+            range_surf = pygame.Surface((range_radius*2, range_radius*2), pygame.SRCALPHA)
+            pygame.draw.circle(range_surf, (*color, 50), (range_radius, range_radius), range_radius)
+            pygame.draw.circle(range_surf, (*color, 150), (range_radius, range_radius), range_radius, 2)
+            SCREEN.blit(range_surf, (int(tower.x) - range_radius, int(tower.y) - range_radius))
     
     # 绘制怪物
     for monster in state.monsters:
@@ -203,23 +239,43 @@ def draw_game():
         # 绘制怪物身体
         pygame.draw.circle(SCREEN, color, (x, y), 12)
         
-        # 绘制血条背景（带边框）
-        pygame.draw.rect(SCREEN, (50, 0, 0), (x - 16, y - 26, 32, 7))  # 边框
-        pygame.draw.rect(SCREEN, (80, 0, 0), (x - 15, y - 25, 30, 5))  # 背景
+        # 绘制血条背景（深色边框）
+        pygame.draw.rect(SCREEN, (30, 30, 30), (x - 17, y - 27, 34, 9), 1)  # 外框
+        pygame.draw.rect(SCREEN, (60, 0, 0), (x - 16, y - 26, 32, 7))  # 背景
         
         # 绘制血条
         health_ratio = monster.health / monster.max_health
-        health_width = max(0, int(30 * health_ratio))  # 防止负数
-        
-        # 血条颜色根据血量变化
+        health_width = max(0, int(30 * health_ratio))
+        # 颜色渐变
         if health_ratio > 0.6:
-            health_color = (0, 255, 0)  # 绿色
+            health_color = (50, 200, 50)  # 亮绿
         elif health_ratio > 0.3:
-            health_color = (255, 255, 0)  # 黄色
+            health_color = (255, 200, 0)  # 金黄
         else:
-            health_color = (255, 0, 0)  # 红色
+            health_color = (220, 50, 50)  # 红
         
         pygame.draw.rect(SCREEN, health_color, (x - 15, y - 25, health_width, 5))
+        # 高光效果
+        if health_width > 5:
+            pygame.draw.rect(SCREEN, (255, 255, 255), (x - 14, y - 24, 3, 2))
+    
+    # 绘制防御塔攻击线（激光效果）
+    for tower in state.towers:
+        if tower.target and hasattr(tower.target, 'alive') and tower.target.alive:
+            # 获取目标屏幕坐标
+            tx = int(100 + tower.target.position * 600)
+            ty = 300
+            # 根据塔类型选择颜色
+            if "箭" in tower.name:
+                color = BLUE
+            elif "炮" in tower.name:
+                color = RED
+            elif "魔法" in tower.name:
+                color = PURPLE
+            else:
+                color = CYAN
+            # 绘制细线（攻击特效）
+            pygame.draw.line(SCREEN, color, (int(tower.x), int(tower.y)), (tx, ty), 2)
     
     # 绘制子弹
     for p in state.projectiles:
@@ -230,11 +286,66 @@ def draw_game():
         font = pygame.font.Font(None, 36)
         wave_text = font.render(f"🌊 波次 {state.wave_manager.current_wave + 1}", True, WHITE)
         SCREEN.blit(wave_text, (SCREEN_WIDTH//2 - 80, 50))
+    
+    # 绘制死亡特效
+    for ef in death_effects[:]:
+        ef[2] -= 1/60  # 减少计时
+        x, y, timer, color = ef
+        # 扩散圆圈效果
+        radius = int(30 * (0.5 - timer) * 2)
+        if radius > 0:
+            pygame.draw.circle(SCREEN, color, (x, y), radius, 2)
+        if timer <= 0:
+            death_effects.remove(ef)
+
+def draw_game_over_screen():
+    """绘制游戏结束画面"""
+    # 半透明遮罩
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 180))
+    SCREEN.blit(overlay, (0, 0))
+    
+    if state.game_over:
+        # 失败画面
+        font_title = pygame.font.Font(None, 72)
+        title = font_title.render("💀 游戏结束", True, RED)
+        SCREEN.blit(title, (SCREEN_WIDTH//2 - 150, SCREEN_HEIGHT//2 - 80))
+        
+        font = pygame.font.Font(None, 36)
+        info = font.render(f"坚持到第 {state.wave} 波", True, WHITE)
+        SCREEN.blit(info, (SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2))
+    else:
+        # 胜利画面（所有波次完成）
+        font_title = pygame.font.Font(None, 72)
+        title = font_title.render("🎉 胜利！", True, YELLOW)
+        SCREEN.blit(title, (SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2 - 80))
+        
+        font = pygame.font.Font(None, 36)
+        info = font.render("恭喜通关！", True, WHITE)
+        SCREEN.blit(info, (SCREEN_WIDTH//2 - 70, SCREEN_HEIGHT//2))
+    
+    # 重新开始提示
+    font_small = pygame.font.Font(None, 28)
+    hint = font_small.render("按 R 重新开始", True, GRAY)
+    SCREEN.blit(hint, (SCREEN_WIDTH//2 - 80, SCREEN_HEIGHT//2 + 60))
 
 def main():
     """主循环"""
     clock = pygame.time.Clock()
     running = True
+    
+    # 简单的终端关卡选择
+    levels = config.get('levels', [{'name': '草地平原', 'difficulty': 1.0}])
+    current_level_idx = 0
+    difficulty = 1.0
+    
+    print("=" * 40)
+    print("欢迎来到保卫萝卜!")
+    print("=" * 40)
+    print("选择关卡:")
+    for i, level in enumerate(levels):
+        print(f"  {i+1}. {level['name']} (难度:{level['difficulty']})")
+    print("=" * 40)
     
     # 初始化系统
     tower_placement = TowerPlacement(config)
@@ -271,12 +382,31 @@ def main():
                             # 如果没有选中塔，先显示提示信息
                             print("请先选择要升级的防御塔")
                 elif event.key == pygame.K_ESCAPE:
-                    running = False
+                    state.paused = not getattr(state, 'paused', False)
                 elif event.key == pygame.K_SPACE:
                     # 跳过当前波次
                     if state.wave_manager.has_more_waves():
                         state.wave_manager.start_wave(state.wave_manager.get_next_wave_index())
                         state.wave += 1
+                elif event.key == pygame.K_s:
+                    from src.save_system import save_game
+                    save_game(state)
+                    print("游戏已保存")
+                elif event.key == pygame.K_l:
+                    from src.save_system import load_game
+                    data = load_game()
+                    if data:
+                        state.money = data.get("money", 200)
+                        state.lives = data.get("lives", 10)
+                        state.wave = data.get("wave", 0)
+                        print("游戏已读取")
+                elif event.key == pygame.K_r:
+                    # 重新开始游戏
+                    state.reset()
+                    state.wave_manager = WaveManager()
+                    state.wave_manager.start_wave(0)
+                    state.wave = 1
+                    print("游戏重新开始")
         
         # 处理鼠标事件
         for event in pygame.event.get():
@@ -290,21 +420,6 @@ def main():
                 elif event.key == pygame.K_3:
                     tower_placement.select_tower(TowerFactory.list_towers()[2])
                 elif event.key == pygame.K_U:
-                    # 切换升级模式
-                    if tower_placement.upgrade_mode:
-                        tower_placement.upgrade_mode = False
-                        tower_placement.selected_tower_obj = None
-                        state.selected_tower = None
-                    else:
-                        # 如果已有选中塔，进入升级模式
-                        if state.selected_tower:
-                            tower_placement.select_tower_for_upgrade(state.selected_tower)
-                        else:
-                            # 如果没有选中塔，先显示提示信息
-                            print("请先选择要升级的防御塔")
-                elif event.key == pygame.K_ESCAPE:
-                    running = False
-                elif event.key == pygame.K_SPACE:
                     # 跳过当前波次
                     if state.wave_manager.has_more_waves():
                         state.wave_manager.start_wave(state.wave_manager.get_next_wave_index())
@@ -369,6 +484,24 @@ def main():
                     else:
                         state.selected_tower = None
         
+        # 暂停处理
+        if getattr(state, 'paused', False):
+            # 绘制暂停菜单
+            pause_overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            pause_overlay.fill((0, 0, 0, 150))
+            SCREEN.blit(pause_overlay, (0, 0))
+            
+            font = pygame.font.Font(None, 64)
+            text = font.render("⏸️ 暂停", True, WHITE)
+            SCREEN.blit(text, (SCREEN_WIDTH//2 - 80, SCREEN_HEIGHT//2 - 50))
+            
+            font_small = pygame.font.Font(None, 32)
+            hint = font_small.render("按 ESC 继续 | S 保存 | L 读取", True, YELLOW)
+            SCREEN.blit(hint, (SCREEN_WIDTH//2 - 160, SCREEN_HEIGHT//2 + 20))
+            
+            pygame.display.flip()
+            continue
+        
         # 更新波次系统
         state.wave_manager.update(dt, state)
         
@@ -396,6 +529,16 @@ def main():
             if not p.active:
                 state.projectiles.remove(p)
         
+        # 检测并处理死亡的怪物（添加击杀特效）
+        for monster in state.monsters[:]:
+            if not monster.alive:
+                # 添加爆炸特效
+                mx = int(100 + monster.position * 600)
+                death_effects.append([mx, 300, 0.5, RED])  # 0.5秒红色爆炸
+                state.monsters.remove(monster)
+                # 加钱
+                state.money += getattr(monster, 'reward', 10)
+        
         # 绘制
         draw_game()
         
@@ -411,10 +554,9 @@ def main():
             upgrade_text = font.render("升级模式: 点击要升级的防御塔", True, (255, 255, 0))
             SCREEN.blit(upgrade_text, (SCREEN_WIDTH//2 - 140, 20))
         
-        if state.game_over:
-            font = pygame.font.Font(None, 48)
-            text = font.render("💀 GAME OVER", True, RED)
-            SCREEN.blit(text, (SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT//2))
+        # 绘制游戏结束画面（胜利或失败）
+        if state.game_over or (state.wave >= 10 and len(state.monsters) == 0):
+            draw_game_over_screen()
         
         pygame.display.flip()
     

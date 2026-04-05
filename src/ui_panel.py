@@ -54,9 +54,15 @@ class UIPanel:
         
     def draw(self, screen, game_state, state_machine):
         """绘制UI面板"""
-        # 绘制信息面板背景
-        pygame.draw.rect(screen, (0, 0, 0, 180), self.info_panel_rect)
-        pygame.draw.rect(screen, (255, 255, 0), self.info_panel_rect, 2)
+        # 绘制信息面板背景（渐变效果）
+        gradient_surface = pygame.Surface((self.info_panel_rect.width, self.info_panel_rect.height), pygame.SRCALPHA)
+        # 从深蓝到透明的渐变
+        for i in range(self.info_panel_rect.height):
+            alpha = int(180 * (1 - i / self.info_panel_rect.height))
+            pygame.draw.line(gradient_surface, (20, 30, 60, alpha), (0, i), (self.info_panel_rect.width, i))
+        screen.blit(gradient_surface, (self.info_panel_rect.x, self.info_panel_rect.y))
+        # 金色边框
+        pygame.draw.rect(screen, (255, 215, 0), self.info_panel_rect, 2)
         
         # 绘制信息
         info_y = self.info_panel_rect.y + 10
@@ -88,9 +94,14 @@ class UIPanel:
                 max_level_text = self.small_font.render(f"已满级 ({tower.max_level})", True, (255, 255, 0))
                 screen.blit(max_level_text, (self.info_panel_rect.x + 10, info_y + 120))
         
-        # 绘制塔按钮面板
-        pygame.draw.rect(screen, (0, 0, 0, 180), self.tower_buttons_rect)
-        pygame.draw.rect(screen, (255, 255, 0), self.tower_buttons_rect, 2)
+        # 绘制塔按钮面板背景（渐变）
+        gradient_surface2 = pygame.Surface((self.tower_buttons_rect.width, self.tower_buttons_rect.height), pygame.SRCALPHA)
+        for i in range(self.tower_buttons_rect.height):
+            alpha = int(180 * (1 - i / self.tower_buttons_rect.height))
+            pygame.draw.line(gradient_surface2, (60, 30, 20, alpha), (0, i), (self.tower_buttons_rect.width, i))
+        screen.blit(gradient_surface2, (self.tower_buttons_rect.x, self.tower_buttons_rect.y))
+        # 金色边框
+        pygame.draw.rect(screen, (255, 215, 0), self.tower_buttons_rect, 2)
         
         # 绘制塔选择按钮
         tower_types = ['箭塔', '炮塔', '魔法塔']

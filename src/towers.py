@@ -5,6 +5,14 @@ from src.config_loader import get_config
 保卫萝卜 - 防御塔系统
 """ 
 
+# 全局音效播放器（可在 main.py 中设置）
+sound_player = None
+
+def set_sound_player(player):
+    """设置全局音效播放器"""
+    global sound_player
+    sound_player = player
+
 class Tower:
     """防御塔基类"""
     max_level = 3
@@ -73,6 +81,9 @@ class Tower:
                 from src.projectiles import Projectile
                 p = Projectile(self.x, self.y, target, self.damage, slow_factor=self.slow_factor)
                 projectiles.append(p)
+                # 播放音效
+                if sound_player:
+                    sound_player()
                 self.cooldown = 1 / self.attack_speed
     
     def update_projectiles(self, dt):
