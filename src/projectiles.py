@@ -8,7 +8,7 @@ import pygame
 class Projectile:
     """子弹类"""
     
-    def __init__(self, x, y, target, damage, speed=5, slow_factor=1.0):
+    def __init__(self, x, y, target, damage, speed=5, slow_factor=1.0, source_tower=None):
         self.x = x
         self.y = y
         self.target = target
@@ -19,6 +19,7 @@ class Projectile:
         self.hit_effect = 0  # 命中特效持续时间
         self.hit_x = 0
         self.hit_y = 0
+        self.source_tower = source_tower  # 发射该子弹的塔
         
     def update(self, dt):
         """更新子弹位置"""

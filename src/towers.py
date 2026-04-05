@@ -30,12 +30,19 @@ class Tower:
         self.y = y
         self.cooldown = 0
         self.projectiles = []
+        self.kill_count = 0  # 击杀统计
+        # 攻击优先级: "first"=最前, "last"=最后, "strong"=最强, "weak"=最弱
+        self.priority = "first"
         
     def get_upgrade_cost(self):
         """获取升级费用"""
         config = get_config()
         tower_config = config.get('towers', {}).get(self.name, {})
         return tower_config.get('upgrade_cost', self.cost // 2)
+    
+    def get_sell_price(self):
+        """获取出售价格（升级花费的50%）"""
+        return int(self.get_upgrade_cost() * 0.5)
     
     def can_upgrade(self):
         """检查是否可以升级"""
@@ -52,24 +59,39 @@ class Tower:
         return self.level
     
     def find_target(self, monsters):
-        """寻找范围内最接近终点的怪物"""
-        best_target = None
-        best_progress = -1
-        for m in monsters:
-            if not hasattr(m, 'alive') or not m.alive:
-                continue
-            # 怪物位置转换为屏幕坐标
+        """根据优先级寻找目标"""
+        # 过滤活着的怪物
+        alive_monsters = [m for m in monsters if hasattr(m, 'alive') and m.alive]
+        if not alive_monsters:
+            return None
+        
+        # 根据优先级排序
+        if self.priority == "first":
+            # 最前（position最大，最接近终点）
+            sorted_monsters = sorted(alive_monsters, key=lambda m: m.position, reverse=True)
+        elif self.priority == "last":
+            # 最后（position最小，最远离起点）
+            sorted_monsters = sorted(alive_monsters, key=lambda m: m.position)
+        elif self.priority == "strong":
+            # 最强（血量最多）
+            sorted_monsters = sorted(alive_monsters, key=lambda m: m.health, reverse=True)
+        elif self.priority == "weak":
+            # 最弱（血量最少）
+            sorted_monsters = sorted(alive_monsters, key=lambda m: m.health)
+        else:
+            sorted_monsters = alive_monsters
+        
+        # 在排序后的怪物中找范围内最近的
+        for m in sorted_monsters:
             m_x = int(100 + m.position * 600)
             m_y = 300
-            # 计算距离
             dx = m_x - self.x
             dy = m_y - self.y
             dist = (dx*dx + dy*dy) ** 0.5
             if dist <= self.range * 50:  # range单位转换
-                if m.position > best_progress:
-                    best_progress = m.position
-                    best_target = m
-        return best_target
+                return m
+        
+        return None
     
     def attack(self, monsters, projectiles):
         """攻击冷却更新和发射子弹"""
@@ -79,7 +101,7 @@ class Tower:
             if target:
                 # 创建子弹
                 from src.projectiles import Projectile
-                p = Projectile(self.x, self.y, target, self.damage, slow_factor=self.slow_factor)
+                p = Projectile(self.x, self.y, target, self.damage, slow_factor=self.slow_factor, source_tower=self)
                 projectiles.append(p)
                 # 播放音效
                 if sound_player:

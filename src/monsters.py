@@ -20,6 +20,7 @@ class Monster:
         self.alive = True
         self.x = 100  # 屏幕坐标
         self.y = 300
+        self.is_boss = (monster_type == "Boss" or monster_type == "超级Boss")
         
     def take_damage(self, damage):
         """受到伤害"""
@@ -79,7 +80,7 @@ class MonsterFactory:
         if name not in cls.MONSTERS:
             return None
         stats = cls.MONSTERS[name]
-        return Monster(name, stats["health"], stats["speed"], stats["reward"])
+        return Monster(name, stats["health"], stats["speed"], stats["reward"], name)
     
     @classmethod
     def list_monsters(cls):

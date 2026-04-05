@@ -4,13 +4,14 @@ import os
 
 SAVE_FILE = os.path.join(os.path.dirname(__file__), "..", "save.json")
 
-def save_game(state):
+def save_game(state, game_time=0):
     """保存游戏状态"""
     data = {
         "money": state.money,
         "lives": state.lives,
         "wave": state.wave,
         "level": state.level,
+        "game_time": game_time,  # 游戏时间
         "towers": [
             {"name": t.name, "x": t.x, "y": t.y, "level": t.level}
             for t in state.towers

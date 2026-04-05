@@ -31,6 +31,13 @@ class UIPanel:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
             
+            # 检查是否点击了波次开始按钮
+            if hasattr(self, 'wave_button_rect') and self.wave_button_rect.collidepoint(mouse_pos):
+                if hasattr(game_state, 'wave_manager') and game_state.wave_manager:
+                    if not game_state.wave_manager.is_waving:
+                        game_state.wave_manager.start_wave(game_state.wave)
+                return True
+            
             # 检查是否点击了塔按钮
             tower_types = ['箭塔', '炮塔', '魔法塔']
             button_height = 30
@@ -90,9 +97,31 @@ class UIPanel:
                 
                 level_text = self.small_font.render(f"等级: {tower.level}/{tower.max_level}", True, (255, 255, 255))
                 screen.blit(level_text, (self.info_panel_rect.x + 10, info_y + 160))
+                
+                # 出售提示
+                sell_price = tower.get_sell_price()
+                sell_text = self.small_font.render(f"按D出售: 💰{sell_price}", True, (255, 200, 200))
+                screen.blit(sell_text, (self.info_panel_rect.x + 10, info_y + 180))
+                
+                # 显示攻击优先级
+                priority_labels = {"first": "🔴 最前", "last": "🔵 最后", "strong": "⚔️ 最强", "weak": "💀 最弱"}
+                priority_text = priority_labels.get(tower.priority, "🔴 最前")
+                priority_info = self.small_font.render(f"按P切换: {priority_text}", True, (200, 200, 255))
+                screen.blit(priority_info, (self.info_panel_rect.x + 10, info_y + 200))
             else:
                 max_level_text = self.small_font.render(f"已满级 ({tower.max_level})", True, (255, 255, 0))
                 screen.blit(max_level_text, (self.info_panel_rect.x + 10, info_y + 120))
+                
+                # 出售提示
+                sell_price = tower.get_sell_price()
+                sell_text = self.small_font.render(f"按D出售: 💰{sell_price}", True, (255, 200, 200))
+                screen.blit(sell_text, (self.info_panel_rect.x + 10, info_y + 140))
+                
+                # 显示攻击优先级
+                priority_labels = {"first": "🔴 最前", "last": "🔵 最后", "strong": "⚔️ 最强", "weak": "💀 最弱"}
+                priority_text = priority_labels.get(tower.priority, "🔴 最前")
+                priority_info = self.small_font.render(f"按P切换: {priority_text}", True, (200, 200, 255))
+                screen.blit(priority_info, (self.info_panel_rect.x + 10, info_y + 160))
         
         # 绘制塔按钮面板背景（渐变）
         gradient_surface2 = pygame.Surface((self.tower_buttons_rect.width, self.tower_buttons_rect.height), pygame.SRCALPHA)
@@ -145,3 +174,83 @@ class UIPanel:
             
             screen.blit(game_over_text, (screen.get_width() // 2 - 100, screen.get_height() // 2 - 20))
             screen.blit(restart_text, (screen.get_width() // 2 - 60, screen.get_height() // 2 + 20))
+        
+        # 绘制选中塔详细信息面板（右侧）
+        SCREEN_WIDTH = self.config.get('screen', {}).get('SCREEN_WIDTH', 800)
+        if hasattr(game_state, 'selected_tower') and game_state.selected_tower:
+            selected_tower = game_state.selected_tower
+            info_rect = pygame.Rect(SCREEN_WIDTH - 180, 200, 170, 150)
+            pygame.draw.rect(screen, (0, 0, 0, 180), info_rect)
+            pygame.draw.rect(screen, (255, 215, 0), info_rect, 2)
+            
+            font_title = pygame.font.Font(None, 28)
+            font_info = pygame.font.Font(None, 22)
+            
+            # 塔信息
+            title = font_title.render(f"{selected_tower.name} Lv.{selected_tower.level}", True, (255, 255, 0))
+            screen.blit(title, (info_rect.x + 10, info_rect.y + 10))
+            
+            # 属性
+            y = info_rect.y + 40
+            damage = getattr(selected_tower, 'damage', 10)
+            tower_range = getattr(selected_tower, 'range', 3)
+            cooldown = getattr(selected_tower, 'cooldown', 1.0)
+            
+            attrs = [
+                f"伤害: {int(damage * (1 + (selected_tower.level-1)*0.3))}",
+                f"射程: {int(tower_range * 50)}",
+                f"攻速: {1.0 / cooldown:.1f}/秒",
+            ]
+            if hasattr(selected_tower, 'slow_factor'):
+                attrs.append(f"减速: {int(selected_tower.slow_factor*100)}%")
+            # 显示击杀统计
+            if hasattr(selected_tower, 'kill_count'):
+                attrs.append(f"击杀: {selected_tower.kill_count}")
+            
+            for attr in attrs:
+                text = font_info.render(attr, True, (255, 255, 255))
+                screen.blit(text, (info_rect.x + 10, y))
+                y += 22
+            
+            # 升级/出售信息
+            y += 5
+            upgrade_cost = selected_tower.get_upgrade_cost() if hasattr(selected_tower, 'get_upgrade_cost') else 0
+            sell_price = selected_tower.get_sell_price() if hasattr(selected_tower, 'get_sell_price') else 0
+            
+            up_text = font_info.render(f"升级: {upgrade_cost}💰", True, (0, 255, 0) if game_state.money >= upgrade_cost else (128, 128, 128))
+            screen.blit(up_text, (info_rect.x + 10, y))
+            
+            sell_text = font_info.render(f"出售: +{sell_price}💰", True, (255, 200, 100))
+            screen.blit(sell_text, (info_rect.x + 10, y + 22))
+        
+        # 绘制波次开始按钮（右下角）
+        SCREEN_WIDTH = self.config.get('screen', {}).get('SCREEN_WIDTH', 800)
+        SCREEN_HEIGHT = self.config.get('screen', {}).get('height', 580)
+        btn_rect = pygame.Rect(SCREEN_WIDTH - 120, SCREEN_HEIGHT - 80, 100, 40)
+        
+        # 按钮颜色
+        if hasattr(game_state, 'wave_manager') and game_state.wave_manager and game_state.wave_manager.is_waving:
+            btn_color = (100, 100, 100)
+        else:
+            btn_color = (0, 150, 0)
+        
+        # 绘制按钮
+        pygame.draw.rect(screen, btn_color, btn_rect, border_radius=8)
+        pygame.draw.rect(screen, (255, 255, 255), btn_rect, 2, border_radius=8)
+        
+        # 按钮文字
+        font_btn = pygame.font.Font(None, 24)
+        if hasattr(game_state, 'wave_manager') and game_state.wave_manager and game_state.wave_manager.is_waving:
+            btn_text = f"波次 {game_state.wave}"
+        else:
+            btn_text = "开始"
+        text_surf = font_btn.render(btn_text, True, (255, 255, 255))
+        screen.blit(text_surf, (btn_rect.x + 20, btn_rect.y + 10))
+        
+        # 保存按钮区域供点击检测
+        self.wave_button_rect = btn_rect
+        
+        # 绘制操作提示（底部）
+        hint_text = "1-3:选塔 | 鼠标:放塔 | U:升级 | D:出售 | 空格:波次 | S:保存 | L:读取 | ESC:暂停"
+        hint = self.small_font.render(hint_text, True, (200, 200, 200))
+        screen.blit(hint, (10, SCREEN_HEIGHT - 25))
