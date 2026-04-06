@@ -1,6 +1,7 @@
 import pygame
 import random
-from src.config_loader import get_config
+from config_loader import get_config
+from sound_manager import SoundManager
 
 """ 
 保卫萝卜 - 防御塔系统
@@ -9,8 +10,16 @@ from src.config_loader import get_config
 # 全局音效播放器（可在 main.py 中设置）
 sound_player = None
 
+# 全局音效管理器
+_sound_manager = None
+
+def set_sound_manager(sm):
+    """设置全局音效管理器"""
+    global _sound_manager
+    _sound_manager = sm
+
 def set_sound_player(player):
-    """设置全局音效播放器"""
+    """设置全局音效播放器(兼容旧代码)"""
     global sound_player
     sound_player = player
 
@@ -122,13 +131,15 @@ class Tower:
                 actual_damage = int(self.damage * synergy)
                 
                 # 创建子弹
-                from src.projectiles import Projectile
+                from projectiles import Projectile
                 p = Projectile(self.x, self.y, target, actual_damage, slow_factor=self.slow_factor, source_tower=self, tower_type=self.name)
                 # 记录组合加成用于UI显示
                 p.synergy = synergy
                 projectiles.append(p)
                 # 播放音效
-                if sound_player:
+                if _sound_manager:
+                    _sound_manager.play('shoot')
+                elif sound_player:
                     sound_player()
                 self.cooldown = 1 / self.attack_speed
     

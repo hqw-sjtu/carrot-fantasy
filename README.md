@@ -1,39 +1,94 @@
-# 保卫萝卜 (Carrot Fantasy)
+# 🎮 保卫萝卜 (Carrot Fantasy)
 
-> A Tower Defense Game
+> A Tower Defense Game built with Python & Pygame
 
-## 项目简介
+English | [中文](README_CN.md)
 
-保卫萝卜是一款经典塔防游戏，玩家需要在地图上建造各种防御塔来阻止怪物到达萝卜。
-
-## 技术栈
-
-- Python 3.x
-- Pygame
-
-## 安装
+## ⭐ Quick Start
 
 ```bash
+# 1. Clone or download the project
+git clone https://github.com/hqw-sjtu/carrot-fantasy.git
+cd carrot-fantasy
+
+# 2. Install dependencies
 pip install -r requirements.txt
-```
 
-## 运行
-
-```bash
+# 3. Run the game
 python src/main.py
 ```
 
-## 项目结构
+Or use the launcher:
+```bash
+bash start.sh
+```
+
+## 🕹️ How to Play
+
+| Key | Action |
+|-----|--------|
+| 1-4 | Select tower type |
+| Mouse | Place / select tower |
+| U | Upgrade selected tower |
+| D | Sell selected tower |
+| Space | Start wave |
+| ESC | Pause |
+
+### Shortcuts
+- **I**: Tower Encyclopedia
+- **J**: Monster Book
+- **K**: Daily Check-in
+- **M**: Toggle sound
+- **T**: Statistics
+- **H**: Toggle health bars
+- **P**: Screenshot
+
+## 🎯 Features
+
+- 10+ Levels with different themes
+- 4 Tower types (Arrow, Cannon, Magic, Ice)
+- Tower quality system (Normal/Rare/Epic)
+- Random events (Gold Rain, Double Damage, Slow All)
+- Tower synergy (adjacent same-type +10% damage)
+- Achievement system
+- Daily quests & check-in rewards
+- Particle effects & dynamic lighting
+- Sound effects
+
+## 📋 Requirements
+
+- Python 3.8+
+- pygame>=2.5.0
+
+## 📁 Project Structure
 
 ```
 carrot-fantasy/
-├── src/              # 源代码
-├── assets/           # 资源文件
-├── docs/             # 文档
-├── requirements.txt  # 依赖
+├── src/              # Source code
+│   ├── main.py       # Main game
+│   ├── towers.py     # Tower logic
+│   ├── monsters.py   # Monster logic
+│   ├── projectiles.py
+│   ├── waves.py
+│   └── ...
+├── config.json       # Game config
+├── requirements.txt  # Dependencies
 └── README.md
 ```
 
-## 许可证
+## 🐛 Issues
+
+If you encounter errors, try:
+```bash
+# Reinstall dependencies
+pip uninstall pygame -y
+pip install pygame
+```
+
+## 📄 License
 
 MIT License
+
+---
+
+**Enjoy the game!** 🎉

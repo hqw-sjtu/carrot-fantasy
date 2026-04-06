@@ -5,6 +5,16 @@
 import math
 import pygame
 
+# 尝试导入音效管理器（避免循环导入问题）
+try:
+    from sound_manager import SoundManager
+    _sound_manager = None  # 需要由main.py设置
+    def set_sound_manager_for_projectiles(sm):
+        global _sound_manager
+        _sound_manager = sm
+except ImportError:
+    _sound_manager = None
+
 class Projectile:
     """子弹类"""
     
@@ -53,6 +63,9 @@ class Projectile:
             # 应用减速效果 (持续3秒)
             if self.slow_factor < 1.0:
                 self.target.apply_slow(self.slow_factor, 3.0)
+            # 播放击中音效
+            if _sound_manager:
+                _sound_manager.play('hit')
         self.active = False
         
     def draw(self, screen):

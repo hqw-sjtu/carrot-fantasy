@@ -2,7 +2,7 @@
 保卫萝卜 - 波次系统
 """
 import time
-from src.monsters import MonsterFactory
+from monsters import MonsterFactory
 
 # 波次配置
 WAVES = [
@@ -71,6 +71,11 @@ class WaveManager:
                 monster.max_health = int(monster.max_health * difficulty)
                 state.monsters.append(monster)
                 self.spawn_timer = 0
+                
+                # Boss出现时触发屏幕震动
+                if getattr(monster, 'is_boss', False):
+                    import main
+                    main.trigger_screen_shake(15, 0.5)
                 
         # 检查波次是否完成
         if not self.monster_queue and not state.monsters:
