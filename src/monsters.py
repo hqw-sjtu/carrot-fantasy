@@ -28,7 +28,8 @@ class Monster:
         self.alive = True
         self.x = 100  # 屏幕坐标
         self.y = 300
-        self.is_boss = (monster_type == "boss" or "boss" in monster_type.lower() or "超级" in name)
+        name_str = str(name) if name else ""
+        self.is_boss = (monster_type == "boss" or "boss" in str(monster_type).lower() or "超级" in name_str)
     
     def _get_monster_type(self, monster_type):
         """根据怪物名称判断类型"""
