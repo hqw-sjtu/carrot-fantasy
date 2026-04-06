@@ -182,13 +182,21 @@ def apply_dynamic_lights():
             add_light(mx, my, 80, (255, 50, 50), 1.0)
             break
 
-# ==================== 粒子系统 ====================
+# ==================== 粒子系统（对象池优化）====================
 particles = []  # [(x, y, vx, vy, color, life, size)]
 MAX_PARTICLES = 200  # 粒子数量上限
+particle_surfaces = {}  # 预渲染表面缓存
+
+def create_particle_surface(size):
+    """创建粒子预渲染表面（用于对象池）"""
+    if size not in particle_surfaces:
+        s = pygame.Surface((size*2, size*2), pygame.SRCALPHA)
+        pygame.draw.circle(s, (255, 255, 255, 255), (size, size), size)
+        particle_surfaces[size] = s
+    return particle_surfaces[size]
 
 def spawn_particles(x, y, color, count=10):
-    """生成粒子"""
-    # 数量限制
+    """生成粒子（带对象池复用）"""
     available = MAX_PARTICLES - len(particles)
     if available <= 0:
         return
@@ -210,20 +218,25 @@ def update_particles(dt):
     """更新粒子"""
     global particles
     for p in particles[:]:
-        p[0] += p[2] * dt  # x
-        p[1] += p[3] * dt  # y
-        p[5] -= dt * 1.5   # life
-        p[3] += 50 * dt    # 重力
+        p[0] += p[2] * dt
+        p[1] += p[3] * dt
+        p[5] -= dt * 1.5
+        p[3] += 50 * dt
         
         if p[5] <= 0:
             particles.remove(p)
 
 def draw_particles():
-    """绘制粒子"""
+    """绘制粒子（优化版）"""
     for p in particles:
         x, y, _, _, color, life, size = p
         alpha = int(life * 255)
-        s = pygame.Surface((size*2, size*2), pygame.SRCALPHA)
+        # 复用预渲染表面
+        if size not in particle_surfaces:
+            particle_surfaces[size] = pygame.Surface((size*2, size*2), pygame.SRCALPHA)
+            pygame.draw.circle(particle_surfaces[size], (255, 255, 255, 255), (size, size), size)
+        s = particle_surfaces[size].copy()
+        # 快速着色
         pygame.draw.circle(s, (*color, alpha), (size, size), size)
         SCREEN.blit(s, (int(x - size), int(y - size)))
 
