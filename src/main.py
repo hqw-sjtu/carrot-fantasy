@@ -151,9 +151,16 @@ def apply_dynamic_lights():
 
 # ==================== 粒子系统 ====================
 particles = []  # [(x, y, vx, vy, color, life, size)]
+MAX_PARTICLES = 200  # 粒子数量上限
 
 def spawn_particles(x, y, color, count=10):
     """生成粒子"""
+    # 数量限制
+    available = MAX_PARTICLES - len(particles)
+    if available <= 0:
+        return
+    count = min(count, available)
+    
     for _ in range(count):
         angle = random.uniform(0, 6.28)
         speed = random.uniform(50, 150)
@@ -886,21 +893,28 @@ def draw_game():
             # 普通怪: 蓝色圆形
             pygame.draw.circle(SCREEN, (50, 100, 200), (x + shake_x, y + shake_y), 14)
 
-        # 绘制血条背景(带边框 - 更高更显眼)
-        pygame.draw.rect(SCREEN, (255, 255, 255), (x - 18 + shake_x, y - 30 + shake_y, 38, 14), 2)  # 白色外边框
-        pygame.draw.rect(SCREEN, (60, 0, 0), (x - 16 + shake_x, y - 28 + shake_y, 34, 10))
-
-        # 绘制血条
+        # 绘制血条背景(带边框 - 更高更显眼) - 美化版本
+        # 外边框白色
+        pygame.draw.rect(SCREEN, (255, 255, 255), (x - 18 + shake_x, y - 30 + shake_y, 38, 14), 2, border_radius=3)
+        # 背景深色
+        bg_color = (40, 40, 50)
+        pygame.draw.rect(SCREEN, bg_color, (x - 16 + shake_x, y - 28 + shake_y, 34, 10), border_radius=2)
+        
+        # 绘制血条(带渐变效果)
         health_ratio = monster.health / monster.max_health
         health_width = max(0, int(32 * health_ratio))
-        # 颜色渐变
+        # 颜色渐变 - 更丰富的色彩
         if health_ratio > 0.6:
-            health_color = (50, 200, 50)
+            health_color = (80, 220, 80)  # 鲜绿
         elif health_ratio > 0.3:
-            health_color = (255, 200, 0)
+            health_color = (255, 180, 0)  # 橙黄
         else:
-            health_color = (220, 50, 50)
-        pygame.draw.rect(SCREEN, health_color, (x - 16 + shake_x, y - 28 + shake_y, health_width, 10))
+            health_color = (255, 60, 60)  # 红色
+        # 绘制主体血条
+        pygame.draw.rect(SCREEN, health_color, (x - 16 + shake_x, y - 28 + shake_y, health_width, 10), border_radius=2)
+        # 高光效果
+        if health_width > 4:
+            pygame.draw.rect(SCREEN, (255, 255, 255, 80), (x - 16 + shake_x, y - 28 + shake_y, health_width, 3), border_radius=1)
 
         # 详细血量显示(按H切换)
         if show_health_detail:
