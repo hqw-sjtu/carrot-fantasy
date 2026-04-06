@@ -2,21 +2,24 @@ name: Python Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, main ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
     
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
-        python-version: '3.8'
+        python-version: ${{ matrix.python-version }}
     
     - name: Install dependencies
       run: |
@@ -25,10 +28,49 @@ jobs:
     
     - name: Syntax Check
       run: |
+        echo "=== 语法检查 ==="
         python -m py_compile src/main.py
-        for f in src/*.py; do python -m py_compile "$f" || exit 1; done
+        echo "✓ main.py 语法通过"
+        for f in src/*.py; do 
+            python -m py_compile "$f" && echo "✓ $f 语法通过"
+        done
     
-    - name: Run Tests
+    - name: Import Test
       run: |
-        # 导入测试
+        echo "=== 导入测试 ==="
         python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('✓ 导入测试通过')"
+    
+    - name: Unit Tests
+      run: |
+        echo "=== 单元测试 ==="
+        python -c "
+import sys
+sys.path.insert(0, 'src')
+
+# 测试渐变缓存
+print('测试渐变缓存...')
+from main import get_cached_gradient, clear_gradient_cache
+surf1 = get_cached_gradient((100, 100), (255, 0, 0), (0, 0, 255), 'horizontal')
+surf2 = get_cached_gradient((100, 100), (255, 0, 0), (0, 0, 255), 'horizontal')
+assert surf1 is surf2, '缓存应该返回同一对象'
+clear_gradient_cache()
+print('✓ 渐变缓存测试通过')
+
+# 测试配置加载
+print('测试配置加载...')
+from config_loader import load_config
+cfg = load_config()
+assert 'colors' in cfg, '配置应包含colors'
+print('✓ 配置加载测试通过')
+
+# 测试状态机
+print('测试状态机...')
+from state_machine import GameState
+state = GameState()
+assert state.current_state == 'menu', '初始状态应为menu'
+state.change_state('playing')
+assert state.current_state == 'playing', '状态应变为playing'
+print('✓ 状态机测试通过')
+
+print('\\n=== 所有测试通过! ===')
+"

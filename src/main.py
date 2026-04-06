@@ -66,6 +66,39 @@ def animate_text(text, x, y, color, flicker=False):
 SCREENSHOT_DIR = os.path.join(os.path.dirname(__file__), "..", "screenshots")
 os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 
+# ==================== 渐变表面缓存 ====================
+_gradient_cache = {}
+
+def get_cached_gradient(size, color1, color2, direction='horizontal'):
+    """获取或创建渐变表面缓存"""
+    key = (size, color1, color2, direction)
+    if key in _gradient_cache:
+        return _gradient_cache[key]
+    
+    surf = pygame.Surface(size, pygame.SRCALPHA)
+    if direction == 'horizontal':
+        for x in range(size[0]):
+            ratio = x / size[0]
+            r = int(color1[0] * (1 - ratio) + color2[0] * ratio)
+            g = int(color1[1] * (1 - ratio) + color2[1] * ratio)
+            b = int(color1[2] * (1 - ratio) + color2[2] * ratio)
+            pygame.draw.line(surf, (r, g, b, 255), (x, 0), (x, size[1]))
+    else:  # vertical
+        for y in range(size[1]):
+            ratio = y / size[1]
+            r = int(color1[0] * (1 - ratio) + color2[0] * ratio)
+            g = int(color1[1] * (1 - ratio) + color2[1] * ratio)
+            b = int(color1[2] * (1 - ratio) + color2[2] * ratio)
+            pygame.draw.line(surf, (r, g, b, 255), (0, y), (size[0], y))
+    
+    _gradient_cache[key] = surf
+    return surf
+
+def clear_gradient_cache():
+    """清除渐变缓存"""
+    global _gradient_cache
+    _gradient_cache = {}
+
 def take_screenshot():
     """保存截图"""
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -839,17 +872,53 @@ def draw_game():
                 # 内部小点标记
                 pygame.draw.circle(SCREEN, (40, 40, 40), (x + TILE_SIZE//2, y + TILE_SIZE//2), 3)
 
-    # 起点和终点标记
-    # 起点
-    pygame.draw.circle(SCREEN, GREEN, (100, 300), 15)
+    # === 传送门装饰效果 ===
+    def draw_portal(cx, cy, color_primary, color_secondary, time_offset=0):
+        """绘制传送门效果"""
+        t = pygame.time.get_ticks() / 1000.0 + time_offset
+        
+        # 外层光环 - 脉冲效果
+        pulse = 1.0 + 0.1 * math.sin(t * 3)
+        radius_outer = int(25 * pulse)
+        
+        # 绘制多层光环
+        for i in range(3):
+            alpha = 60 - i * 15
+            radius = radius_outer - i * 5
+            portal_surf = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+            pygame.draw.circle(portal_surf, (*color_primary, alpha), (radius, radius), radius, 2)
+            SCREEN.blit(portal_surf, (cx - radius, cy - radius))
+        
+        # 旋转的能量环
+        angle = t * 2
+        for i in range(4):
+            rot_angle = angle + i * (math.pi / 2)
+            ex = cx + math.cos(rot_angle) * 18
+            ey = cy + math.sin(rot_angle) * 18
+            pygame.draw.circle(SCREEN, color_secondary, (int(ex), int(ey)), 4)
+        
+        # 中心发光
+        center_surf = pygame.Surface((30, 30), pygame.SRCALPHA)
+        pygame.draw.circle(center_surf, (*color_primary, 100), (15, 15), 12)
+        pygame.draw.circle(center_surf, (*color_secondary, 180), (15, 15), 6)
+        SCREEN.blit(center_surf, (cx - 15, cy - 15))
+    
+    # 起点传送门(绿色)
+    draw_portal(100, 300, (0, 200, 100), (100, 255, 150), 0)
     font_mark = pygame.font.Font(None, 20)
     start_text = font_mark.render("S", True, WHITE)
-    SCREEN.blit(start_text, (95, 293))
+    SCREEN.blit(start_text, (95, 260))
 
-    # 终点(萝卜位置)
+    # 终点传送门(金色 - 萝卜)
+    draw_portal(700 + shake_x, 300 + shake_y, (255, 180, 0), (255, 220, 100), 1.5)
+    
+    # 萝卜本身
     pygame.draw.circle(SCREEN, (255, 140, 0), (700 + shake_x, 300 + shake_y), 28)  # 深橙色外圈
     pygame.draw.circle(SCREEN, ORANGE, (700 + shake_x, 300 + shake_y), 22)  # 橙色主体
     pygame.draw.circle(SCREEN, (255, 200, 100), (700 + shake_x, 300 + shake_y), 14)  # 浅色高光
+    # 萝卜叶子
+    pygame.draw.line(SCREEN, (50, 180, 50), (700 + shake_x - 5, 300 + shake_y - 22), (700 + shake_x - 8, 300 + shake_y - 32), 3)
+    pygame.draw.line(SCREEN, (50, 180, 50), (700 + shake_x + 5, 300 + shake_y - 22), (700 + shake_x + 8, 300 + shake_y - 32), 3)
 
     # 绘制怪物(带震动偏移)- 根据怪物类型显示不同形状
     for monster in state.monsters:
