@@ -1,37 +1,110 @@
-# 保卫萝卜 - 游戏增强功能
+# 🎮 Carrot Fantasy (Guard the Carrot)
 
-## 新增功能列表
+> Tower Defense Game based on Python & Pygame
 
-### 1. 暴击火花效果
-- 击杀怪物时有10%几率触发暴击
-- 暴击时产生金色火花粒子效果
-- 暴击造成150%伤害并触发屏幕震动
+A polished tower defense game with rich features, particle effects, and engaging gameplay.
 
-### 2. 快捷键功能
-- **P键**: 暂停/恢复游戏
-- **F12键**: 截图保存
-- **Ctrl+Shift+R**: 触发隐藏彩蛋（萝卜跳舞）
+## 🚀 Quick Start
 
-### 3. 彩蛋功能
-- 输入特殊组合键（Ctrl+Shift+R）激活隐藏功能
-- 激活后萝卜将开始跳舞动画
+```bash
+# 1. Clone the repository
+git clone https://github.com/hqw-sjtu/carrot-fantasy.git
+cd carrot-fantasy
 
-### 4. 金币动画优化
-- 击杀怪物时金币会以动画形式飘出
-- 连击奖励会有额外的金币提示
+# 2. Install dependencies
+pip install -r requirements.txt
 
-## 实现说明
+# 3. Run the game
+python src/main.py
+```
 
-### 暴击系统
-在 `src/projectiles.py` 中添加了暴击检测逻辑，在 `src/main.py` 中实现了暴击火花粒子系统。
+Or use the launcher:
+```bash
+bash start.sh
+```
 
-### 快捷键
-在键盘事件处理中添加了P键暂停和F12截图功能。
+## 🕹️ Controls
 
-### 彩蛋系统
-通过Ctrl+Shift+R组合键触发隐藏功能。
+| Key | Action |
+|-----|--------|
+| 1-4 | Select tower type |
+| Mouse | Place/Select tower |
+| U | Upgrade selected tower |
+| D | Sell selected tower |
+| Space | Start wave |
+| ESC | Pause |
 
-## 项目结构
-- `src/` - 游戏源码
-- `assets/` - 游戏资源
-- `screenshots/` - 截图保存目录
+### Shortcuts
+- **I**: Tower Dictionary
+- **J**: Monster Dictionary  
+- **K**: Daily Check-in
+- **M**: Toggle Sound
+- **T**: Statistics
+- **H**: Toggle HP Display
+- **P**: Screenshot
+- **F12**: Screenshot
+
+## 🎯 Features
+
+- 10+ Levels with different themes
+- 4 Tower Types (Arrow, Cannon, Magic, Frost)
+- Tower Quality System (Common/Rare/Epic)
+- Random Events (Coin Rain/Double Damage/Global Slow)
+- Tower Combo Effects (+10% damage for adjacent same-type towers)
+- Achievement System
+- Daily Tasks & Check-in Rewards
+- Particle Effects & Dynamic Lighting
+- Sound System
+- Critical Hit System (10% chance, 150% damage)
+- Hidden Easter Eggs
+
+## 📋 Requirements
+
+- Python 3.8+
+- pygame>=2.5.0
+
+## 📁 Project Structure
+
+```
+carrot-fantasy/
+├── src/              # Source code
+│   ├── main.py       # Main game
+│   ├── towers.py     # Tower logic
+│   ├── monsters.py   # Monster logic
+│   ├── projectiles.py
+│   ├── waves.py
+│   ├── particle_system.py  # Particle effects
+│   └── ...
+├── config.json       # Game configuration
+├── requirements.txt  # Dependencies
+├── tests/            # Unit tests
+├── .github/          # CI/CD workflows
+└── README.md
+```
+
+## 🧪 Testing
+
+```bash
+# Run unit tests
+python -m pytest tests/ -v
+
+# Or run in-game tests
+python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('Import OK')"
+```
+
+## 🐛 Troubleshooting
+
+If you encounter errors:
+```bash
+# Reinstall dependencies
+pip uninstall pygame -y
+pip install pygame
+```
+
+## 📄 License
+
+MIT License
+
+---
+
+**Enjoy the game!** 🎉

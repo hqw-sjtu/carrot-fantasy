@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-04-07
+
+### Added | 新增功能
+- 🧪 Complete test suite (pytest)
+- ✨ New particle system module (particle_system.py)
+- 📖 Updated README with testing instructions
+- 🔧 GitHub Actions CI workflow for automated testing
+
+### Technical | 技术更新
+- Python syntax validation for all source files
+- Unit tests for core modules (monsters, towers, projectiles, waves)
+- Integration tests for config and placement systems
+
+---
+
 ## [1.0.0] - 2026-04-07
 
 ### Added | 新增功能
