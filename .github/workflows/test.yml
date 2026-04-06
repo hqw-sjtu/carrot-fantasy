@@ -72,5 +72,21 @@ state.change_state('playing')
 assert state.current_state == 'playing', '状态应变为playing'
 print('✓ 状态机测试通过')
 
+# 测试弹道轨迹系统
+print('测试弹道轨迹系统...')
+from projectiles import Projectile
+from monsters import Monster
+monster = Monster(100, 100, 10, 1.0)
+proj = Projectile(0, 0, monster, 10, speed=5, tower_type='箭塔')
+# 模拟移动更新
+proj.x, proj.y = 10, 10
+proj.update(1.0)
+proj.x, proj.y = 20, 20
+proj.update(1.0)
+proj.x, proj.y = 30, 30
+proj.update(1.0)
+assert len(proj.trail_positions) >= 2, '应该有轨迹记录'
+print('✓ 弹道轨迹测试通过')
+
 print('\\n=== 所有测试通过! ===')
 "

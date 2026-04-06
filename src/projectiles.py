@@ -32,13 +32,23 @@ class Projectile:
         self.source_tower = source_tower  # 发射该子弹的塔
         self.tower_type = tower_type  # 塔类型，用于确定子弹形状
         self.is_critical = False  # 是否暴击
+        # 弹道轨迹系统
+        self.trail_positions = []  # 轨迹位置列表
+        self.trail_max_length = 8  # 轨迹最大长度
+        self.last_x = x  # 上一次位置
+        self.last_y = y
         
     def update(self, dt):
         """更新子弹位置"""
         if not self.active or not self.target or not self.target.alive:
             self.active = False
             return
-            
+        
+        # 记录当前位置到轨迹
+        self.trail_positions.append((self.x, self.y))
+        if len(self.trail_positions) > self.trail_max_length:
+            self.trail_positions.pop(0)
+        
         # 计算到目标的方向
         dx = self.target.x - self.x
         dy = self.target.y - self.y
@@ -102,8 +112,30 @@ class Projectile:
         else:
             pygame.draw.circle(screen, (255, 255, 0), (int(self.x), int(self.y)), 5)
         
+        # 绘制弹道轨迹
+        if len(self.trail_positions) >= 2:
+            for i, (tx, ty) in enumerate(self.trail_positions):
+                # 轨迹渐变透明度
+                alpha = int(255 * (i / len(self.trail_positions)) * 0.6)
+                color = self._get_trail_color(alpha)
+                size = max(1, 3 * (i / len(self.trail_positions)))
+                pygame.draw.circle(screen, color, (int(tx), int(ty)), int(size))
+        
         # 绘制命中特效
         if self.hit_effect > 0:
             effect_size = self.hit_effect * 2  # 特效大小随帧数递减
             pygame.draw.circle(screen, (255, 255, 200, 150), (int(self.hit_x), int(self.hit_y)), effect_size)
             self.hit_effect -= 1
+    
+    def _get_trail_color(self, alpha):
+        """获取轨迹颜色（根据塔类型）"""
+        if self.tower_type:
+            if "箭" in self.tower_type:
+                return (200, 200, 255, alpha)
+            elif "炮" in self.tower_type:
+                return (255, 150, 50, alpha)
+            elif "魔法" in self.tower_type:
+                return (180, 80, 255, alpha)
+            elif "减速" in self.tower_type:
+                return (100, 200, 255, alpha)
+        return (255, 255, 150, alpha)
