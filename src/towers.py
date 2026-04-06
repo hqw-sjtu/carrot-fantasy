@@ -1,4 +1,5 @@
 import pygame
+import random
 from src.config_loader import get_config
 
 """ 
@@ -33,6 +34,19 @@ class Tower:
         self.kill_count = 0  # 击杀统计
         # 攻击优先级: "first"=最前, "last"=最后, "strong"=最强, "weak"=最弱
         self.priority = "first"
+        
+        # 塔品质系统：普通/优秀/史诗
+        self.quality = "normal"  # 默认普通
+        # 随机品质（10%几率史诗，30%优秀）
+        roll = random.random()
+        if roll < 0.1:
+            self.quality = "epic"
+            self.damage = int(self.damage * 1.5)
+            self.range = self.range * 1.2
+        elif roll < 0.4:
+            self.quality = "rare"
+            self.damage = int(self.damage * 1.25)
+            self.range = self.range * 1.1
         
     def get_upgrade_cost(self):
         """获取升级费用"""
@@ -93,15 +107,25 @@ class Tower:
         
         return None
     
-    def attack(self, monsters, projectiles):
+    def attack(self, monsters, projectiles, all_towers=None):
         """攻击冷却更新和发射子弹"""
         self.cooldown -= 1/60  # 每帧减少冷却
         if self.cooldown <= 0:
             target = self.find_target(monsters)
             if target:
+                # 计算组合加成
+                if all_towers is None:
+                    synergy = 1.0
+                else:
+                    synergy = self.check_synergy(all_towers)
+                
+                actual_damage = int(self.damage * synergy)
+                
                 # 创建子弹
                 from src.projectiles import Projectile
-                p = Projectile(self.x, self.y, target, self.damage, slow_factor=self.slow_factor, source_tower=self)
+                p = Projectile(self.x, self.y, target, actual_damage, slow_factor=self.slow_factor, source_tower=self, tower_type=self.name)
+                # 记录组合加成用于UI显示
+                p.synergy = synergy
                 projectiles.append(p)
                 # 播放音效
                 if sound_player:
@@ -114,6 +138,22 @@ class Tower:
             p.update(dt)
             if not p.active:
                 self.projectiles.remove(p)
+    
+    def check_synergy(self, all_towers):
+        """检测与相邻塔的组合效果"""
+        synergy_bonus = 1.0
+        
+        for other in all_towers:
+            if other is self:
+                continue
+            # 计算距离（像素）
+            dist = ((self.x - other.x)**2 + (self.y - other.y)**2) ** 0.5
+            if dist < 100:  # 相距100像素内
+                # 同类型加成
+                if self.name == other.name:
+                    synergy_bonus += 0.1  # 10%伤害加成
+        
+        return synergy_bonus
     
     def __str__(self):
         return f"{self.name} Lv.{self.level} (伤害:{self.damage}, 射程:{self.range})"

@@ -88,31 +88,50 @@
       "health": 50,
       "speed": 1.0,
       "reward": 10,
-      "color": "GREEN"
+      "color": "GREEN",
+      "type": "normal"
     },
     "yellow": {
       "health": 80,
       "speed": 1.5,
       "reward": 15,
-      "color": "YELLOW"
+      "color": "YELLOW",
+      "type": "normal"
     },
     "orange": {
       "health": 120,
       "speed": 2.0,
       "reward": 25,
-      "color": "ORANGE"
+      "color": "ORANGE",
+      "type": "normal"
     },
     "red": {
       "health": 200,
       "speed": 2.5,
       "reward": 40,
-      "color": "RED"
+      "color": "RED",
+      "type": "boss"
     },
     "purple": {
       "health": 500,
       "speed": 3.0,
       "reward": 100,
-      "color": "PURPLE"
+      "color": "PURPLE",
+      "type": "boss"
+    },
+    "fast": {
+      "health": 40,
+      "speed": 2.0,
+      "reward": 15,
+      "color": "CYAN",
+      "type": "fast"
+    },
+    "armor": {
+      "health": 300,
+      "speed": 0.8,
+      "reward": 50,
+      "color": "GRAY",
+      "type": "armor"
     }
   },
   "waves": [

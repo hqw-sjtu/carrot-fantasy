@@ -5,6 +5,22 @@ import pygame
 from typing import Optional, Tuple
 from src.config_loader import get_config
 
+# 颜色定义
+GOLD = (255, 215, 0)
+
+# 面板背景（渐变+圆角）
+def draw_panel(surface, rect, color_top, color_bottom, border_radius=8):
+    # 渐变填充
+    for i in range(rect.height):
+        ratio = i / rect.height
+        r = int(color_top[0] * (1 - ratio) + color_bottom[0] * ratio)
+        g = int(color_top[1] * (1 - ratio) + color_bottom[1] * ratio)
+        b = int(color_top[2] * (1 - ratio) + color_bottom[2] * ratio)
+        pygame.draw.line(surface, (r, g, b), (rect.x, rect.y + i), (rect.right, rect.y + i))
+    
+    # 金色边框
+    pygame.draw.rect(surface, GOLD, rect, 2, border_radius=border_radius)
+
 class UIPanel:
     """UI面板管理器"""
     
@@ -61,15 +77,8 @@ class UIPanel:
         
     def draw(self, screen, game_state, state_machine):
         """绘制UI面板"""
-        # 绘制信息面板背景（渐变效果）
-        gradient_surface = pygame.Surface((self.info_panel_rect.width, self.info_panel_rect.height), pygame.SRCALPHA)
-        # 从深蓝到透明的渐变
-        for i in range(self.info_panel_rect.height):
-            alpha = int(180 * (1 - i / self.info_panel_rect.height))
-            pygame.draw.line(gradient_surface, (20, 30, 60, alpha), (0, i), (self.info_panel_rect.width, i))
-        screen.blit(gradient_surface, (self.info_panel_rect.x, self.info_panel_rect.y))
-        # 金色边框
-        pygame.draw.rect(screen, (255, 215, 0), self.info_panel_rect, 2)
+        # 绘制信息面板背景（渐变效果+圆角）
+        draw_panel(screen, self.info_panel_rect, (30, 40, 70), (20, 30, 50))
         
         # 绘制信息
         info_y = self.info_panel_rect.y + 10
@@ -123,14 +132,8 @@ class UIPanel:
                 priority_info = self.small_font.render(f"按P切换: {priority_text}", True, (200, 200, 255))
                 screen.blit(priority_info, (self.info_panel_rect.x + 10, info_y + 160))
         
-        # 绘制塔按钮面板背景（渐变）
-        gradient_surface2 = pygame.Surface((self.tower_buttons_rect.width, self.tower_buttons_rect.height), pygame.SRCALPHA)
-        for i in range(self.tower_buttons_rect.height):
-            alpha = int(180 * (1 - i / self.tower_buttons_rect.height))
-            pygame.draw.line(gradient_surface2, (60, 30, 20, alpha), (0, i), (self.tower_buttons_rect.width, i))
-        screen.blit(gradient_surface2, (self.tower_buttons_rect.x, self.tower_buttons_rect.y))
-        # 金色边框
-        pygame.draw.rect(screen, (255, 215, 0), self.tower_buttons_rect, 2)
+        # 绘制塔按钮面板背景（渐变效果+圆角）
+        draw_panel(screen, self.tower_buttons_rect, (70, 40, 30), (50, 30, 20))
         
         # 绘制塔选择按钮
         tower_types = ['箭塔', '炮塔', '魔法塔']
@@ -154,7 +157,7 @@ class UIPanel:
             # 绘制按钮文本
             tower_info = self.config.get('towers', {}).get(tower_type, {})
             cost = tower_info.get('cost', 0)
-            text = self.small_font.render(f"{tower_type} 💰{cost}", True, (255, 255, 255))
+            text = self.small_font.render(f"🗼 {tower_type} 💰{cost}", True, (255, 255, 255))
             screen.blit(text, (button_rect.x + 5, button_rect.y + 5))
             
         # 绘制波次信息
@@ -187,7 +190,7 @@ class UIPanel:
             font_info = pygame.font.Font(None, 22)
             
             # 塔信息
-            title = font_title.render(f"{selected_tower.name} Lv.{selected_tower.level}", True, (255, 255, 0))
+            title = font_title.render(f"🗼 {selected_tower.name} Lv.{selected_tower.level}", True, (255, 255, 0))
             screen.blit(title, (info_rect.x + 10, info_rect.y + 10))
             
             # 属性
@@ -201,6 +204,12 @@ class UIPanel:
                 f"射程: {int(tower_range * 50)}",
                 f"攻速: {1.0 / cooldown:.1f}/秒",
             ]
+            # 显示塔品质
+            quality_map = {"normal": "普通", "rare": "优秀", "epic": "史诗"}
+            if hasattr(selected_tower, 'quality'):
+                quality_cn = quality_map.get(selected_tower.quality, "普通")
+                quality_color = {"normal": (200, 200, 200), "rare": (0, 191, 255), "epic": (255, 215, 0)}
+                attrs.append(f"品质: {quality_cn}")
             if hasattr(selected_tower, 'slow_factor'):
                 attrs.append(f"减速: {int(selected_tower.slow_factor*100)}%")
             # 显示击杀统计

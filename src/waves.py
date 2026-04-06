@@ -10,6 +10,10 @@ WAVES = [
     {"monsters": [("小怪物", 8), ("中怪物", 2)], "interval": 0.8},
     {"monsters": [("中怪物", 5), ("大怪物", 1)], "interval": 0.6},
     {"monsters": [("大怪物", 3), ("Boss", 1)], "interval": 0.5},
+    {"monsters": [("快速怪", 10)], "interval": 0.5},  # 新增快速怪
+    {"monsters": [("装甲怪", 3), ("中怪物", 5)], "interval": 1.0},  # 新增装甲怪
+    {"monsters": [("快速怪", 5), ("装甲怪", 2), ("Boss", 1)], "interval": 0.8},  # 混合波次
+    {"monsters": [("超级Boss", 1), ("装甲怪", 5)], "interval": 1.0},  # 最终波
 ]
 
 class WaveManager:
@@ -48,7 +52,7 @@ class WaveManager:
         self.wave_start_time = time.time()
         return True
         
-    def update(self, dt, state):
+    def update(self, dt, state, difficulty=1.0):
         """更新波次系统"""
         if not self.is_waving or self.wave_complete:
             return
@@ -62,6 +66,9 @@ class WaveManager:
             monster = MonsterFactory.create(monster_type)
             
             if monster:
+                # 应用难度倍率
+                monster.health = int(monster.health * difficulty)
+                monster.max_health = int(monster.max_health * difficulty)
                 state.monsters.append(monster)
                 self.spawn_timer = 0
                 
