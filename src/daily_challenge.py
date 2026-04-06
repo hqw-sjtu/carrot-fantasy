@@ -1,5 +1,7 @@
 # 每日挑战系统
-# 每日挑战系统
+import datetime
+import pygame
+
 daily_challenge = {
     "active": False,
     "type": None,  # "speed", "survival", "economy", "no_magic"
@@ -20,8 +22,14 @@ def get_today_challenge():
     day_of_year = datetime.datetime.now().timetuple().tm_yday
     return CHALLENGES[day_of_year % len(CHALLENGES)]
 
-def check_challenge_completion():
-    """检查挑战是否完成"""
+def check_challenge_completion(state, game_complete_time=None, show_achievement_unlock=None):
+    """检查挑战是否完成
+    
+    Args:
+        state: 游戏状态对象
+        game_complete_time: 通关时间(秒),可选
+        show_achievement_unlock: 成就解锁回调函数,可选
+    """
     if not daily_challenge["active"] or daily_challenge["completed"]:
         return
     
@@ -29,26 +37,29 @@ def check_challenge_completion():
     completed = False
     
     if challenge_type == "speed":
-        if game_complete_time and game_complete_time <= 300:  # 5分钟
+        if game_complete_time is not None and game_complete_time <= 300:  # 5分钟
             completed = True
     elif challenge_type == "survival":
-        if state.lives >= 3 and state.game_over:
+        if hasattr(state, 'lives') and hasattr(state, 'game_over') and state.lives >= 3 and state.game_over:
             completed = True
     elif challenge_type == "economy":
-        if state.money >= 500 and state.game_over:
+        if hasattr(state, 'money') and hasattr(state, 'game_over') and state.money >= 500 and state.game_over:
             completed = True
     elif challenge_type == "no_magic":
         # 检查是否使用过法术塔
-        magic_used = any(t.type == "magic" for t in state.towers)
-        if not magic_used and state.game_over:
-            completed = True
+        if hasattr(state, 'towers'):
+            magic_used = any(t.type == "magic" for t in state.towers)
+            if not magic_used and hasattr(state, 'game_over') and state.game_over:
+                completed = True
     
     if completed:
         daily_challenge["completed"] = True
-        state.money += daily_challenge["bonus_gold"]
-        show_achievement_unlock(f"🎯 今日挑战完成! +{daily_challenge['bonus_gold']}金币", "🏆")
+        if hasattr(state, 'money'):
+            state.money += daily_challenge["bonus_gold"]
+        if show_achievement_unlock:
+            show_achievement_unlock(f"🎯 今日挑战完成! +{daily_challenge['bonus_gold']}金币", "🏆")
 
-def draw_daily_challenge_panel():
+def draw_daily_challenge_panel(SCREEN, SCREEN_WIDTH=800, SCREEN_HEIGHT=600):
     """绘制每日挑战面板"""
     if not daily_challenge["active"]:
         return

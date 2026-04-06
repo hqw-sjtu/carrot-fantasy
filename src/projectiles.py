@@ -31,6 +31,7 @@ class Projectile:
         self.hit_y = 0
         self.source_tower = source_tower  # 发射该子弹的塔
         self.tower_type = tower_type  # 塔类型，用于确定子弹形状
+        self.is_critical = False  # 是否暴击
         
     def update(self, dt):
         """更新子弹位置"""
@@ -59,13 +60,19 @@ class Projectile:
     def hit_target(self):
         """命中目标"""
         if self.target and self.target.alive:
+            # 暴击概率检测
+            import random
+            if random.random() < 0.1:  # 10%暴击率
+                self.is_critical = True
+                self.damage = int(self.damage * 1.5)  # 暴击伤害提升50%
+                
             self.target.take_damage(self.damage)
             # 应用减速效果 (持续3秒)
             if self.slow_factor < 1.0:
                 self.target.apply_slow(self.slow_factor, 3.0)
             # 播放击中音效
             if _sound_manager:
-                _sound_manager.play('hit')
+                _sound_manager.play(hit)
         self.active = False
         
     def draw(self, screen):

@@ -1,4 +1,5 @@
 import datetime
+import pygame
 
 # 签到系统
 checkin_data = {

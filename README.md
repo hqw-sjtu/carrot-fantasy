@@ -1,94 +1,37 @@
-# 🎮 保卫萝卜 (Carrot Fantasy)
+# 保卫萝卜 - 游戏增强功能
 
-> A Tower Defense Game built with Python & Pygame
+## 新增功能列表
 
-English | [中文](README_CN.md)
+### 1. 暴击火花效果
+- 击杀怪物时有10%几率触发暴击
+- 暴击时产生金色火花粒子效果
+- 暴击造成150%伤害并触发屏幕震动
 
-## ⭐ Quick Start
+### 2. 快捷键功能
+- **P键**: 暂停/恢复游戏
+- **F12键**: 截图保存
+- **Ctrl+Shift+R**: 触发隐藏彩蛋（萝卜跳舞）
 
-```bash
-# 1. Clone or download the project
-git clone https://github.com/hqw-sjtu/carrot-fantasy.git
-cd carrot-fantasy
+### 3. 彩蛋功能
+- 输入特殊组合键（Ctrl+Shift+R）激活隐藏功能
+- 激活后萝卜将开始跳舞动画
 
-# 2. Install dependencies
-pip install -r requirements.txt
+### 4. 金币动画优化
+- 击杀怪物时金币会以动画形式飘出
+- 连击奖励会有额外的金币提示
 
-# 3. Run the game
-python src/main.py
-```
+## 实现说明
 
-Or use the launcher:
-```bash
-bash start.sh
-```
+### 暴击系统
+在 `src/projectiles.py` 中添加了暴击检测逻辑，在 `src/main.py` 中实现了暴击火花粒子系统。
 
-## 🕹️ How to Play
+### 快捷键
+在键盘事件处理中添加了P键暂停和F12截图功能。
 
-| Key | Action |
-|-----|--------|
-| 1-4 | Select tower type |
-| Mouse | Place / select tower |
-| U | Upgrade selected tower |
-| D | Sell selected tower |
-| Space | Start wave |
-| ESC | Pause |
+### 彩蛋系统
+通过Ctrl+Shift+R组合键触发隐藏功能。
 
-### Shortcuts
-- **I**: Tower Encyclopedia
-- **J**: Monster Book
-- **K**: Daily Check-in
-- **M**: Toggle sound
-- **T**: Statistics
-- **H**: Toggle health bars
-- **P**: Screenshot
-
-## 🎯 Features
-
-- 10+ Levels with different themes
-- 4 Tower types (Arrow, Cannon, Magic, Ice)
-- Tower quality system (Normal/Rare/Epic)
-- Random events (Gold Rain, Double Damage, Slow All)
-- Tower synergy (adjacent same-type +10% damage)
-- Achievement system
-- Daily quests & check-in rewards
-- Particle effects & dynamic lighting
-- Sound effects
-
-## 📋 Requirements
-
-- Python 3.8+
-- pygame>=2.5.0
-
-## 📁 Project Structure
-
-```
-carrot-fantasy/
-├── src/              # Source code
-│   ├── main.py       # Main game
-│   ├── towers.py     # Tower logic
-│   ├── monsters.py   # Monster logic
-│   ├── projectiles.py
-│   ├── waves.py
-│   └── ...
-├── config.json       # Game config
-├── requirements.txt  # Dependencies
-└── README.md
-```
-
-## 🐛 Issues
-
-If you encounter errors, try:
-```bash
-# Reinstall dependencies
-pip uninstall pygame -y
-pip install pygame
-```
-
-## 📄 License
-
-MIT License
-
----
-
-**Enjoy the game!** 🎉
+## 项目结构
+- `src/` - 游戏源码
+- `assets/` - 游戏资源
+- `screenshots/` - 截图保存目录
