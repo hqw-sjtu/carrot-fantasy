@@ -611,6 +611,7 @@ from projectiles import Projectile
 from projectiles import set_sound_manager_for_projectiles
 from waves import WaveManager
 from tower_placement import TowerPlacement
+from particle_system import get_particle_system
 
 # 设置全局音效管理器给towers模块
 set_sound_manager(sound_manager)
@@ -1659,6 +1660,10 @@ def draw_game():
     
     # 绘制粒子特效
     draw_particles()
+    
+    # 更新和绘制升级光晕特效
+    particle_system.update_upgrade_aura()
+    particle_system.draw_upgrade_aura(SCREEN)
 
 # 波次预览系统
 def draw_wave_preview_panel():
@@ -1832,6 +1837,9 @@ def main():
     global wave_tip, egg_input_buffer, easter_egg_active
     global lights, particles, lines
     global screen_shake_offset, time_str, show_achievement_unlock
+    # 初始化粒子系统
+    particle_system = get_particle_system()
+    
     clock = pygame.time.Clock()
     running = True
 
@@ -1938,6 +1946,7 @@ def main():
 
                             # 升级成功特效
                             upgrade_effects.append([int(tower.x), int(tower.y), 1.0])
+                            particle_system.add_upgrade_aura(int(tower.x), int(tower.y))
                             trigger_screen_shake(3, 0.1)
                             print("⬆️ 升级成功")
 
@@ -2169,6 +2178,10 @@ def main():
                 show_achievement_unlock("无伤波次", "🛡️")
             wave_no_damage = True  # 重置下一波检测
             wave_wait_timer = wave_wait_duration
+            
+            # ===== 波次完成庆祝动画 =====
+            particle_system.emit_explosion(SCREEN_WIDTH//2, 100, (255, 215, 0), count=30)
+            particle_system.emit(SCREEN_WIDTH//2, 100, 20, (255, 255, 255), lifetime=1.5, size=8, speed=80, upward=True)
             
             # ===== 每日任务进度更新 =====
             update_quest("wave_5")

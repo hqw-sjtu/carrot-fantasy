@@ -63,6 +63,43 @@ class ParticleSystem:
     
     def __init__(self):
         self.particles = []
+        self.upgrade_aura = []
+    
+    def add_upgrade_aura(self, x, y):
+        """添加升级光晕效果"""
+        self.upgrade_aura.append({
+            'x': x, 'y': y,
+            'radius': 10,
+            'alpha': 200,
+            'start_time': pygame.time.get_ticks()
+        })
+    
+    def update_upgrade_aura(self):
+        """更新升级光晕"""
+        import pygame
+        current_time = pygame.time.get_ticks()
+        to_remove = []
+        for aura in self.upgrade_aura:
+            elapsed = current_time - aura['start_time']
+            if elapsed > 1000:
+                to_remove.append(aura)
+                continue
+            aura['radius'] += 2
+            aura['alpha'] = max(0, 200 - elapsed * 0.2)
+        for aura in to_remove:
+            self.upgrade_aura.remove(aura)
+    
+    def draw_upgrade_aura(self, screen):
+        """绘制升级光晕"""
+        import pygame
+        for aura in self.upgrade_aura:
+            if aura['alpha'] <= 0:
+                continue
+            size = aura['radius'] * 2 + 20
+            surf = pygame.Surface((size, size), pygame.SRCALPHA)
+            color = (255, 215, 0, int(aura['alpha']))
+            pygame.draw.circle(surf, color, (aura['radius'] + 10, aura['radius'] + 10), aura['radius'], 4)
+            screen.blit(surf, (aura['x'] - aura['radius'] - 10, aura['y'] - aura['radius'] - 10))
         
     def emit(self, x, y, count, color, lifetime=1.0, size=5, 
              speed=50, spread=360, fade=True, upward=False):
