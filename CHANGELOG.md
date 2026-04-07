@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.8] - 2026-04-08
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (main.py + 全部模块)
+- ✅ UI面板呼吸效果动画
+
+### Added | 新增功能
+- ✨ **UI呼吸效果动画**:
+  - 波次开始按钮添加呼吸效果(绿色渐变)
+  - 新增 get_breathing_color() 函数
+- ✨ **护盾特效** (emit_shield):
+  - 护盾塔/技能触发时蓝色光环粒子
+  - 20个蓝色光环粒子+8个中心亮点
+- 📊 测试覆盖: 粒子系统/UI面板
+
+### Updated | 更新
+- 📝 CHANGELOG更新
+
+---
+
 ## [1.1.7] - 2026-04-08
 
 ### Fixed | 修复问题

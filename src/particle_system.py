@@ -266,6 +266,33 @@ class ParticleSystem:
                 fade=True
             ))
     
+    def emit_shield(self, x, y):
+        """护盾特效 - 护盾塔或护盾技能触发时"""
+        # 蓝色光环
+        for _ in range(20):
+            angle = random.uniform(0, 360)
+            speed = random.uniform(20, 50)
+            self.particles.append(Particle(
+                x, y,
+                math.cos(math.radians(angle)) * speed,
+                math.sin(math.radians(angle)) * speed,
+                (100, 200, 255),  # 护盾蓝
+                lifetime=random.uniform(0.6, 1.0),
+                size=random.uniform(3, 6),
+                fade=True
+            ))
+        # 中心亮点
+        for _ in range(8):
+            self.particles.append(Particle(
+                x, y,
+                random.uniform(-30, 30),
+                random.uniform(-30, 30),
+                (200, 240, 255),
+                lifetime=0.5,
+                size=4,
+                fade=True
+            ))
+    
     def update(self, dt):
         """更新所有粒子"""
         self.particles = [p for p in self.particles if p.update(dt)]

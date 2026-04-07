@@ -8,6 +8,14 @@ from config_loader import get_config
 # 颜色定义
 GOLD = (255, 215, 0)
 
+# 呼吸效果动画（工艺品级别增强）
+def get_breathing_color(base_color, time_ms: float, speed: float = 0.003, amplitude: float = 30):
+    delta = int(amplitude * math.sin(time_ms * speed))
+    r = max(0, min(255, base_color[0] + delta))
+    g = max(0, min(255, base_color[1] + delta))
+    b = max(0, min(255, base_color[2] + delta))
+    return (r, g, b)
+
 # 面板背景（渐变+圆角）
 def draw_panel(surface, rect, color_top, color_bottom, border_radius=8):
     # 渐变填充
@@ -28,6 +36,8 @@ class UIPanel:
         self.config = config
         self.font = pygame.font.Font(None, 24)
         self.small_font = pygame.font.Font(None, 20)
+        # 动画时间追踪（工艺品级别增强）
+        self.animation_time = 0
         self.info_panel_rect = pygame.Rect(
             config.get('ui', {}).get('info_panel', {}).get('x', 10),
             config.get('ui', {}).get('info_panel', {}).get('y', 10),
@@ -73,7 +83,7 @@ class UIPanel:
         
     def update(self, dt: float, game_state, state_machine):
         """更新UI状态"""
-        pass
+        self.animation_time += dt * 1000  # 转换为毫秒
         
     def draw(self, screen, game_state, state_machine):
         """绘制UI面板"""
@@ -232,16 +242,17 @@ class UIPanel:
             sell_text = font_info.render(f"出售: +{sell_price}💰", True, (255, 200, 100))
             screen.blit(sell_text, (info_rect.x + 10, y + 22))
         
-        # 绘制波次开始按钮（右下角）
+        # 绘制波次开始按钮（右下角）- 呼吸效果
         SCREEN_WIDTH = self.config.get('screen', {}).get('SCREEN_WIDTH', 800)
         SCREEN_HEIGHT = self.config.get('screen', {}).get('height', 580)
         btn_rect = pygame.Rect(SCREEN_WIDTH - 120, SCREEN_HEIGHT - 80, 100, 40)
         
-        # 按钮颜色
+        # 呼吸效果按钮颜色
         if hasattr(game_state, 'wave_manager') and game_state.wave_manager and game_state.wave_manager.is_waving:
             btn_color = (100, 100, 100)
         else:
-            btn_color = (0, 150, 0)
+            # 呼吸效果：绿->亮绿
+            btn_color = get_breathing_color((0, 150, 0), self.animation_time)
         
         # 绘制按钮
         pygame.draw.rect(screen, btn_color, btn_rect, border_radius=8)
