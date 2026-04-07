@@ -16,14 +16,25 @@ def draw_ui_border():
     pygame.draw.line(SCREEN, (60, 60, 80), (0, 0), (SCREEN_WIDTH, 0), 3)
     pygame.draw.line(SCREEN, (100, 100, 120), (0, 1), (SCREEN_WIDTH, 1), 2)
     
-    # 左侧生命值栏边框
-    pygame.draw.rect(SCREEN, (80, 60, 40), (10, 50, 180, 40), 2, border_radius=5)
+    # 左侧生命值栏 - 带渐变背景
+    lives_rect = pygame.Rect(10, 50, 180, 40)
+    lives_surf = pygame.Surface((180, 40), pygame.SRCALPHA)
+    lives_surf.fill((30, 30, 50, 200))
+    SCREEN.blit(lives_surf, (10, 50))
+    pygame.draw.rect(SCREEN, (80, 60, 40), lives_rect, 2, border_radius=5)
     
-    # 右侧金币边框
-    pygame.draw.rect(SCREEN, (80, 60, 40), (SCREEN_WIDTH - 130, 50, 120, 40), 2, border_radius=5)
+    # 右侧金币 - 带渐变背景
+    gold_rect = pygame.Rect(SCREEN_WIDTH - 130, 50, 120, 40)
+    gold_surf = pygame.Surface((120, 40), pygame.SRCALPHA)
+    gold_surf.fill((30, 30, 50, 200))
+    SCREEN.blit(gold_surf, (SCREEN_WIDTH - 130, 50))
+    pygame.draw.rect(SCREEN, (80, 60, 40), gold_rect, 2, border_radius=5)
     
-    # 波次信息框
+    # 波次信息框 - 带背景
     wave_box_x, wave_box_y = SCREEN_WIDTH//2 - 80, 10
+    wave_surf = pygame.Surface((160, 35), pygame.SRCALPHA)
+    wave_surf.fill((30, 30, 50, 180))
+    SCREEN.blit(wave_surf, (wave_box_x, wave_box_y))
     pygame.draw.rect(SCREEN, (50, 50, 70), (wave_box_x, wave_box_y, 160, 35), 2, border_radius=8)
     
     # 塔按钮区域（底部）
@@ -1209,7 +1220,7 @@ def draw_game():
                 border_width = 1
             pygame.draw.circle(SCREEN, border_color, (tx, ty), 17, border_width)
 
-    # 绘制防御塔攻击线(锁定目标)
+    # 绘制防御塔攻击线(锁定目标) - 增强版
     for tower in state.towers:
         if hasattr(tower, 'target') and tower.target and hasattr(tower.target, 'alive') and tower.target.alive:
             # 获取目标位置
@@ -1228,7 +1239,12 @@ def draw_game():
             else:
                 color = WHITE
 
-            # 目标锁定线(实线)
+            # 目标锁定线 - 双层效果(外发光+内实线)
+            # 外层发光
+            glow_surf = pygame.Surface((abs(tx - int(tower.x)) + 20, 12), pygame.SRCALPHA)
+            pygame.draw.line(glow_surf, (*color, 60), (10, 6), (abs(tx - int(tower.x)) + 10, 6), 6)
+            SCREEN.blit(glow_surf, (min(int(tower.x), tx) - 10 + shake_x, int(tower.y) - 6 + shake_y))
+            # 内层实线
             pygame.draw.line(SCREEN, color, (int(tower.x) + shake_x, int(tower.y) + shake_y), (tx + shake_x, ty + shake_y), 2)
 
             # 目标点高亮(红色小点)
@@ -1537,6 +1553,21 @@ def draw_game():
             pygame.draw.circle(SCREEN, WHITE, (x + shake_x, y + shake_y), int(10 * (0.8-timer)*2), 2)
         if timer <= 0:
             place_effects.remove(ef)
+
+    # 绘制死亡爆炸特效
+    for ef in death_effects[:]:
+        ef[2] -= dt * game_speed
+        x, y, timer, color = ef
+        # 爆炸扩散圈
+        progress = 0.5 - timer  # 0到0.5
+        radius = int(30 * (1 - progress * 2))
+        if radius > 0:
+            # 外圈
+            pygame.draw.circle(SCREEN, color, (x + shake_x, y + shake_y), radius, 3)
+            # 内圈
+            pygame.draw.circle(SCREEN, (255, 200, 150), (x + shake_x, y + shake_y), max(1, radius - 5), 2)
+        if timer <= 0:
+            death_effects.remove(ef)
 
     # 绘制暴击特效
     for ce in crit_effects[:]:
@@ -2225,6 +2256,9 @@ def main():
                     # 记录击杀来源塔
                     source_tower = getattr(projectile, 'source_tower', None)
                     if monster.health <= 0:  # 怪物死亡
+                        # 添加死亡爆炸特效
+                        if len(death_effects) < MAX_DEATH_EFFECTS:
+                            death_effects.append([int(mx), int(my), 0.5, (255, 100, 50)])
                         # 增加塔的击杀计数
                         if source_tower and hasattr(source_tower, 'kill_count'):
                             source_tower.kill_count += 1
