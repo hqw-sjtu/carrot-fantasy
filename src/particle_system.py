@@ -225,6 +225,47 @@ class ParticleSystem:
             self.emit(x, y, 5, (255, 200, 100), lifetime=0.4, size=4, 
                      speed=40, spread=180, fade=True)
     
+    def emit_armor_break(self, x, y):
+        """装甲破碎特效 - 装甲怪物护甲被击碎时触发"""
+        # 蓝色碎片飞散
+        for _ in range(20):
+            self.particles.append(Particle(
+                x, y,
+                random.uniform(-100, 100),
+                random.uniform(-120, 80),
+                (100, 150, 255),  # 蓝色装甲色
+                lifetime=random.uniform(0.5, 1.0),
+                size=random.uniform(3, 6),
+                fade=True
+            ))
+        # 白色火花
+        for _ in range(10):
+            self.particles.append(Particle(
+                x, y,
+                random.uniform(-80, 80),
+                random.uniform(-100, 60),
+                (255, 255, 255),
+                lifetime=0.3,
+                size=random.uniform(2, 4),
+                fade=True
+            ))
+    
+    def emit_freeze(self, x, y):
+        """冰冻特效 - 冰霜攻击命中时"""
+        # 冰晶粒子
+        for _ in range(12):
+            angle = random.uniform(0, 360)
+            speed = random.uniform(30, 80)
+            self.particles.append(Particle(
+                x, y,
+                math.cos(math.radians(angle)) * speed,
+                math.sin(math.radians(angle)) * speed,
+                (150, 220, 255),  # 冰蓝色
+                lifetime=random.uniform(0.4, 0.8),
+                size=random.uniform(2, 5),
+                fade=True
+            ))
+    
     def update(self, dt):
         """更新所有粒子"""
         self.particles = [p for p in self.particles if p.update(dt)]

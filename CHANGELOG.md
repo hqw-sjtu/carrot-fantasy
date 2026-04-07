@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.6] - 2026-04-08
+
+### Fixed | 修复问题
+- ✅ 所有核心模块语法检查通过
+- ✅ 快速检查脚本创建完成
+
+### Added | 新增功能
+- ✨ **粒子特效扩展**:
+  - 装甲破碎特效 (emit_armor_break): 蓝色碎片+白色火花
+  - 冰冻特效 (emit_freeze): 冰晶粒子飞散
+- 📊 快速检查脚本 (tests/quick_check.py): 无需pytest的基础功能验证
+
+### Updated | 更新
+- 🧪 核心模块导入测试: towers/monsters/particle_system/config_loader
+
+---
+
 ## [1.1.5] - 2026-04-08
 
 ### Fixed | 修复问题
