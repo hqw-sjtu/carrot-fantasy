@@ -59,11 +59,42 @@ class Particle:
 
 
 class ParticleSystem:
-    """粒子系统管理器"""
+    """粒子系统管理器 - 带对象池优化"""
     
     def __init__(self):
         self.particles = []
         self.upgrade_aura = []
+        # 对象池：预分配粒子对象减少GC
+        self._particle_pool = []
+        self._pool_size = 200
+        self._init_pool()
+    
+    def _init_pool(self):
+        """初始化对象池"""
+        for _ in range(self._pool_size):
+            self._particle_pool.append({
+                'active': False,
+                'x': 0, 'y': 0, 'vx': 0, 'vy': 0,
+                'color': (255, 255, 255), 'lifetime': 0,
+                'max_lifetime': 1, 'size': 5, 'fade': True
+            })
+    
+    def _get_particle(self):
+        """从池中获取粒子"""
+        for p in self._particle_pool:
+            if not p['active']:
+                p['active'] = True
+                return p
+        # 池满了，创建新的
+        new_p = {'active': True, 'x': 0, 'y': 0, 'vx': 0, 'vy': 0,
+                 'color': (255, 255, 255), 'lifetime': 0, 
+                 'max_lifetime': 1, 'size': 5, 'fade': True}
+        self._particle_pool.append(new_p)
+        return new_p
+    
+    def _release_particle(self, p):
+        """归还粒子到池"""
+        p['active'] = False
     
     def add_upgrade_aura(self, x, y):
         """添加升级光晕效果"""
@@ -164,6 +195,20 @@ class ParticleSystem:
         """金币特效"""
         self.emit(x, y, 8, (255, 215, 0), lifetime=0.8, size=5, 
                  speed=60, spread=90, fade=True, upward=True)
+    
+    def emit_death(self, x, y, is_boss=False):
+        """击杀特效 - 怪物死亡时触发"""
+        if is_boss:
+            # Boss死亡：大型爆炸
+            self.emit_explosion(x, y, (255, 100, 50), count=40)
+            self.emit_explosion(x, y, (255, 215, 0), count=30)
+            self.emit(x, y, 20, (255, 255, 255), lifetime=1.0, size=10, 
+                     speed=150, spread=360, fade=True)
+        else:
+            # 普通怪物：小型爆炸
+            self.emit_explosion(x, y, (200, 100, 150), count=15)
+            self.emit(x, y, 5, (255, 200, 100), lifetime=0.4, size=4, 
+                     speed=40, spread=180, fade=True)
     
     def update(self, dt):
         """更新所有粒子"""

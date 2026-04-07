@@ -86,6 +86,37 @@ class Monster:
     
     def __str__(self):
         return f"{self.name} 💜{self.health}/{self.max_health} ⚡{self.speed}"
+    
+    def get_health_ratio(self):
+        """获取生命值百分比"""
+        return max(0, self.health / self.max_health)
+    
+    def draw_health_bar(self, screen, x, y, width=40, height=6):
+        """绘制血条"""
+        import pygame
+        ratio = self.get_health_ratio()
+        if ratio >= 1.0:
+            return  # 满血不显示
+        
+        # 血条背景
+        bg_rect = pygame.Rect(x - width//2, y - 20, width, height)
+        pygame.draw.rect(screen, (50, 50, 50), bg_rect)
+        
+        # 血条前景（根据血量变色）
+        if ratio > 0.5:
+            color = (50, 200, 50)  # 绿色
+        elif ratio > 0.25:
+            color = (255, 200, 0)  # 黄色
+        else:
+            color = (255, 50, 50)  # 红色
+        
+        fill_width = int(width * ratio)
+        if fill_width > 0:
+            fill_rect = pygame.Rect(x - width//2, y - 20, fill_width, height)
+            pygame.draw.rect(screen, color, fill_rect)
+        
+        # 边框
+        pygame.draw.rect(screen, (100, 100, 100), bg_rect, 1)
 
 
 class MonsterFactory:
