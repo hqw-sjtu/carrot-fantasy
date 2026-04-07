@@ -96,6 +96,21 @@ class ParticleSystem:
         """归还粒子到池"""
         p['active'] = False
     
+    def add_critical_effect(self, x, y):
+        """添加暴击特效 - 红色爆炸效果"""
+        for _ in range(15):
+            angle = random.uniform(0, math.pi * 2)
+            speed = random.uniform(50, 150)
+            vx = math.cos(angle) * speed
+            vy = math.sin(angle) * speed
+            color = random.choice([
+                (255, 100, 100),   # 红色
+                (255, 200, 50),    # 金色
+                (255, 255, 100),   # 亮黄
+            ])
+            particle = Particle(x, y, vx, vy, color, 0.5, random.uniform(3, 8))
+            self.particles.append(particle)
+    
     def add_upgrade_aura(self, x, y):
         """添加升级光晕效果"""
         self.upgrade_aura.append({

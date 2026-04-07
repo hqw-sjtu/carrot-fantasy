@@ -82,7 +82,11 @@ class Projectile:
                 self.target.apply_slow(self.slow_factor, 3.0)
             # 播放击中音效
             if _sound_manager:
-                _sound_manager.play(hit)
+                _sound_manager.play('hit')
+            
+            # 暴击时触发特效
+            if self.is_critical and hasattr(self.source_tower, 'particle_system'):
+                self.source_tower.particle_system.add_critical_effect(self.target.x, self.target.y)
         self.active = False
         
     def draw(self, screen):

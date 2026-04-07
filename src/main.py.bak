@@ -1,114 +1,13 @@
-import sys
-import os
 import pygame
+import os
 import random
 import time
 import math
 import datetime
-sys.path.append(os.path.dirname(__file__))
-from daily_challenge import daily_challenge, CHALLENGES, get_today_challenge, check_challenge_completion, draw_daily_challenge_panel
-
-# ==================== 精致UI边框和动画系统 ====================
-
-def draw_ui_border():
-    """绘制精致UI边框"""
-    # 顶部标题栏渐变边框
-    pygame.draw.line(SCREEN, (60, 60, 80), (0, 0), (SCREEN_WIDTH, 0), 3)
-    pygame.draw.line(SCREEN, (100, 100, 120), (0, 1), (SCREEN_WIDTH, 1), 2)
-    
-    # 左侧生命值栏 - 带渐变背景
-    lives_rect = pygame.Rect(10, 50, 180, 40)
-    lives_surf = pygame.Surface((180, 40), pygame.SRCALPHA)
-    lives_surf.fill((30, 30, 50, 200))
-    SCREEN.blit(lives_surf, (10, 50))
-    pygame.draw.rect(SCREEN, (80, 60, 40), lives_rect, 2, border_radius=5)
-    
-    # 右侧金币 - 带渐变背景
-    gold_rect = pygame.Rect(SCREEN_WIDTH - 130, 50, 120, 40)
-    gold_surf = pygame.Surface((120, 40), pygame.SRCALPHA)
-    gold_surf.fill((30, 30, 50, 200))
-    SCREEN.blit(gold_surf, (SCREEN_WIDTH - 130, 50))
-    pygame.draw.rect(SCREEN, (80, 60, 40), gold_rect, 2, border_radius=5)
-    
-    # 波次信息框 - 带背景
-    wave_box_x, wave_box_y = SCREEN_WIDTH//2 - 80, 10
-    wave_surf = pygame.Surface((160, 35), pygame.SRCALPHA)
-    wave_surf.fill((30, 30, 50, 180))
-    SCREEN.blit(wave_surf, (wave_box_x, wave_box_y))
-    pygame.draw.rect(SCREEN, (50, 50, 70), (wave_box_x, wave_box_y, 160, 35), 2, border_radius=8)
-    
-    # 塔按钮区域（底部）
-    tower_types = ['箭塔', '炮塔', '魔法塔']
-    selected = config.get('tower_selection', None)
-    for i, tower_type in enumerate(tower_types):
-        btn_rect = pygame.Rect(50 + i * 80, SCREEN_HEIGHT - 60, 70, 50)
-        # 普通按钮边框
-        pygame.draw.rect(SCREEN, (60, 60, 80), btn_rect, 2, border_radius=8)
-        # 选中高亮
-        if selected == tower_type:
-            pygame.draw.rect(SCREEN, GOLD, btn_rect, 3, border_radius=8)
-
-def draw_button_hover():
-    """按钮悬停/点击效果"""
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    
-    tower_types = ['箭塔', '炮塔', '魔法塔']
-    for i, tower_type in enumerate(tower_types):
-        btn_rect = pygame.Rect(50 + i * 80, SCREEN_HEIGHT - 60, 70, 50)
-        if btn_rect.collidepoint(mouse_x, mouse_y):
-            # 悬停发光效果
-            glow_surf = pygame.Surface((70, 50), pygame.SRCALPHA)
-            glow_surf.fill((255, 255, 200, 50))
-            SCREEN.blit(glow_surf, (50 + i * 80, SCREEN_HEIGHT - 60))
-
-def animate_text(text, x, y, color, flicker=False):
-    """带闪烁效果的文字"""
-    if flicker:
-        alpha = 150 + math.sin(pygame.time.get_ticks() * 0.01) * 100
-    else:
-        alpha = 255
-    
-    font = pygame.font.Font(None, 28)
-    surf = font.render(text, True, color)
-    surf.set_alpha(int(alpha))
-    SCREEN.blit(surf, (x, y))
 
 # 截图保存目录
 SCREENSHOT_DIR = os.path.join(os.path.dirname(__file__), "..", "screenshots")
 os.makedirs(SCREENSHOT_DIR, exist_ok=True)
-
-# ==================== 渐变表面缓存 ====================
-_gradient_cache = {}
-
-def get_cached_gradient(size, color1, color2, direction='horizontal'):
-    """获取或创建渐变表面缓存"""
-    key = (size, color1, color2, direction)
-    if key in _gradient_cache:
-        return _gradient_cache[key]
-    
-    surf = pygame.Surface(size, pygame.SRCALPHA)
-    if direction == 'horizontal':
-        for x in range(size[0]):
-            ratio = x / size[0]
-            r = int(color1[0] * (1 - ratio) + color2[0] * ratio)
-            g = int(color1[1] * (1 - ratio) + color2[1] * ratio)
-            b = int(color1[2] * (1 - ratio) + color2[2] * ratio)
-            pygame.draw.line(surf, (r, g, b, 255), (x, 0), (x, size[1]))
-    else:  # vertical
-        for y in range(size[1]):
-            ratio = y / size[1]
-            r = int(color1[0] * (1 - ratio) + color2[0] * ratio)
-            g = int(color1[1] * (1 - ratio) + color2[1] * ratio)
-            b = int(color1[2] * (1 - ratio) + color2[2] * ratio)
-            pygame.draw.line(surf, (r, g, b, 255), (0, y), (size[0], y))
-    
-    _gradient_cache[key] = surf
-    return surf
-
-def clear_gradient_cache():
-    """清除渐变缓存"""
-    global _gradient_cache
-    _gradient_cache = {}
 
 def take_screenshot():
     """保存截图"""
@@ -132,124 +31,6 @@ stats = {
     "gold_earned": 0,
     "waves_completed": 0,
 }
-
-# ==================== 动态光影系统 ====================
-lights = []  # 光源列表: [{"x": x, "y": y, "radius": radius, "color": color, "intensity": intensity}]
-
-def add_light(x, y, radius=50, color=(255, 200, 100), intensity=1.0):
-    """添加光源"""
-    lights.append({"x": x, "y": y, "radius": radius, "color": color, "intensity": intensity})
-
-def update_lights():
-    """更新光源（闪烁效果）"""
-    global lights
-    for light in lights:
-        # 闪烁效果
-        flicker = math.sin(pygame.time.get_ticks() * 0.005) * 0.1 + 0.9
-        light["intensity"] = flicker
-
-def draw_lights():
-    # 绘制每日挑战面板
-    draw_daily_challenge_panel(SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
-    """绘制光影叠加层"""
-    if not lights:
-        return
-    
-    # 创建光照层
-    light_layer = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    
-    for light in lights:
-        x, y = light["x"], light["y"]
-        radius = light["radius"] * light["intensity"]
-        color = light["color"]
-        intensity = light["intensity"]
-        
-        # 光晕渐变
-        for r in range(int(radius), 0, -5):
-            alpha = int((1 - r/radius) * 80 * intensity)
-            pygame.draw.circle(light_layer, (*color, alpha), (int(x), int(y)), r)
-    
-    SCREEN.blit(light_layer, (0, 0))
-
-def apply_dynamic_lights():
-    """根据游戏状态动态添加光源"""
-    global lights
-    lights.clear()
-    
-    # 1. 萝卜处光源（始终存在）
-    carrot_light_radius = 30 + math.sin(pygame.time.get_ticks() * 0.002) * 5
-    add_light(700, 300, carrot_light_radius, (100, 255, 100), 0.6)
-    
-    # 2. 选中塔时添加光源
-    if state.selected_tower:
-        tower = state.selected_tower
-        add_light(tower.x, tower.y, 40, (255, 215, 0), 0.8)
-    
-    # 3. Boss出现时添加光源
-    for monster in state.monsters:
-        if hasattr(monster, 'is_boss') and monster.is_boss:
-            mx = 100 + monster.position * 600
-            my = 300
-            add_light(mx, my, 80, (255, 50, 50), 1.0)
-            break
-
-# ==================== 粒子系统（对象池优化）====================
-particles = []  # [(x, y, vx, vy, color, life, size)]
-MAX_PARTICLES = 200  # 粒子数量上限
-particle_surfaces = {}  # 预渲染表面缓存
-
-def create_particle_surface(size):
-    """创建粒子预渲染表面（用于对象池）"""
-    if size not in particle_surfaces:
-        s = pygame.Surface((size*2, size*2), pygame.SRCALPHA)
-        pygame.draw.circle(s, (255, 255, 255, 255), (size, size), size)
-        particle_surfaces[size] = s
-    return particle_surfaces[size]
-
-def spawn_particles(x, y, color, count=10):
-    """生成粒子（带对象池复用）"""
-    available = MAX_PARTICLES - len(particles)
-    if available <= 0:
-        return
-    count = min(count, available)
-    
-    for _ in range(count):
-        angle = random.uniform(0, 6.28)
-        speed = random.uniform(50, 150)
-        particles.append([
-            x, y,
-            math.cos(angle) * speed,
-            math.sin(angle) * speed,
-            color,
-            1.0,  # 生命周期
-            random.randint(2, 5)
-        ])
-
-def update_particles(dt):
-    """更新粒子"""
-    global particles
-    for p in particles[:]:
-        p[0] += p[2] * dt
-        p[1] += p[3] * dt
-        p[5] -= dt * 1.5
-        p[3] += 50 * dt
-        
-        if p[5] <= 0:
-            particles.remove(p)
-
-def draw_particles():
-    """绘制粒子（优化版）"""
-    for p in particles:
-        x, y, _, _, color, life, size = p
-        alpha = int(life * 255)
-        # 复用预渲染表面
-        if size not in particle_surfaces:
-            particle_surfaces[size] = pygame.Surface((size*2, size*2), pygame.SRCALPHA)
-            pygame.draw.circle(particle_surfaces[size], (255, 255, 255, 255), (size, size), size)
-        s = particle_surfaces[size].copy()
-        # 快速着色
-        pygame.draw.circle(s, (*color, alpha), (size, size), size)
-        SCREEN.blit(s, (int(x - size), int(y - size)))
 
 # 游戏结束报告函数
 def draw_end_report(screen, won, stats, time_seconds):
@@ -398,54 +179,6 @@ total_kills = 0
 achievement_notify = ""  # 当前显示的成就
 achievement_timer = 0
 
-# ==================== 成就解锁动画 ====================
-achievement_unlock_anim = None  # {"name": "", "icon": "", "timer": 0}
-dt = 0  # 全局delta time用于动画
-
-def show_achievement_unlock(name, icon):
-    """显示成就解锁动画"""
-    global achievement_unlock_anim
-    achievement_unlock_anim = {"name": name, "icon": icon, "timer": 3.0}
-
-def draw_achievement_unlock():
-    """绘制成就解锁动画 - 从右侧滑入"""
-    global achievement_unlock_anim
-    
-    if achievement_unlock_anim is None:
-        return
-    
-    timer = achievement_unlock_anim["timer"]
-    timer -= dt * game_speed
-    achievement_unlock_anim["timer"] = timer
-    
-    if timer <= 0:
-        achievement_unlock_anim = None
-        return
-    
-    # 从右侧滑入动画
-    anim_progress = (3.0 - timer) / 3.0
-    if anim_progress < 0.2:
-        x = SCREEN_WIDTH - (anim_progress * 5) * 200
-    else:
-        x = SCREEN_WIDTH - 200
-    
-    y = 100
-    
-    # 背景
-    pygame.draw.rect(SCREEN, (50, 50, 80), (x, y, 190, 60), border_radius=10)
-    pygame.draw.rect(SCREEN, GOLD, (x, y, 190, 60), 3, border_radius=10)
-    
-    # 图标和文字
-    font = pygame.font.Font(None, 28)
-    icon = achievement_unlock_anim["icon"]
-    name = achievement_unlock_anim["name"]
-    
-    icon_surf = font.render(icon, True, YELLOW)
-    name_surf = font.render(f"成就解锁: {name}", True, WHITE)
-    
-    SCREEN.blit(icon_surf, (x + 10, y + 15))
-    SCREEN.blit(name_surf, (x + 45, y + 20))
-
 # ==================== 成就徽章UI ====================
 def draw_achievement_badges():
     """绘制已解锁成就徽章（右上角）"""
@@ -591,40 +324,23 @@ music_enabled = True
 music_volume = 0.5
 BGMusic = None
 
-from sound_manager import SoundManager
-
 pygame.mixer.init()
-
-# 初始化音效管理器
-sound_manager = SoundManager()
-
-from config_loader import load_config, get_config
-from checkin_system import checkin_data, try_checkin, draw_checkin_panel
+from src.config_loader import load_config, get_config
+from src.checkin_system import checkin_data, try_checkin, draw_checkin_panel
 
 # 游戏速度
 game_speed = 1.0  # 1.0=正常, 2.0=快进, 0.5=慢放
 speed_labels = {0.5: "🐢 慢放", 1.0: "▶️ 正常", 2.0: "⏩ 快进"}
-from state_machine import GameStateMachine
-from towers import TowerFactory, set_sound_player, set_sound_manager
-from monsters import MonsterFactory
-from projectiles import Projectile
-from projectiles import set_sound_manager_for_projectiles
-from waves import WaveManager
-from tower_placement import TowerPlacement
-from particle_system import get_particle_system
-
-# 设置全局音效管理器给towers模块
-set_sound_manager(sound_manager)
-set_sound_manager_for_projectiles(sound_manager)
+from src.state_machine import GameStateMachine
+from src.towers import TowerFactory, set_sound_player
+from src.monsters import MonsterFactory
+from src.projectiles import Projectile
+from src.waves import WaveManager
+from src.tower_placement import TowerPlacement
 
 # 屏幕震动
 screen_shake = 0
 screen_shake_offset = [0, 0]
-
-def trigger_screen_shake(intensity=10, duration=0.3):
-    """触发屏幕震动"""
-    global screen_shake
-    screen_shake = intensity
 
 # 加载配置
 config = load_config()
@@ -708,63 +424,6 @@ combo_text = ""  # 连杀文字
 # 连杀特效列表 [(x, y, text, color, timer)]
 combo_texts = []
 
-# ==================== 背包系统 ====================
-inventory = {"arrow": 0, "cannon": 0, "magic": 0, "ice": 0}  # 存放拆卸的塔
-show_inventory = False  # 背包面板显示开关
-
-def sell_tower_to_inventory(tower):
-    """出售塔到背包（返还一半金币到背包）"""
-    refund = tower.level * 30  # 等级*30金币
-    tower_type = tower.name
-    # 映射塔名称到背包key
-    type_map = {"箭塔": "arrow", "炮塔": "cannon", "魔法塔": "magic", "减速塔": "ice"}
-    inv_key = type_map.get(tower_type, tower_type)
-    if inv_key in inventory:
-        inventory[inv_key] += 1
-    else:
-        inventory[inv_key] = 1
-    state.money += refund
-    sound_manager.play('sell')
-    print(f"🔄 {tower_type}塔存入背包，返还{refund}金币")
-
-def use_inventory_tower(tower_type):
-    """从背包取出塔（消耗1个）"""
-    type_map = {"箭塔": "arrow", "炮塔": "cannon", "魔法塔": "magic", "减速塔": "ice"}
-    inv_key = type_map.get(tower_type, tower_type)
-    if inv_key in inventory and inventory[inv_key] > 0:
-        inventory[inv_key] -= 1
-        return True
-    return False
-
-def draw_inventory_panel():
-    """绘制背包面板 - 按B键查看"""
-    panel_w, panel_h = 200, 120
-    panel_x = SCREEN_WIDTH - panel_w - 10
-    panel_y = SCREEN_HEIGHT - 140
-    
-    # 背景
-    s = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
-    s.fill((40, 40, 60, 220))
-    SCREEN.blit(s, (panel_x, panel_y))
-    
-    # 边框
-    pygame.draw.rect(SCREEN, (100, 100, 150), (panel_x, panel_y, panel_w, panel_h), 2, border_radius=5)
-    
-    # 标题
-    font = pygame.font.Font(None, 22)
-    title = font.render("🎒 背包 (B)", True, (255, 215, 0))
-    SCREEN.blit(title, (panel_x + 10, panel_y + 5))
-    
-    # 塔数量
-    icons = {"arrow": "🏹", "cannon": "💣", "magic": "🔮", "ice": "❄️"}
-    for i, (tower_type, count) in enumerate(inventory.items()):
-        row = i // 2
-        col = i % 2
-        x = panel_x + 10 + col * 90
-        y = panel_y + 30 + row * 30
-        text = font.render(f"{icons[tower_type]} {count}", True, (200, 200, 200))
-        SCREEN.blit(text, (x, y))
-
 # 金币不足警告
 no_money_warning = ""
 no_money_timer = 0
@@ -789,15 +448,12 @@ show_tower_book = False
 # 显示怪物图鉴
 show_monster_book = False
 
-# 波次预览系统
-show_wave_preview = False
-
 # 波次间隔
 wave_wait_timer = 0
 wave_wait_duration = 5.0  # 每波间隔5秒
 
-# 波次击杀计数（用于大量击杀震动）
-kills_this_wave = 0
+# 全局游戏状态
+state = GameState()
 
 class GameState:
     def __init__(self):
@@ -834,8 +490,6 @@ class GameState:
         difficulty_selected = False  # 重置难度选择状态
         level_select_mode = True  # 重新进入关卡选择
         selected_level = 0
-# 全局游戏状态
-state = GameState()
 
 def draw_game():
     """绘制游戏画面"""
@@ -860,46 +514,16 @@ def draw_game():
     # 示例: 绘制一个简单的场景
     # 这里应该包含所有游戏对象的绘制,但为了演示,我会简化
     shake_x, shake_y = screen_shake_offset
-    
-    # 更新和绘制动态光影
-    update_lights()
-    apply_dynamic_lights()
-    draw_lights()
-    # 绘制每日挑战面板
-    draw_daily_challenge_panel(SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    # 绘制渐变天空背景
-    sky_height = 150
-    for y in range(sky_height):
-        # 从深蓝到浅蓝的渐变
-        r = int(30 + (y / sky_height) * 40)
-        g = int(40 + (y / sky_height) * 60)
-        b = int(80 + (y / sky_height) * 80)
-        pygame.draw.line(SCREEN, (r, g, b), (0, y), (SCREEN_WIDTH, y))
-    
-    # 绘制草地背景
-    grass_color = (45, 100, 45)
-    pygame.draw.rect(SCREEN, grass_color, (0, sky_height, SCREEN_WIDTH, SCREEN_HEIGHT - sky_height))
-    
-    # 草地纹理(随机小点)
-    random.seed(42)  # 固定种子保持一致
-    for _ in range(200):
-        gx = random.randint(0, SCREEN_WIDTH)
-        gy = random.randint(sky_height, SCREEN_HEIGHT)
-        pygame.draw.circle(SCREEN, (35, 80, 35), (gx, gy), 1)
-    random.seed()  # 恢复随机种子
-
-    # 绘制怪物行走路线(带边缘装饰)
-    path_color = (70, 70, 70)  # 路线颜色
-    path_width = 44  # 略宽一点
-    path_y = 300
-    pygame.draw.rect(SCREEN, (50, 50, 50), (95, path_y - path_width//2, 610, path_width))  # 边缘深色
-    pygame.draw.rect(SCREEN, path_color, (100, path_y - path_width//2 + 2, 600, path_width - 4))  # 主体
+    # 绘制怪物行走路线
+    path_color = (60, 60, 60)  # 深灰色路线
+    path_width = 40
+    pygame.draw.rect(SCREEN, path_color, (100, 300 - path_width//2, 600, path_width))
 
     # 路线装饰虚线
     for i in range(10):
         x = 100 + i * 60 + 30
-        pygame.draw.line(SCREEN, (90, 90, 90), (x, path_y - 15), (x, path_y + 15), 2)
+        pygame.draw.line(SCREEN, (80, 80, 80), (x, 300 - 15), (x, 300 + 15), 2)
 
     # 绘制塔基座格子(8x4网格)
     TILE_SIZE = 60
@@ -920,53 +544,17 @@ def draw_game():
                 # 内部小点标记
                 pygame.draw.circle(SCREEN, (40, 40, 40), (x + TILE_SIZE//2, y + TILE_SIZE//2), 3)
 
-    # === 传送门装饰效果 ===
-    def draw_portal(cx, cy, color_primary, color_secondary, time_offset=0):
-        """绘制传送门效果"""
-        t = pygame.time.get_ticks() / 1000.0 + time_offset
-        
-        # 外层光环 - 脉冲效果
-        pulse = 1.0 + 0.1 * math.sin(t * 3)
-        radius_outer = int(25 * pulse)
-        
-        # 绘制多层光环
-        for i in range(3):
-            alpha = 60 - i * 15
-            radius = radius_outer - i * 5
-            portal_surf = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
-            pygame.draw.circle(portal_surf, (*color_primary, alpha), (radius, radius), radius, 2)
-            SCREEN.blit(portal_surf, (cx - radius, cy - radius))
-        
-        # 旋转的能量环
-        angle = t * 2
-        for i in range(4):
-            rot_angle = angle + i * (math.pi / 2)
-            ex = cx + math.cos(rot_angle) * 18
-            ey = cy + math.sin(rot_angle) * 18
-            pygame.draw.circle(SCREEN, color_secondary, (int(ex), int(ey)), 4)
-        
-        # 中心发光
-        center_surf = pygame.Surface((30, 30), pygame.SRCALPHA)
-        pygame.draw.circle(center_surf, (*color_primary, 100), (15, 15), 12)
-        pygame.draw.circle(center_surf, (*color_secondary, 180), (15, 15), 6)
-        SCREEN.blit(center_surf, (cx - 15, cy - 15))
-    
-    # 起点传送门(绿色)
-    draw_portal(100, 300, (0, 200, 100), (100, 255, 150), 0)
+    # 起点和终点标记
+    # 起点
+    pygame.draw.circle(SCREEN, GREEN, (100, 300), 15)
     font_mark = pygame.font.Font(None, 20)
     start_text = font_mark.render("S", True, WHITE)
-    SCREEN.blit(start_text, (95, 260))
+    SCREEN.blit(start_text, (95, 293))
 
-    # 终点传送门(金色 - 萝卜)
-    draw_portal(700 + shake_x, 300 + shake_y, (255, 180, 0), (255, 220, 100), 1.5)
-    
-    # 萝卜本身
+    # 终点(萝卜位置)
     pygame.draw.circle(SCREEN, (255, 140, 0), (700 + shake_x, 300 + shake_y), 28)  # 深橙色外圈
     pygame.draw.circle(SCREEN, ORANGE, (700 + shake_x, 300 + shake_y), 22)  # 橙色主体
     pygame.draw.circle(SCREEN, (255, 200, 100), (700 + shake_x, 300 + shake_y), 14)  # 浅色高光
-    # 萝卜叶子
-    pygame.draw.line(SCREEN, (50, 180, 50), (700 + shake_x - 5, 300 + shake_y - 22), (700 + shake_x - 8, 300 + shake_y - 32), 3)
-    pygame.draw.line(SCREEN, (50, 180, 50), (700 + shake_x + 5, 300 + shake_y - 22), (700 + shake_x + 8, 300 + shake_y - 32), 3)
 
     # 绘制怪物(带震动偏移)- 根据怪物类型显示不同形状
     for monster in state.monsters:
@@ -1010,28 +598,21 @@ def draw_game():
             # 普通怪: 蓝色圆形
             pygame.draw.circle(SCREEN, (50, 100, 200), (x + shake_x, y + shake_y), 14)
 
-        # 绘制血条背景(带边框 - 更高更显眼) - 美化版本
-        # 外边框白色
-        pygame.draw.rect(SCREEN, (255, 255, 255), (x - 18 + shake_x, y - 30 + shake_y, 38, 14), 2, border_radius=3)
-        # 背景深色
-        bg_color = (40, 40, 50)
-        pygame.draw.rect(SCREEN, bg_color, (x - 16 + shake_x, y - 28 + shake_y, 34, 10), border_radius=2)
-        
-        # 绘制血条(带渐变效果)
+        # 绘制血条背景(带边框 - 更高更显眼)
+        pygame.draw.rect(SCREEN, (255, 255, 255), (x - 18 + shake_x, y - 30 + shake_y, 38, 14), 2)  # 白色外边框
+        pygame.draw.rect(SCREEN, (60, 0, 0), (x - 16 + shake_x, y - 28 + shake_y, 34, 10))
+
+        # 绘制血条
         health_ratio = monster.health / monster.max_health
         health_width = max(0, int(32 * health_ratio))
-        # 颜色渐变 - 更丰富的色彩
+        # 颜色渐变
         if health_ratio > 0.6:
-            health_color = (80, 220, 80)  # 鲜绿
+            health_color = (50, 200, 50)
         elif health_ratio > 0.3:
-            health_color = (255, 180, 0)  # 橙黄
+            health_color = (255, 200, 0)
         else:
-            health_color = (255, 60, 60)  # 红色
-        # 绘制主体血条
-        pygame.draw.rect(SCREEN, health_color, (x - 16 + shake_x, y - 28 + shake_y, health_width, 10), border_radius=2)
-        # 高光效果
-        if health_width > 4:
-            pygame.draw.rect(SCREEN, (255, 255, 255, 80), (x - 16 + shake_x, y - 28 + shake_y, health_width, 3), border_radius=1)
+            health_color = (220, 50, 50)
+        pygame.draw.rect(SCREEN, health_color, (x - 16 + shake_x, y - 28 + shake_y, health_width, 10))
 
         # 详细血量显示(按H切换)
         if show_health_detail:
@@ -1221,7 +802,7 @@ def draw_game():
                 border_width = 1
             pygame.draw.circle(SCREEN, border_color, (tx, ty), 17, border_width)
 
-    # 绘制防御塔攻击线(锁定目标) - 增强版
+    # 绘制防御塔攻击线(锁定目标)
     for tower in state.towers:
         if hasattr(tower, 'target') and tower.target and hasattr(tower.target, 'alive') and tower.target.alive:
             # 获取目标位置
@@ -1240,12 +821,7 @@ def draw_game():
             else:
                 color = WHITE
 
-            # 目标锁定线 - 双层效果(外发光+内实线)
-            # 外层发光
-            glow_surf = pygame.Surface((abs(tx - int(tower.x)) + 20, 12), pygame.SRCALPHA)
-            pygame.draw.line(glow_surf, (*color, 60), (10, 6), (abs(tx - int(tower.x)) + 10, 6), 6)
-            SCREEN.blit(glow_surf, (min(int(tower.x), tx) - 10 + shake_x, int(tower.y) - 6 + shake_y))
-            # 内层实线
+            # 目标锁定线(实线)
             pygame.draw.line(SCREEN, color, (int(tower.x) + shake_x, int(tower.y) + shake_y), (tx + shake_x, ty + shake_y), 2)
 
             # 目标点高亮(红色小点)
@@ -1312,50 +888,28 @@ def draw_game():
         speed_text = font_speed.render(speed_labels[game_speed], True, YELLOW)
         SCREEN.blit(speed_text, (SCREEN_WIDTH - 100, 10))
 
-    # 塔放置预览增强(包含范围和放置状态)
+    # 塔放置预览增强(包含范围)
     if hasattr(state, "mouse_preview") and state.mouse_preview:
         mx, my, tower_type = state.mouse_preview
 
-        # 获取塔的信息
+        # 获取塔的范围
         tower_info = config.get("towers", {}).get(tower_type, {})
         preview_range = tower_info.get("range", 3) * 50
-        tower_cost = tower_info.get("cost", 50)
-        
-        # 检测是否可放置(路径检测)
-        can_place = not any(
-            abs(mx - (100 + col * 60 + 30)) < 30 and abs(my - (300)) < 25
-            for col in range(10)
-        ) and not any(
-            80 + col * 60 < mx < 80 + (col+1) * 60 and 180 + row * 60 < my < 180 + (row+1) * 60
-            for col in range(8) for row in range(4)
-            if not (100 < 80 + col * 60 + 30 < 100 + 600 and 300 - 20 < 180 + row * 60 + 30 < 300 + 20)
-        )
-        
-        # 颜色: 绿色=可放置, 红色=不可放置/钱不够
-        if state.money < tower_cost:
-            place_color = (255, 100, 100)  # 钱不够 - 红色
-        elif can_place:
-            place_color = (100, 255, 100)  # 可放置 - 绿色
-        else:
-            place_color = (255, 100, 100)  # 不可放置 - 红色
 
         # 范围填充(半透明)
         range_surf = pygame.Surface((preview_range*2, preview_range*2), pygame.SRCALPHA)
-        pygame.draw.circle(range_surf, (*place_color, 25), (preview_range, preview_range), preview_range)
+        color = BLUE if "箭" in tower_type else (RED if "炮" in tower_type else PURPLE)
+        if "减速" in tower_type:
+            color = CYAN
+        pygame.draw.circle(range_surf, (*color, 30), (preview_range, preview_range), preview_range)
         SCREEN.blit(range_surf, (mx - preview_range, my - preview_range))
 
         # 范围边框
-        pygame.draw.circle(SCREEN, place_color, (mx, my), preview_range, 2)
+        pygame.draw.circle(SCREEN, color, (mx, my), preview_range, 2)
 
         # 中心塔形状预览
         points = [(mx, my - 12), (mx - 10, my + 8), (mx + 10, my + 8)]
-        pygame.draw.polygon(SCREEN, place_color, points)
-        
-        # 费用显示
-        font_cost = pygame.font.Font(None, 20)
-        cost_text = f"${tower_cost}"
-        cost_surf = font_cost.render(cost_text, True, place_color)
-        SCREEN.blit(cost_surf, (mx - 15, my + 15))
+        pygame.draw.polygon(SCREEN, color, points)
 
     # 显示游戏时间(右上角)
     font_time = pygame.font.Font(None, 32)
@@ -1418,9 +972,6 @@ def draw_game():
         font_ach = pygame.font.Font(None, 32)
         ach_text = font_ach.render(achievement_notify, True, YELLOW)
         SCREEN.blit(ach_text, (SCREEN_WIDTH//2 - 100, 180))
-    
-    # 绘制成就解锁动画
-    draw_achievement_unlock()
     
     # 任务通知
     global quest_timer
@@ -1494,10 +1045,6 @@ def draw_game():
     hint_surf = font_hint.render(hint_text, True, GRAY)
     SCREEN.blit(hint_surf, (10, SCREEN_HEIGHT - 30))
 
-    # ==================== 精致UI边框和动画效果 ====================
-    draw_ui_border()
-    draw_button_hover()
-
     # 绘制升级特效
     for ef in upgrade_effects[:]:
         ef[2] -= dt * game_speed
@@ -1554,21 +1101,6 @@ def draw_game():
             pygame.draw.circle(SCREEN, WHITE, (x + shake_x, y + shake_y), int(10 * (0.8-timer)*2), 2)
         if timer <= 0:
             place_effects.remove(ef)
-
-    # 绘制死亡爆炸特效
-    for ef in death_effects[:]:
-        ef[2] -= dt * game_speed
-        x, y, timer, color = ef
-        # 爆炸扩散圈
-        progress = 0.5 - timer  # 0到0.5
-        radius = int(30 * (1 - progress * 2))
-        if radius > 0:
-            # 外圈
-            pygame.draw.circle(SCREEN, color, (x + shake_x, y + shake_y), radius, 3)
-            # 内圈
-            pygame.draw.circle(SCREEN, (255, 200, 150), (x + shake_x, y + shake_y), max(1, radius - 5), 2)
-        if timer <= 0:
-            death_effects.remove(ef)
 
     # 绘制暴击特效
     for ce in crit_effects[:]:
@@ -1649,69 +1181,6 @@ def draw_game():
     # 绘制怪物图鉴
     if show_monster_book:
         draw_monster_book()
-
-    # 绘制背包面板
-    if show_inventory:
-        draw_inventory_panel()
-    
-    # 绘制波次预览面板
-    if show_wave_preview:
-        draw_wave_preview_panel()
-    
-    # 绘制粒子特效
-    draw_particles()
-    
-    # 更新和绘制升级光晕特效
-    particle_system.update_upgrade_aura()
-    particle_system.draw_upgrade_aura(SCREEN)
-
-# 波次预览系统
-def draw_wave_preview_panel():
-    """绘制波次预览面板 - 按Tab查看"""
-    global show_wave_preview
-    if not show_wave_preview:
-        return
-    
-    panel_w, panel_h = 250, 200
-    panel_x = SCREEN_WIDTH // 2 - panel_w // 2
-    panel_y = SCREEN_HEIGHT // 2 - panel_h // 2
-    
-    # 背景
-    s = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
-    s.fill((20, 20, 40, 240))
-    SCREEN.blit(s, (panel_x, panel_y))
-    
-    # 边框
-    pygame.draw.rect(SCREEN, (100, 150, 255), (panel_x, panel_y, panel_w, panel_h), 2, border_radius=8)
-    
-    # 标题
-    font = pygame.font.Font(None, 26)
-    title = font.render("📋 波次预览 (Tab)", True, (255, 215, 0))
-    SCREEN.blit(title, (panel_x + 20, panel_y + 10))
-    
-    # 波次信息
-    current_wave = state.wave_manager.current_wave + 1 if hasattr(state, 'wave_manager') else 1
-    total_waves = len(state.wave_manager.waves) if hasattr(state, 'wave_manager') else 8
-    
-    font2 = pygame.font.Font(None, 20)
-    info = font2.render(f"当前: 第 {current_wave} 波 / 共 {total_waves} 波", True, (200, 200, 200))
-    SCREEN.blit(info, (panel_x + 20, panel_y + 40))
-    
-    # 接下来几波怪物预览
-    preview_y = panel_y + 70
-    wave_preview_text = ["下一波:", "第2波:", "第3波:"]
-    
-    for i, text in enumerate(wave_preview_text):
-        wave_num = current_wave + i
-        if wave_num <= total_waves and hasattr(state, 'wave_manager'):
-            wave_data = state.wave_manager.waves[wave_num - 1]
-            monster_count = sum(count for _, count in wave_data.get('monsters', []))
-            wave_info = font2.render(f"{text} 怪物x{monster_count}", True, (150, 200, 255))
-            SCREEN.blit(wave_info, (panel_x + 20, preview_y + i * 25))
-    
-    # 提示
-    hint = font2.render("按Tab关闭", True, (150, 150, 150))
-    SCREEN.blit(hint, (panel_x + 20, panel_y + panel_h - 25))
 
 # 塔图鉴
 def draw_tower_book():
@@ -1817,41 +1286,13 @@ def draw_monster_book():
 # 主循环
 def main():
     """主循环"""
-    global game_start_time, display_time, game_complete_time, game_speed
-    global no_money_timer, wave_tip_timer, low_life_warning, low_life_timer
-    global kill_streak, kill_streak_timer, game_difficulty
-    global last_event_check, combo_text, combo_texts
-    global show_health_detail, show_stats, show_tower_book, show_monster_book
-    global show_wave_preview, wave_wait_timer, final_wave_announced
-    global boss_bar_drawn, music_enabled, screen_shake
-    global total_kills, achievement_timer, quest_timer
-    global wave_no_damage, level_select_mode, selected_level
-    global fps_counter, fps_timer, fps
-    global kills_this_wave, wave_wait_duration
-    global gold_rain_active, double_damage_active, slow_all_active
-    global inventory, show_inventory
-    global crit_effects, upgrade_info_display
-    global place_effects, death_effects, upgrade_effects
-    global coin_animations, quest_notify, achievement_unlock_anim
-    global daily_quests, last_daily_key
-    global wave_tip, egg_input_buffer, easter_egg_active
-    global lights, particles, lines
-    global screen_shake_offset, time_str, show_achievement_unlock
-    # 初始化粒子系统
-    particle_system = get_particle_system()
-    
+    global game_start_time, display_time, game_complete_time
     clock = pygame.time.Clock()
     running = True
 
     # 初始化游戏开始时间
     game_start_time = time.time()
     
-# 初始化每日挑战
-    today_challenge = get_today_challenge()
-    daily_challenge["active"] = True
-    daily_challenge["type"] = today_challenge["type"]
-    daily_challenge["description"] = today_challenge["name"] + "\n" + today_challenge["desc"]
-    daily_challenge["bonus_gold"] = today_challenge["bonus"]
     # 检查并重置每日任务
     check_daily_reset()
 
@@ -1903,27 +1344,6 @@ def main():
                 # H键切换血量显示
                 elif event.key == pygame.K_h:
                     show_health_detail = not show_health_detail
-                # D键出售选中塔
-                elif event.key == pygame.K_d and state.selected_tower:
-                    tower = state.selected_tower
-                    sell_price = int(tower.get_upgrade_cost() * 0.5)
-                    state.money += sell_price
-                    # 出售特效
-                    spawn_particles(int(tower.x), int(tower.y), (255, 200, 100), 20)
-                    spawn_particles(int(tower.x), int(tower.y), (255, 150, 50), 15)
-                    state.towers.remove(tower)
-                    state.selected_tower = None
-                    stats["gold_earned"] += sell_price
-                    sound_manager.play('sell')
-                    print(f"💰 出售塔，返还{sell_price}金币")
-                    
-                    # 成就: 首次出售
-                    if not achievements["sell_tower"]["unlocked"]:
-                        achievements["sell_tower"]["unlocked"] = True
-                        achievement_notify = f"🏆 解锁: {achievements['sell_tower']['name']}"
-                        achievement_timer = 3.0
-                        show_achievement_unlock("首次出售", "💰")
-                
                 # 升级选中塔 (按U键)
                 elif event.key == pygame.K_u and state.selected_tower:
                     tower = state.selected_tower
@@ -1941,13 +1361,8 @@ def main():
                             stats["towers_upgraded"] += 1
                             stats["gold_spent"] += upgrade_cost
 
-                            # 播放升级音效
-                            sound_manager.play('upgrade')
-
                             # 升级成功特效
                             upgrade_effects.append([int(tower.x), int(tower.y), 1.0])
-                            particle_system.add_upgrade_aura(int(tower.x), int(tower.y))
-                            trigger_screen_shake(3, 0.1)
                             print("⬆️ 升级成功")
 
                             # 升级属性变化显示 (2秒后消失)
@@ -1965,7 +1380,6 @@ def main():
                                 achievements["upgrade_tower"]["unlocked"] = True
                                 achievement_notify = f"🏆 解锁: {achievements['upgrade_tower']['name']}"
                                 achievement_timer = 3.0
-                                show_achievement_unlock("首次升级", "⬆️")
                         else:
                             # 金币不足警告
                             no_money_warning = "💰 金币不足!"
@@ -1976,8 +1390,8 @@ def main():
                     show_stats = not show_stats
                 # M键切换音效
                 elif event.key == pygame.K_m:
-                    enabled = sound_manager.toggle()
-                    if enabled:
+                    music_enabled = not music_enabled
+                    if music_enabled:
                         print("🔊 音效开启")
                     else:
                         print("🔇 音效关闭")
@@ -2020,14 +1434,6 @@ def main():
                 elif event.key == pygame.K_j:
                     global show_monster_book
                     show_monster_book = not show_monster_book
-                # B键打开/关闭背包
-                elif event.key == pygame.K_b:
-                    global show_inventory
-                    show_inventory = not show_inventory
-                # Tab键打开/关闭波次预览
-                elif event.key == pygame.K_TAB:
-                    global show_wave_preview
-                    show_wave_preview = not show_wave_preview
 
             elif event.type == pygame.MOUSEMOTION:
                 # 鼠标移动时设置预览位置
@@ -2087,7 +1493,7 @@ def main():
 
                                 if not too_close:
                                     # 创建防御塔
-                                    from towers import Tower
+                                    from src.towers import Tower
                                     color = tower_info.get('color', 'BLUE')
                                     color_map = {'BLUE': (0, 0, 255), 'RED': (255, 0, 0), 'PURPLE': (128, 0, 128), 'CYAN': (0, 255, 255)}
                                     preview_color = color_map.get(color, (0, 0, 255))
@@ -2102,8 +1508,6 @@ def main():
                                     )
                                     state.towers.append(tower)
                                     state.money -= cost
-                                    # 播放建造音效
-                                    sound_manager.play('build')
                                     # 统计更新
                                     stats["towers_built"] += 1
                                     stats["gold_spent"] += cost
@@ -2156,9 +1560,6 @@ def main():
                 state.wave_manager.start_wave(state.wave_manager.get_next_wave_index())
                 state.wave += 1
                 wave_wait_timer = 0
-                kills_this_wave = 0  # 重置波次击杀计数
-                # 播放波次开始音效
-                sound_manager.play('wave_start')
                 print("🌊 波次开始!")
 
                 # 检测是否最后一波
@@ -2175,13 +1576,8 @@ def main():
                 achievements["no_damage_wave"]["unlocked"] = True
                 achievement_notify = f"🏆 解锁: {achievements['no_damage_wave']['name']}"
                 achievement_timer = 3.0
-                show_achievement_unlock("无伤波次", "🛡️")
             wave_no_damage = True  # 重置下一波检测
             wave_wait_timer = wave_wait_duration
-            
-            # ===== 波次完成庆祝动画 =====
-            particle_system.emit_explosion(SCREEN_WIDTH//2, 100, (255, 215, 0), count=30)
-            particle_system.emit(SCREEN_WIDTH//2, 100, 20, (255, 255, 255), lifetime=1.5, size=8, speed=80, upward=True)
             
             # ===== 每日任务进度更新 =====
             update_quest("wave_5")
@@ -2190,14 +1586,11 @@ def main():
         if not state.wave_manager.has_more_waves() and state.wave_manager.is_wave_complete() and not state.monsters and state.wave > 0:
             if game_complete_time is None:
                 game_complete_time = display_time
-                # 播放胜利音效
-                sound_manager.play('victory')
                 # 成就: 速通(3分钟内)
                 if display_time < 180 and not achievements["fast_win"]["unlocked"]:
                     achievements["fast_win"]["unlocked"] = True
                     achievement_notify = f"🏆 解锁: {achievements['fast_win']['name']}"
                     achievement_timer = 3.0
-                    show_achievement_unlock("速通", "⚡")
 
         # 更新波次系统
         state.wave_manager.update(effective_dt, state, game_difficulty)
@@ -2225,9 +1618,6 @@ def main():
                     random_events[event_key]["timer"] = random_events[event_key]["duration"]
                     print(f"🎲 随机事件触发: {random_events[event_key]['name']}!")
 
-        # 更新粒子特效
-        update_particles(effective_dt)
-
         # 更新怪物位置
         for monster in state.monsters[:]:
             # 随机事件：全屏减速
@@ -2238,15 +1628,11 @@ def main():
             if monster.move(effective_dt):
                 state.monsters.remove(monster)
                 state.lives -= 1
-                # 触发屏幕震动（怪物到达终点）
-                trigger_screen_shake(10, 0.2)
+                # 触发屏幕震动
+                screen_shake = 10
                 if state.lives <= 0:
                     state.game_over = True
-        # 检查每日挑战完成情况
-        check_challenge_completion(state, game_complete_time if 'game_complete_time' in dir() else None, show_achievement_unlock if 'show_achievement_unlock' in dir() else None)
-        # 播放失败音效
-        sound_manager.play('defeat')
-        wave_no_damage = False  # 掉血了
+                    wave_no_damage = False  # 掉血了
 
         # 塔攻击逻辑 - 添加组合系统
         for tower in state.towers:
@@ -2269,9 +1655,6 @@ def main():
                     # 记录击杀来源塔
                     source_tower = getattr(projectile, 'source_tower', None)
                     if monster.health <= 0:  # 怪物死亡
-                        # 添加死亡爆炸特效
-                        if len(death_effects) < MAX_DEATH_EFFECTS:
-                            death_effects.append([int(mx), int(my), 0.5, (255, 100, 50)])
                         # 增加塔的击杀计数
                         if source_tower and hasattr(source_tower, 'kill_count'):
                             source_tower.kill_count += 1
@@ -2283,11 +1666,9 @@ def main():
                             reward += 5
                         
                         # 暴击检测（10%几率）
-                        is_crit = random.random() < 0.1
-                        if is_crit:
+                        if random.random() < 0.1:
                             crit_effects.append([int(mx), int(my), 1.0])
                             reward *= 2  # 暴击金币翻倍
-                            trigger_screen_shake(5, 0.1)  # 暴击震动
                             print("💥 暴击!")
                         
                         # 连杀判定
@@ -2307,13 +1688,6 @@ def main():
                         state.money += reward + bonus
                         # 统计更新
                         stats["kills"] += 1
-                        kills_this_wave += 1  # 波次击杀计数
-                        
-                        # 大量击杀时触发屏幕震动
-                        if kills_this_wave >= 10:
-                            trigger_screen_shake(8, 0.2)
-                            kills_this_wave = 0  # 重置计数
-                        
                         stats["damage_dealt"] += projectile.damage
                         stats["gold_earned"] += reward + bonus
                         
@@ -2324,16 +1698,7 @@ def main():
                         coin_animations.append([mx, 280, f"+{reward}", 1.0])
                         if bonus > 0:
                             coin_animations.append([mx + 30, 280, f"+{bonus}(连杀)", 1.5])
-                        # 播放金币音效
-                        if bonus > 0:
-                            sound_manager.play('crit')  # 连杀时播放暴击音效
-                        else:
-                            sound_manager.play('coin')
                         if monster in state.monsters:
-                            # 怪物死亡粒子特效
-                            spawn_particles(mx, 300, (255, 200, 0), 15)  # 金色粒子
-                            spawn_particles(mx, 300, (255, 100, 0), 10)  # 橙色粒子
-                            
                             state.monsters.remove(monster)
                             # 成就: 击杀相关
                             total_kills += 1
@@ -2344,28 +1709,25 @@ def main():
                                 achievements["first_blood"]["unlocked"] = True
                                 achievement_notify = f"🏆 解锁: {achievements['first_blood']['name']}"
                                 achievement_timer = 3.0
-                                show_achievement_unlock("首次击杀", "🎯")
                             if total_kills >= 10 and not achievements["ten_kills"]["unlocked"]:
                                 achievements["ten_kills"]["unlocked"] = True
                                 achievement_notify = f"🏆 解锁: {achievements['ten_kills']['name']}"
                                 achievement_timer = 3.0
-                                show_achievement_unlock("击杀10只", "💀")
                             if total_kills >= 50 and not achievements["fifty_kills"]["unlocked"]:
                                 achievements["fifty_kills"]["unlocked"] = True
                                 achievement_notify = f"🏆 解锁: {achievements['fifty_kills']['name']}"
                                 achievement_timer = 3.0
-                                show_achievement_unlock("击杀50只", "💀")
                     break
 
         # 计算FPS
         # 处理签到事件
         for event in pygame.event.get():
-
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_k:
                     success, reward = try_checkin()
                     if success:
                         state.money += reward
-                        print(f"✅ 签到成功! 连续{checkin_data['streak']}天, 奖励{reward}金币")
+                        print(f"✅ 签到成功! 连续{checkin_data[\streak]}天, 奖励{reward}金币")
                     else:
                         print("⚠️ 今日已签到")
 
