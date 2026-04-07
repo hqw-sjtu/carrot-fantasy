@@ -856,15 +856,38 @@ def draw_game():
     # 绘制每日挑战面板
     draw_daily_challenge_panel(SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    # 绘制怪物行走路线
-    path_color = (60, 60, 60)  # 深灰色路线
-    path_width = 40
-    pygame.draw.rect(SCREEN, path_color, (100, 300 - path_width//2, 600, path_width))
+    # 绘制渐变天空背景
+    sky_height = 150
+    for y in range(sky_height):
+        # 从深蓝到浅蓝的渐变
+        r = int(30 + (y / sky_height) * 40)
+        g = int(40 + (y / sky_height) * 60)
+        b = int(80 + (y / sky_height) * 80)
+        pygame.draw.line(SCREEN, (r, g, b), (0, y), (SCREEN_WIDTH, y))
+    
+    # 绘制草地背景
+    grass_color = (45, 100, 45)
+    pygame.draw.rect(SCREEN, grass_color, (0, sky_height, SCREEN_WIDTH, SCREEN_HEIGHT - sky_height))
+    
+    # 草地纹理(随机小点)
+    random.seed(42)  # 固定种子保持一致
+    for _ in range(200):
+        gx = random.randint(0, SCREEN_WIDTH)
+        gy = random.randint(sky_height, SCREEN_HEIGHT)
+        pygame.draw.circle(SCREEN, (35, 80, 35), (gx, gy), 1)
+    random.seed()  # 恢复随机种子
+
+    # 绘制怪物行走路线(带边缘装饰)
+    path_color = (70, 70, 70)  # 路线颜色
+    path_width = 44  # 略宽一点
+    path_y = 300
+    pygame.draw.rect(SCREEN, (50, 50, 50), (95, path_y - path_width//2, 610, path_width))  # 边缘深色
+    pygame.draw.rect(SCREEN, path_color, (100, path_y - path_width//2 + 2, 600, path_width - 4))  # 主体
 
     # 路线装饰虚线
     for i in range(10):
         x = 100 + i * 60 + 30
-        pygame.draw.line(SCREEN, (80, 80, 80), (x, 300 - 15), (x, 300 + 15), 2)
+        pygame.draw.line(SCREEN, (90, 90, 90), (x, path_y - 15), (x, path_y + 15), 2)
 
     # 绘制塔基座格子(8x4网格)
     TILE_SIZE = 60
@@ -1272,28 +1295,50 @@ def draw_game():
         speed_text = font_speed.render(speed_labels[game_speed], True, YELLOW)
         SCREEN.blit(speed_text, (SCREEN_WIDTH - 100, 10))
 
-    # 塔放置预览增强(包含范围)
+    # 塔放置预览增强(包含范围和放置状态)
     if hasattr(state, "mouse_preview") and state.mouse_preview:
         mx, my, tower_type = state.mouse_preview
 
-        # 获取塔的范围
+        # 获取塔的信息
         tower_info = config.get("towers", {}).get(tower_type, {})
         preview_range = tower_info.get("range", 3) * 50
+        tower_cost = tower_info.get("cost", 50)
+        
+        # 检测是否可放置(路径检测)
+        can_place = not any(
+            abs(mx - (100 + col * 60 + 30)) < 30 and abs(my - (300)) < 25
+            for col in range(10)
+        ) and not any(
+            80 + col * 60 < mx < 80 + (col+1) * 60 and 180 + row * 60 < my < 180 + (row+1) * 60
+            for col in range(8) for row in range(4)
+            if not (100 < 80 + col * 60 + 30 < 100 + 600 and 300 - 20 < 180 + row * 60 + 30 < 300 + 20)
+        )
+        
+        # 颜色: 绿色=可放置, 红色=不可放置/钱不够
+        if state.money < tower_cost:
+            place_color = (255, 100, 100)  # 钱不够 - 红色
+        elif can_place:
+            place_color = (100, 255, 100)  # 可放置 - 绿色
+        else:
+            place_color = (255, 100, 100)  # 不可放置 - 红色
 
         # 范围填充(半透明)
         range_surf = pygame.Surface((preview_range*2, preview_range*2), pygame.SRCALPHA)
-        color = BLUE if "箭" in tower_type else (RED if "炮" in tower_type else PURPLE)
-        if "减速" in tower_type:
-            color = CYAN
-        pygame.draw.circle(range_surf, (*color, 30), (preview_range, preview_range), preview_range)
+        pygame.draw.circle(range_surf, (*place_color, 25), (preview_range, preview_range), preview_range)
         SCREEN.blit(range_surf, (mx - preview_range, my - preview_range))
 
         # 范围边框
-        pygame.draw.circle(SCREEN, color, (mx, my), preview_range, 2)
+        pygame.draw.circle(SCREEN, place_color, (mx, my), preview_range, 2)
 
         # 中心塔形状预览
         points = [(mx, my - 12), (mx - 10, my + 8), (mx + 10, my + 8)]
-        pygame.draw.polygon(SCREEN, color, points)
+        pygame.draw.polygon(SCREEN, place_color, points)
+        
+        # 费用显示
+        font_cost = pygame.font.Font(None, 20)
+        cost_text = f"${tower_cost}"
+        cost_surf = font_cost.render(cost_text, True, place_color)
+        SCREEN.blit(cost_surf, (mx - 15, my + 15))
 
     # 显示游戏时间(右上角)
     font_time = pygame.font.Font(None, 32)
