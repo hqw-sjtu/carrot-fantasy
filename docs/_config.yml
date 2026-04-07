@@ -1,3 +1,10 @@
-title: 保卫萝卜
-description: Python塔防游戏
+title: 保卫萝卜 (Carrot Fantasy)
+description: 基于Python+Pygame的塔防游戏
 theme: jekyll-theme-minimal
+
+markdown: kramdown
+plugins:
+  - jekyll-github-metadata
+
+# GitHub Pages配置
+repository: hqw-sjtu/carrot-fantasy

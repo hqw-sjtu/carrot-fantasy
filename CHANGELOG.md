@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.7] - 2026-04-08
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (main.py + 16个模块)
+- ✅ 防御塔放置系统完善
+
+### Added | 新增功能
+- 🚀 **GitHub Pages自动部署workflow**: deploy.yml
+- 📖 Jekyll配置优化: docs/_config.yml
+- 📊 完整CI测试覆盖: 语法/导入/单元/性能/稳定性
+
+### Updated | 更新
+- 📝 任务计划: 第二批交互完善待完成
+
+---
+
 ## [1.1.6] - 2026-04-08
 
 ### Fixed | 修复问题

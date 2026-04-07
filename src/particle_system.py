@@ -280,6 +280,61 @@ class ParticleSystem:
         self.particles = []
 
 
+class ScreenShake:
+    """屏幕震动效果"""
+    def __init__(self):
+        self.intensity = 0
+        self.duration = 0
+        self.current_time = 0
+        self._offset_x = 0
+        self._offset_y = 0
+    
+    def trigger(self, intensity=10, duration=0.3):
+        """触发屏幕震动"""
+        self.intensity = intensity
+        self.duration = duration
+        self.current_time = 0
+    
+    def update(self, dt):
+        """更新震动"""
+        if self.duration > 0:
+            self.current_time += dt
+            progress = self.current_time / self.duration
+            if progress >= 1:
+                self.intensity = 0
+                self._offset_x = 0
+                self._offset_y = 0
+                return False
+            # 衰减曲线
+            decay = 1 - progress
+            current_intensity = self.intensity * decay
+            import random
+            self._offset_x = random.uniform(-current_intensity, current_intensity)
+            self._offset_y = random.uniform(-current_intensity, current_intensity)
+            return True
+        return False
+    
+    def get_offset(self):
+        """获取当前偏移量"""
+        return self._offset_x, self._offset_y
+    
+    def apply(self, screen):
+        """应用震动到屏幕"""
+        if self.intensity > 0:
+            return screen.copy()
+        return screen
+
+# 全局屏幕震动实例
+_global_screen_shake = None
+
+def get_screen_shake():
+    """获取全局屏幕震动"""
+    global _global_screen_shake
+    if _global_screen_shake is None:
+        _global_screen_shake = ScreenShake()
+    return _global_screen_shake
+
+
 # 全局粒子系统实例
 _global_particle_system = None
 
