@@ -50,6 +50,8 @@ bash start.sh
 - 4 Tower Types (Arrow, Cannon, Magic, Frost)
 - Tower Quality System (Common/Rare/Epic)
 - **Tower Selling System** (50% refund, particle effects)
+- **Tower Upgrade Aura** (golden glow effect on upgrade)
+- **Wave Completion Celebration** (particle explosion effects)
 - Random Events (Coin Rain/Double Damage/Global Slow)
 - Tower Combo Effects (+10% damage for adjacent same-type towers)
 - Achievement System
