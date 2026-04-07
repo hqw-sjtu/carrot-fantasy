@@ -48,3 +48,56 @@ print('All imports successful')
     - name: Unit Tests (pytest)
       run: |
         python -m pytest tests/ -v || python tests/simple_runner.py || echo "All test methods exhausted"
+
+    - name: Performance Benchmark
+      run: |
+        python -c "
+import time
+import sys
+sys.path.insert(0, 'src')
+from towers import Tower
+from monsters import Monster
+from projectiles import Projectile
+from particle_system import ParticleSystem
+
+# Benchmark: Particle system
+ps = ParticleSystem()
+start = time.time()
+for _ in range(1000):
+    ps.add_hit_effect(400, 300)
+    ps.update(0.016)
+elapsed = time.time() - start
+print(f'Particle system: 1000 updates in {elapsed*1000:.2f}ms')
+assert elapsed < 1.0, 'Performance regression detected'
+print('Performance check PASSED')
+"
+
+    - name: Game Stability Test
+      run: |
+        python -c "
+import sys
+sys.path.insert(0, 'src')
+from towers import *
+from monsters import *
+from state_machine import GameState
+
+# Test state machine
+gs = GameState()
+assert gs.state == 'menu', 'Initial state should be menu'
+gs.set_state('playing')
+assert gs.state == 'playing', 'State should change to playing'
+gs.set_state('paused')
+assert gs.state == 'paused', 'State should change to paused'
+
+# Test tower creation
+tower = Tower('arrow', 100, 100)
+assert tower.damage > 0, 'Tower should have damage'
+assert tower.range > 0, 'Tower should have range'
+
+# Test monster
+monster = Monster(0, 0, 10, 100)
+assert monster.health == 10, 'Monster should have health'
+assert monster.alive == True, 'Monster should start alive'
+
+print('Stability tests PASSED')
+"

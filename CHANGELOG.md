@@ -18,9 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 装甲破碎特效 (emit_armor_break): 蓝色碎片+白色火花
   - 冰冻特效 (emit_freeze): 冰晶粒子飞散
 - 📊 快速检查脚本 (tests/quick_check.py): 无需pytest的基础功能验证
+- 🧪 **状态机测试**: 验证 GameStateMachine 状态转换
+- ⚡ **性能基准测试**: 500次粒子更新需<500ms
+- 🚀 **GitHub CI增强**:
+  - 性能基准测试 (1000次粒子更新)
+  - 游戏稳定性测试 (状态机/塔/怪物)
 
 ### Updated | 更新
-- 🧪 核心模块导入测试: towers/monsters/particle_system/config_loader
+- 📖 GitHub Pages文档: 添加主动技能说明
+- 🔧 CI/CD流程: 增加性能和稳定性验证
 
 ---
 

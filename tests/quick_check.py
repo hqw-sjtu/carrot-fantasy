@@ -93,6 +93,38 @@ def run_tests():
         print(f"✗ 配置加载测试失败: {e}")
         failed += 1
     
+    # 7. 测试状态机
+    try:
+        from state_machine import GameState, GameStateMachine
+        gsm = GameStateMachine()
+        assert gsm.current_state == GameState.READY
+        gsm.set_state(GameState.PLAYING)
+        assert gsm.current_state == GameState.PLAYING
+        gsm.set_state(GameState.PAUSED)
+        assert gsm.current_state == GameState.PAUSED
+        print("✓ 状态机正常")
+        passed += 1
+    except Exception as e:
+        print(f"✗ 状态机测试失败: {e}")
+        failed += 1
+    
+    # 8. 测试性能基准
+    try:
+        import time
+        from particle_system import ParticleSystem
+        ps = ParticleSystem()
+        start = time.time()
+        for _ in range(500):
+            ps.add_critical_effect(400, 300)
+            ps.update(0.016)
+        elapsed = time.time() - start
+        assert elapsed < 0.5, f'Particle too slow: {elapsed}s'
+        print(f"✓ 性能基准通过 ({elapsed*1000:.1f}ms/500更新)")
+        passed += 1
+    except Exception as e:
+        print(f"✗ 性能基准测试失败: {e}")
+        failed += 1
+    
     # 总结
     print("=" * 50)
     print(f"通过: {passed}, 失败: {failed}")
