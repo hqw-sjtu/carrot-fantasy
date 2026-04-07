@@ -1819,6 +1819,27 @@ def main():
                 # H键切换血量显示
                 elif event.key == pygame.K_h:
                     show_health_detail = not show_health_detail
+                # D键出售选中塔
+                elif event.key == pygame.K_d and state.selected_tower:
+                    tower = state.selected_tower
+                    sell_price = int(tower.get_upgrade_cost() * 0.5)
+                    state.money += sell_price
+                    # 出售特效
+                    spawn_particles(int(tower.x), int(tower.y), (255, 200, 100), 20)
+                    spawn_particles(int(tower.x), int(tower.y), (255, 150, 50), 15)
+                    state.towers.remove(tower)
+                    state.selected_tower = None
+                    stats["gold_earned"] += sell_price
+                    sound_manager.play('sell')
+                    print(f"💰 出售塔，返还{sell_price}金币")
+                    
+                    # 成就: 首次出售
+                    if not achievements["sell_tower"]["unlocked"]:
+                        achievements["sell_tower"]["unlocked"] = True
+                        achievement_notify = f"🏆 解锁: {achievements['sell_tower']['name']}"
+                        achievement_timer = 3.0
+                        show_achievement_unlock("首次出售", "💰")
+                
                 # 升级选中塔 (按U键)
                 elif event.key == pygame.K_u and state.selected_tower:
                     tower = state.selected_tower

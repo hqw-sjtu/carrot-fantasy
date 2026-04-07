@@ -30,7 +30,7 @@ bash start.sh
 | 1-4 | Select tower type |
 | Mouse | Place/Select tower |
 | U | Upgrade selected tower |
-| D | Sell selected tower |
+| D | Sell selected tower (50% refund) |
 | Space | Start wave |
 | ESC | Pause |
 
@@ -49,6 +49,7 @@ bash start.sh
 - 10+ Levels with different themes
 - 4 Tower Types (Arrow, Cannon, Magic, Frost)
 - Tower Quality System (Common/Rare/Epic)
+- **Tower Selling System** (50% refund, particle effects)
 - Random Events (Coin Rain/Double Damage/Global Slow)
 - Tower Combo Effects (+10% damage for adjacent same-type towers)
 - Achievement System
