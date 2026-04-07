@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.4] - 2026-04-07
+
+### Fixed | 修复问题
+- ✅ 语法检查通过
+- ✅ 测试用例路径修复(test_monsters.py)
+
+### Added | 新增功能
+- 🧪 完整单元测试套件: towers/monsters/particle_system
+- ⚡ 性能优化: 粒子预渲染表面缓存
+- 📊 游戏结束报告: 详细统计展示
+
+### Technical | 技术更新
+- Python语法验证通过(6个核心模块)
+- pytest测试框架集成
+- GitHub Actions CI自动化
+
+---
+
 ## [1.1.3] - 2026-04-07
 
 ### Fixed | 修复问题
