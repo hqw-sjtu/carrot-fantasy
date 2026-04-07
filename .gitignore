@@ -1,4 +1,4 @@
-.github/
+# .github/  # Uncomment to ignore GitHub files (keep for CI)
 __pycache__/
 *.pyc
 *.pyo
