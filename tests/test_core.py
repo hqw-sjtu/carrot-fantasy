@@ -127,5 +127,29 @@ class TestTowerPlacement:
         assert isinstance(result, bool)
 
 
+class TestParticleSystemEnhanced:
+    """粒子系统增强功能测试"""
+    
+    def test_upgrade_aura_creation(self):
+        """测试升级光晕创建"""
+        from particle_system import ParticleSystem
+        ps = ParticleSystem()
+        ps.add_upgrade_aura(100, 100)
+        assert len(ps.upgrade_aura) == 1
+        assert ps.upgrade_aura[0]['x'] == 100
+        assert ps.upgrade_aura[0]['y'] == 100
+    
+    def test_upgrade_aura_update(self):
+        """测试升级光晕更新"""
+        import time
+        from particle_system import ParticleSystem
+        ps = ParticleSystem()
+        ps.add_upgrade_aura(100, 100)
+        initial_radius = ps.upgrade_aura[0]['radius']
+        ps.update_upgrade_aura()
+        # 半径应该增加
+        assert ps.upgrade_aura[0]['radius'] > initial_radius
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
