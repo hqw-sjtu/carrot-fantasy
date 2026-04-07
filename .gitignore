@@ -1,53 +1,6 @@
-# Python
+.github/
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual Environment
-venv/
-env/
-ENV/
-.venv
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Pygame
-*.png  # Asset files should be in assets/ folder
-!screenshots/*.png  # Keep screenshots
-
-# Game Data
-*.sav
-*.save
-highscore.txt
-player_data.json
-
-# Logs
+*.pyc
+*.pyo
+screenshots/
 *.log
-
-# Temporary Files
-*.bak
-*.backup
-*.tmp
