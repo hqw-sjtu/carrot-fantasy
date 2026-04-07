@@ -99,6 +99,46 @@ def test_tower_priority():
     assert t.priority == "strong"
     print("✓ test_tower_priority passed")
 
+def test_tower_active_skill():
+    """测试主动技能系统"""
+    from towers import TowerFactory
+    from monsters import Monster
+    
+    # 测试箭塔技能
+    t = TowerFactory.create("箭塔")
+    skill_status = t.get_skill_status()
+    assert skill_status is not None
+    assert skill_status["name"] == "专注射击"
+    assert skill_status["ready"] == True  # 初始就绪
+    
+    # 激活技能
+    result = t.activate_skill()
+    assert result == True
+    assert t.skill_active == True
+    
+    # 再次激活应该失败（冷却中）
+    result = t.activate_skill()
+    assert result == False
+    
+    print("✓ test_tower_active_skill passed")
+
+def test_tower_skill_apply():
+    """测试技能效果应用"""
+    from towers import TowerFactory
+    from monsters import Monster
+    
+    t = TowerFactory.create("炮塔")
+    monsters = [Monster("小怪", 100, 1.0, 10)]
+    monsters[0].x, monsters[0].y = 200, 300
+    projectiles = []
+    
+    t.activate_skill()
+    t.update_skill(0.1, monsters, projectiles)
+    
+    # 技能激活状态
+    assert t.skill_active == True
+    print("✓ test_tower_skill_apply passed")
+
 def run_all_tests():
     """运行所有测试"""
     print("Running tower tests...")
@@ -109,6 +149,8 @@ def run_all_tests():
     test_tower_quality()
     test_tower_synergy()
     test_tower_priority()
+    test_tower_active_skill()
+    test_tower_skill_apply()
     print("\n✅ All tower tests passed!")
 
 if __name__ == "__main__":

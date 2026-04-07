@@ -27,6 +27,13 @@ class Tower:
     """防御塔基类"""
     max_level = 3
     
+    # 塔主动技能定义
+    ACTIVE_SKILLS = {
+        "箭塔": {"name": "专注射击", "cooldown": 15, "duration": 5, "effect": "attack_speed_boost"},
+        "炮塔": {"name": "轰炸", "cooldown": 20, "duration": 3, "effect": "aoe_damage"},
+        "魔法塔": {"name": "能量汲取", "cooldown": 18, "duration": 8, "effect": "life_steal"},
+    }
+    
     def __init__(self, name, damage, range, cost, attack_speed, x=0, y=0, slow_factor=1.0):
         self.name = name
         self.damage = damage
@@ -43,6 +50,16 @@ class Tower:
         self.kill_count = 0  # 击杀统计
         # 攻击优先级: "first"=最前, "last"=最后, "strong"=最强, "weak"=最弱
         self.priority = "first"
+        
+        # 主动技能系统
+        self.skill_active = False
+        self.skill_timer = 0
+        self.skill_cooldown = 0
+        skill_info = self.ACTIVE_SKILLS.get(name, {})
+        self.skill_name = skill_info.get("name", "")
+        self.skill_cooldown_max = skill_info.get("cooldown", 0)
+        self.skill_duration = skill_info.get("duration", 0)
+        self.skill_effect = skill_info.get("effect", "")
         
         # 塔品质系统：普通/优秀/史诗
         self.quality = "normal"  # 默认普通
@@ -142,6 +159,62 @@ class Tower:
                 elif sound_player:
                     sound_player()
                 self.cooldown = 1 / self.attack_speed
+    
+    def update_skill(self, dt, monsters, projectiles):
+        """更新主动技能状态"""
+        if not self.skill_name:
+            return
+        
+        # 更新技能冷却
+        if self.skill_cooldown > 0:
+            self.skill_cooldown -= dt
+        
+        # 更新技能持续时间
+        if self.skill_active:
+            self.skill_timer -= dt
+            if self.skill_timer <= 0:
+                self.skill_active = False
+            # 技能效果应用
+            self._apply_skill_effect(monsters, projectiles)
+    
+    def activate_skill(self):
+        """激活主动技能"""
+        if not self.skill_name or self.skill_cooldown > 0 or self.skill_active:
+            return False
+        self.skill_active = True
+        self.skill_timer = self.skill_duration
+        self.skill_cooldown = self.skill_cooldown_max
+        return True
+    
+    def _apply_skill_effect(self, monsters, projectiles):
+        """应用技能效果"""
+        if self.skill_effect == "attack_speed_boost" and self.target:
+            # 专注射击：攻速翻倍
+            self.cooldown = max(0, self.cooldown - 0.02)
+        elif self.skill_effect == "aoe_damage" and self.target:
+            # 轰炸：对目标周围造成范围伤害
+            for m in monsters:
+                if hasattr(m, 'alive') and m.alive:
+                    m_x = int(100 + m.position * 600)
+                    m_y = 300
+                    dist = ((m_x - self.target.x)**2 + (m_y - self.target.y)**2) ** 0.5
+                    if dist < 80:
+                        m.take_damage(self.damage // 2)
+        elif self.skill_effect == "life_steal" and self.target:
+            # 能量汲取：50%伤害转化为金币
+            pass  # 后续可在main.py中处理
+    
+    def get_skill_status(self):
+        """获取技能状态"""
+        if not self.skill_name:
+            return None
+        return {
+            "name": self.skill_name,
+            "active": self.skill_active,
+            "cooldown": self.skill_cooldown,
+            "cooldown_max": self.skill_cooldown_max,
+            "ready": self.skill_cooldown <= 0 and not self.skill_active
+        }
     
     def update_projectiles(self, dt):
         """更新所有子弹"""

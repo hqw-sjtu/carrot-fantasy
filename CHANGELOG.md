@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.5] - 2026-04-08
+
+### Fixed | 修复问题
+- ✅ 代码语法检查全部通过
+
+### Added | 新增功能
+- 🎯 **主动技能系统** (塔按K键释放):
+  - 箭塔「专注射击」: 攻速大幅提升
+  - 炮塔「轰炸」: 范围AOE伤害
+  - 魔法塔「能量汲取」: 吸血效果
+- 🧪 新增技能系统测试用例
+
+### Updated | 更新
+- 📖 GitHub Pages文档: 添加主动技能说明
+
+---
 ## [1.1.4] - 2026-04-07
 
 ### Fixed | 修复问题

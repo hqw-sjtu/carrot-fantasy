@@ -2,7 +2,7 @@
 保卫萝卜 - 怪物系统测试
 """
 import sys
-sys.path.insert(0, '../src')
+sys.path.insert(0, '/home/qw/.openclaw/workspace/projects/carrot-fantasy/src')
 
 def test_monster_creation():
     """测试怪物创建"""
