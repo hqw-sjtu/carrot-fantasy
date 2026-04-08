@@ -9,15 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.3.3] - 2026-04-09 05:23
+## [1.3.3] - 2026-04-09 07:23
 
 ### Added | 新增功能
+- ✨ **升级光晕系统增强 (工艺品级别)**:
+  - 2级塔额外脉冲环效果 (青色)
+  - 3级塔8角星级粒子特效
+  - 主光环外发光渲染
+  - 按等级区分视觉效果
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (全部20个Python模块)
+
+---
+
+## [1.3.3] - 2026-04-09 06:23
+
+### Added | 新增功能
+- ⚔️ **Combo Strike集火系统**:
+  - 多塔攻击同一目标时获得额外+5%/塔伤害加成
+  - 同类型塔相邻+10%伤害（叠加）
+  - 总加成上限50%
+  - 子弹标记is_combo用于视觉反馈
 - 🎮 **屏幕震动系统 (Screen Shake System)**:
   - 新增 screen_shake.py 模块
   - 支持轻/中/强/极致4级震动
   - 预设效果: light/medium/heavy/extreme/wave_complete/tower_sell/tower_upgrade
   - 可配置频率和衰减系数
 - 📝 CI/CD完善: 添加性能基准测试
+- ✅ 语法检查通过 (全部19个Python模块)
 
 ### Fixed | 修复问题
 - ✅ 语法检查通过 (全部19个Python模块)

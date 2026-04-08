@@ -37,6 +37,7 @@ class Projectile:
         self.source_tower = source_tower  # 发射该子弹的塔
         self.tower_type = tower_type  # 塔类型，用于确定子弹形状
         self.is_critical = False  # 是否暴击
+        self.is_combo = False  # 是否集火（Combo Strike）
         # 弹道轨迹系统
         self.trail_positions = []  # 轨迹位置列表
         self.trail_max_length = 8  # 轨迹最大长度

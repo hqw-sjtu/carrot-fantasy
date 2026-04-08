@@ -1964,7 +1964,7 @@ def main():
 
                             # 升级成功特效
                             upgrade_effects.append([int(tower.x), int(tower.y), 1.0])
-                            particle_system.add_upgrade_aura(int(tower.x), int(tower.y))
+                            particle_system.add_upgrade_aura(int(tower.x), int(tower.y), tower.level)
                             trigger_screen_shake(3, 0.1)
                             print("⬆️ 升级成功")
 
@@ -2273,6 +2273,9 @@ def main():
         # 塔攻击逻辑 - 添加组合系统
         for tower in state.towers:
             tower.attack(state.monsters, state.projectiles, state.towers)
+        
+        # 清空Combo Strike计数（每帧重新计算）
+        Tower._combo_targets.clear()
 
         # 怪物击杀检测(子弹击中怪物)
         for projectile in state.projectiles[:]:

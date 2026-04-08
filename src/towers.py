@@ -27,6 +27,9 @@ class Tower:
     """防御塔基类"""
     max_level = 3
     
+    # 新增：Combo Strike系统 - 多塔集火加成
+    _combo_targets = {}  # 记录哪些塔正在攻击同一目标
+    
     # 塔主动技能定义
     ACTIVE_SKILLS = {
         "箭塔": {"name": "专注射击", "cooldown": 15, "duration": 5, "effect": "attack_speed_boost"},
@@ -198,11 +201,15 @@ class Tower:
         if self.cooldown <= 0:
             target = self.find_target(monsters)
             if target:
+                # 更新Combo Strike计数
+                target_id = id(target)
+                Tower._combo_targets[target_id] = Tower._combo_targets.get(target_id, 0) + 1
+                
                 # 计算组合加成
                 if all_towers is None:
                     synergy = 1.0
                 else:
-                    synergy = self.check_synergy(all_towers)
+                    synergy = self.check_synergy(all_towers, target)
                 
                 actual_damage = int(self.damage * synergy)
                 
@@ -211,6 +218,7 @@ class Tower:
                 p = Projectile(self.x, self.y, target, actual_damage, slow_factor=self.slow_factor, source_tower=self, tower_type=self.name)
                 # 记录组合加成用于UI显示
                 p.synergy = synergy
+                p.is_combo = Tower._combo_targets.get(target_id, 1) > 1  # 标记集火
                 projectiles.append(p)
                 # 播放音效
                 if _sound_manager:
@@ -282,8 +290,8 @@ class Tower:
             if not p.active:
                 self.projectiles.remove(p)
     
-    def check_synergy(self, all_towers):
-        """检测与相邻塔的组合效果"""
+    def check_synergy(self, all_towers, target=None):
+        """检测与相邻塔的组合效果 + 集火加成"""
         synergy_bonus = 1.0
         
         for other in all_towers:
@@ -296,7 +304,12 @@ class Tower:
                 if self.name == other.name:
                     synergy_bonus += 0.1  # 10%伤害加成
         
-        return synergy_bonus
+        # Combo Strike：集火同一目标的塔获得额外+5%伤害/塔
+        if target and id(target) in Tower._combo_targets:
+            combo_count = Tower._combo_targets[id(target)]
+            synergy_bonus += combo_count * 0.05
+        
+        return min(synergy_bonus, 1.5)  # 最多+50%
     
     def __str__(self):
         return f"{self.name} Lv.{self.level} (伤害:{self.damage}, 射程:{self.range})"

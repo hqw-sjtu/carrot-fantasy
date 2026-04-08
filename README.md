@@ -80,6 +80,7 @@ bash start.sh
 - Sound System
 - Critical Hit System (10% chance, 150% damage)
 - Hidden Easter Eggs
+- **Combo Strike System** - 多塔集火同一目标额外+5%/塔（最多+50%）
 
 ## 📋 Requirements
 

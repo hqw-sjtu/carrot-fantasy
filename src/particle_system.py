@@ -111,41 +111,83 @@ class ParticleSystem:
             particle = Particle(x, y, vx, vy, color, 0.5, random.uniform(3, 8))
             self.particles.append(particle)
     
-    def add_upgrade_aura(self, x, y):
-        """添加升级光晕效果"""
+    def add_upgrade_aura(self, x, y, tower_level=1):
+        """添加升级光晕效果 - 工艺品级别增强"""
+        # 主光环
         self.upgrade_aura.append({
             'x': x, 'y': y,
             'radius': 10,
             'alpha': 200,
-            'start_time': pygame.time.get_ticks()
+            'start_time': pygame.time.get_ticks(),
+            'type': 'main',
+            'level': tower_level
         })
+        # 额外脉冲环 (等级≥2时)
+        if tower_level >= 2:
+            self.upgrade_aura.append({
+                'x': x, 'y': y,
+                'radius': 5,
+                'alpha': 150,
+                'start_time': pygame.time.get_ticks(),
+                'type': 'pulse',
+                'level': tower_level
+            })
+        # 星级粒子 (等级=3时)
+        if tower_level >= 3:
+            for i in range(8):
+                angle = i * 45
+                self.emit(
+                    x + math.cos(math.radians(angle)) * 30,
+                    y + math.sin(math.radians(angle)) * 30,
+                    3, (255, 215, 0), lifetime=0.8, size=4,
+                    speed=20, spread=30, fade=True
+                )
     
     def update_upgrade_aura(self):
-        """更新升级光晕"""
+        """更新升级光晕 - 工艺品级别"""
         import pygame
         current_time = pygame.time.get_ticks()
         to_remove = []
         for aura in self.upgrade_aura:
             elapsed = current_time - aura['start_time']
-            if elapsed > 1000:
+            duration = 1200 if aura.get('type') == 'pulse' else 1000
+            if elapsed > duration:
                 to_remove.append(aura)
                 continue
-            aura['radius'] += 2
-            aura['alpha'] = max(0, 200 - elapsed * 0.2)
+            # 不同类型不同动画
+            if aura.get('type') == 'pulse':
+                aura['radius'] += 3
+                aura['alpha'] = max(0, 150 - elapsed * 0.15)
+            else:
+                aura['radius'] += 2
+                aura['alpha'] = max(0, 200 - elapsed * 0.2)
         for aura in to_remove:
             self.upgrade_aura.remove(aura)
     
     def draw_upgrade_aura(self, screen):
-        """绘制升级光晕"""
+        """绘制升级光晕 - 工艺品级别"""
         import pygame
         for aura in self.upgrade_aura:
             if aura['alpha'] <= 0:
                 continue
-            size = aura['radius'] * 2 + 20
+            size = aura['radius'] * 2 + 30
             surf = pygame.Surface((size, size), pygame.SRCALPHA)
-            color = (255, 215, 0, int(aura['alpha']))
-            pygame.draw.circle(surf, color, (aura['radius'] + 10, aura['radius'] + 10), aura['radius'], 4)
-            screen.blit(surf, (aura['x'] - aura['radius'] - 10, aura['y'] - aura['radius'] - 10))
+            cx, cy = aura['radius'] + 15, aura['radius'] + 15
+            # 外发光
+            glow_color = (255, 215, 0, int(aura['alpha'] * 0.3))
+            pygame.draw.circle(surf, glow_color, (cx, cy), aura['radius'] + 5)
+            # 主环
+            if aura.get('type') == 'pulse':
+                color = (100, 200, 255, int(aura['alpha']))
+                pygame.draw.circle(surf, color, (cx, cy), aura['radius'], 3)
+            else:
+                color = (255, 215, 0, int(aura['alpha']))
+                pygame.draw.circle(surf, color, (cx, cy), aura['radius'], 4)
+            # 等级3金色闪烁
+            if aura.get('level', 1) >= 3 and aura['alpha'] > 100:
+                spark_color = (255, 255, 200, int(aura['alpha'] * 0.5))
+                pygame.draw.circle(surf, spark_color, (cx, cy), aura['radius'] - 3, 2)
+            screen.blit(surf, (aura['x'] - aura['radius'] - 15, aura['y'] - aura['radius'] - 15))
         
     def emit(self, x, y, count, color, lifetime=1.0, size=5, 
              speed=50, spread=360, fade=True, upward=False):
