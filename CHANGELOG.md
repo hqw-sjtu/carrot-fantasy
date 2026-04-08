@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.0] - 2026-04-08 23:23
+
+### Added | 新增功能
+- 🎯 **伤害数字系统**:
+  - 新增 src/damage_numbers.py 模块
+  - 攻击时显示飘字伤害数字
+  - 暴击伤害高亮显示（橙色+放大）
+  - 血量低于50%变色提示
+- ✨ 伤害数字管理器（DamageNumberManager）
+- 📝 README版本更新至1.3.0
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (main.py + damage_numbers.py)
+
+---
+
 ## [1.2.5] - 2026-04-08 20:23
 
 ### Fixed | 修复问题

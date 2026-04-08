@@ -31,6 +31,7 @@ jobs:
         python -m py_compile src/projectiles.py
         python -m py_compile src/particle_system.py
         python -m py_compile src/waves.py
+        python -m py_compile src/damage_numbers.py
     
     - name: Import Test
       run: |

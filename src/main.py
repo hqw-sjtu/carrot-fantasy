@@ -612,6 +612,7 @@ from projectiles import set_sound_manager_for_projectiles
 from waves import WaveManager
 from tower_placement import TowerPlacement
 from particle_system import get_particle_system
+from damage_numbers import DamageNumberManager
 
 # 设置全局音效管理器给towers模块
 set_sound_manager(sound_manager)
@@ -1673,6 +1674,8 @@ def draw_game():
     
     # 绘制粒子特效
     draw_particles()
+    # 绘制伤害数字
+    damage_number_manager.draw(SCREEN)
     
     # 更新和绘制升级光晕特效
     particle_system.update_upgrade_aura()
@@ -1852,6 +1855,8 @@ def main():
     global screen_shake_offset, time_str, show_achievement_unlock
     # 初始化粒子系统
     particle_system = get_particle_system()
+    # 初始化伤害数字系统
+    damage_number_manager = DamageNumberManager()
     
     clock = pygame.time.Clock()
     running = True
@@ -2242,6 +2247,8 @@ def main():
 
         # 更新粒子特效
         update_particles(effective_dt)
+        # 更新伤害数字
+        damage_number_manager.update(effective_dt)
 
         # 更新怪物位置
         for monster in state.monsters[:]:
@@ -2281,6 +2288,8 @@ def main():
                     damage_mult = 2.0 if random_events["double_damage"]["active"] else 1.0
                     actual_damage = int(projectile.damage * damage_mult)
                     monster.health -= actual_damage
+                    # 显示伤害数字
+                    damage_number_manager.add_damage(int(mx_monster), 280, actual_damage, is_crit)
                     # 记录击杀来源塔
                     source_tower = getattr(projectile, 'source_tower', None)
                     if monster.health <= 0:  # 怪物死亡

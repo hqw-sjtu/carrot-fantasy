@@ -1,8 +1,11 @@
-# 🎮 Carrot Fantasy (Guard the Carrot)
+# 🎮 Carrot Fantasy (保卫萝卜)
 
-> Tower Defense Game based on Python & Pygame
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![pygame](https://img.shields.io/badge/pygame-2.5+-green.svg)](https://www.pygame.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-1.3.0-orange.svg)]
 
-A polished tower defense game with rich features, particle effects, and engaging gameplay.
+> A polished tower defense game based on Python & Pygame - Guard your carrot from waves of monsters!
 
 ## 🚀 Quick Start
 
@@ -25,14 +28,22 @@ bash start.sh
 
 ## 🕹️ Controls
 
-| Key | Action |
-|-----|--------|
-| 1-4 | Select tower type |
-| Mouse | Place/Select tower |
-| U | Upgrade selected tower |
-| D | Sell selected tower (50% refund) |
-| Space | Start wave |
-| ESC | Pause |
+### 🎮 Gameplay Controls
+
+| Key | Action | Key | Action |
+|-----|--------|-----|--------|
+| `1-5` | Select tower type | `U` | Upgrade selected tower |
+| `Mouse` | Place/Select tower | `D` | Sell tower (50% refund) |
+| `Space` | Start wave | `ESC` | Pause |
+
+### ⚡ Quick Actions
+
+| Key | Feature | Key | Feature |
+|-----|---------|-----|---------|
+| `I` | Tower Dictionary | `J` | Monster Dictionary |
+| `K` | Daily Check-in | `M` | Toggle Sound |
+| `T` | Statistics | `H` | Toggle HP Display |
+| `P` / `F12` | Screenshot | - | - |
 
 ### Shortcuts
 - **I**: Tower Dictionary
