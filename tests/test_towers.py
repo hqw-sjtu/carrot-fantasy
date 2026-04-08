@@ -122,6 +122,38 @@ def test_tower_active_skill():
     
     print("✓ test_tower_active_skill passed")
 
+def test_tower_specialization():
+    """测试防御塔专精系统"""
+    from towers import TowerFactory, TOWER_SPECIALIZATIONS
+    
+    t = TowerFactory.create("箭塔")
+    # 先升到满级
+    t.upgrade()
+    t.upgrade()
+    
+    # 测试满级后可专精
+    assert t.can_specialize() == True
+    assert t.level == 3
+    
+    # 获取专精选项
+    options = t.get_specialization_options()
+    assert "damage" in options
+    assert "range" in options
+    assert "speed" in options
+    
+    # 应用专精
+    result = t.specialize("damage")
+    assert result == True
+    assert t.specialized == True
+    assert t.specialization == "damage"
+    
+    # 专精后伤害翻倍
+    assert t.damage > t.get_effective_damage()
+    
+    # 专精后不能再专精
+    assert t.can_specialize() == False
+    print("✓ test_tower_specialization passed")
+
 def test_tower_skill_apply():
     """测试技能效果应用"""
     from towers import TowerFactory
@@ -151,6 +183,7 @@ def run_all_tests():
     test_tower_priority()
     test_tower_active_skill()
     test_tower_skill_apply()
+    test_tower_specialization()
     print("\n✅ All tower tests passed!")
 
 if __name__ == "__main__":

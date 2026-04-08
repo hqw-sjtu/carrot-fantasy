@@ -74,6 +74,10 @@ class Tower:
             self.damage = int(self.damage * 1.25)
             self.range = self.range * 1.1
         
+        # 专精系统：满级后可选专精方向
+        self.specialization = None  # "damage", "range", "speed", "aoe"
+        self.specialized = False  # 是否已专精
+    
     def get_upgrade_cost(self):
         """获取升级费用"""
         config = get_config()
@@ -97,6 +101,44 @@ class Tower:
         self.range *= 1.1
         self.attack_speed *= 1.1
         return self.level
+    
+    def can_specialize(self):
+        """检查是否可以专精（满级且未专精）"""
+        return self.level >= self.max_level and not self.specialized
+    
+    def get_specialization_options(self):
+        """获取可用的专精选项"""
+        if not self.can_specialize():
+            return []
+        return TOWER_SPECIALIZATIONS.get(self.name, {})
+    
+    def specialize(self, spec_type):
+        """应用专精"""
+        if not self.can_specialize():
+            return False
+        options = self.get_specialization_options()
+        if spec_type not in options:
+            return False
+        self.specialization = spec_type
+        self.specialized = True
+        spec = options[spec_type]
+        # 应用专精效果
+        self.damage *= spec.get("damage_mult", 1.0)
+        self.range *= spec.get("range_mult", 1.0)
+        self.attack_speed *= spec.get("speed_mult", 1.0)
+        return True
+    
+    def get_effective_damage(self):
+        """获取实际伤害（考虑专精）"""
+        return self.damage
+    
+    def get_effective_range(self):
+        """获取实际范围（考虑专精）"""
+        return self.range
+    
+    def get_effective_speed(self):
+        """获取实际攻速（考虑专精）"""
+        return self.attack_speed
     
     def find_target(self, monsters):
         """根据优先级寻找目标"""
@@ -241,6 +283,26 @@ class Tower:
     
     def __str__(self):
         return f"{self.name} Lv.{self.level} (伤害:{self.damage}, 射程:{self.range})"
+
+
+# 防御塔专精配置
+TOWER_SPECIALIZATIONS = {
+    "箭塔": {
+        "damage": {"name": "穿透射击", "effect": "穿透+100%伤害", "damage_mult": 2.0, "range_mult": 1.0, "speed_mult": 1.0, "aoe": False},
+        "range": {"name": "狙击大师", "effect": "+50%范围", "damage_mult": 1.0, "range_mult": 1.5, "speed_mult": 1.0, "aoe": False},
+        "speed": {"name": "急速射击", "effect": "+100%攻速", "damage_mult": 1.0, "range_mult": 1.0, "speed_mult": 2.0, "aoe": False},
+    },
+    "炮塔": {
+        "damage": {"name": "毁灭轰炸", "effect": "+100%伤害", "damage_mult": 2.0, "range_mult": 1.0, "speed_mult": 1.0, "aoe": True},
+        "range": {"name": "远程轰炸", "effect": "+50%范围+AOE", "damage_mult": 1.0, "range_mult": 1.5, "speed_mult": 1.0, "aoe": True},
+        "speed": {"name": "速射炮", "effect": "+80%攻速", "damage_mult": 1.0, "range_mult": 1.0, "speed_mult": 1.8, "aoe": True},
+    },
+    "魔法塔": {
+        "damage": {"name": "奥术爆发", "effect": "+100%伤害+吸血", "damage_mult": 2.0, "range_mult": 1.0, "speed_mult": 1.0, "aoe": False, "lifesteal": 0.1},
+        "range": {"name": "精神控制", "effect": "+50%范围+减速强化", "damage_mult": 1.0, "range_mult": 1.5, "speed_mult": 1.0, "aoe": False, "slow_boost": 2.0},
+        "speed": {"name": "能量倾泻", "effect": "+100%攻速", "damage_mult": 1.0, "range_mult": 1.0, "speed_mult": 2.0, "aoe": False},
+    },
+}
 
 
 class TowerFactory:

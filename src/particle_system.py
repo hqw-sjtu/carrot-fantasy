@@ -293,6 +293,44 @@ class ParticleSystem:
                 fade=True
             ))
     
+    def emit_critical(self, x, y):
+        """暴击特效 - 暴击伤害时触发"""
+        # 金色闪电粒子
+        for _ in range(25):
+            angle = random.uniform(0, 360)
+            speed = random.uniform(80, 180)
+            self.particles.append(Particle(
+                x, y,
+                math.cos(math.radians(angle)) * speed,
+                math.sin(math.radians(angle)) * speed,
+                (255, 215, 0),  # 金色
+                lifetime=random.uniform(0.3, 0.7),
+                size=random.uniform(4, 8),
+                fade=True
+            ))
+        # 白色火花
+        for _ in range(15):
+            self.particles.append(Particle(
+                x, y,
+                random.uniform(-120, 120),
+                random.uniform(-150, 50),
+                (255, 255, 255),
+                lifetime=random.uniform(0.2, 0.5),
+                size=random.uniform(2, 5),
+                fade=True
+            ))
+        # 红色火花（伤害）
+        for _ in range(10):
+            self.particles.append(Particle(
+                x, y,
+                random.uniform(-80, 80),
+                random.uniform(-100, 80),
+                (255, 80, 80),
+                lifetime=0.3,
+                size=3,
+                fade=True
+            ))
+    
     def update(self, dt):
         """更新所有粒子"""
         self.particles = [p for p in self.particles if p.update(dt)]

@@ -3,6 +3,7 @@
 """
 
 import math
+import random
 import pygame
 
 # 尝试导入音效管理器（避免循环导入问题）
@@ -14,6 +15,10 @@ try:
         _sound_manager = sm
 except ImportError:
     _sound_manager = None
+
+# 常量配置
+CRITICAL_CHANCE = 0.1  # 暴击概率
+CRITICAL_DAMAGE_MULT = 1.5  # 暴击伤害倍率
 
 class Projectile:
     """子弹类"""
@@ -71,10 +76,9 @@ class Projectile:
         """命中目标"""
         if self.target and self.target.alive:
             # 暴击概率检测
-            import random
-            if random.random() < 0.1:  # 10%暴击率
+            if random.random() < CRITICAL_CHANCE:
                 self.is_critical = True
-                self.damage = int(self.damage * 1.5)  # 暴击伤害提升50%
+                self.damage = int(self.damage * CRITICAL_DAMAGE_MULT)
                 
             self.target.take_damage(self.damage)
             # 应用减速效果 (持续3秒)
