@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.5] - 2026-04-08 20:23
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (全部模块)
+- ✅ CI/CD 工作流完善
+- ✅ 粒子系统对象池优化
+- ✅ 测试框架完整
+
+### Updated | 更新
+- 📝 CHANGELOG版本更新
+
+---
+
 ## [1.2.4] - 2026-04-08
 
 ### Fixed | 修复问题
