@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.1] - 2026-04-08
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (main.py + 全部模块)
+
+### Added | 新增功能
+- 📊 **稳定性压力测试** (test_stability.py):
+  - 粒子性能测试: 1000次更新耗时验证
+  - 塔创建压力测试: 100个塔并发创建
+  - 路径计算稳定性: 50个怪物批量更新
+  - 配置加载稳定性: 10次重复加载
+  - 状态机转换: 多次状态切换
+
+### Updated | 更新
+- 📝 CHANGELOG更新
+
+---
+
 ## [1.2.0] - 2026-04-08
 
 ### Fixed | 修复问题
