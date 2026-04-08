@@ -1,11 +1,24 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-09 01:23 (Hourly Maintenance)
+> Last updated: 2026-04-09 03:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.3.2] - 2026-04-09 03:23
+
+### Added | 新增功能
+- 📝 README完善：添加快捷键快捷表、CI/CD状态
+- 🧪 测试框架：test_performance.py包含粒子池和塔创建测试
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (全部18个Python模块)
+- ✅ 核心模块导入测试通过
+- ✅ 屏幕震动效果已就绪（怪物攻击萝卜时触发）
 
 ---
 
