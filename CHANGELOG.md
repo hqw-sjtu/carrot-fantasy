@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.4] - 2026-04-08
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (全部模块)
+
+### Added | 新增功能
+- 🎯 **防御塔专精系统完善**:
+  - 冰霜塔专精选项: 冰封千里/绝对零度/寒冰风暴
+  - TowerFactory添加冰霜塔支持
+  - get_specialization_bonus()方法获取专精加成
+  - README新增专精系统说明
+
+### Updated | 更新
+- 📝 README专精系统文档
+- 📝 CHANGELOG更新
+
+---
+
 ## [1.2.3] - 2026-04-08
 
 ### Fixed | 修复问题

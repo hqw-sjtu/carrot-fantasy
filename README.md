@@ -52,6 +52,11 @@ bash start.sh
   - 💣 炮塔 (Cannon) - High AOE damage
   - ✨ 魔法塔 (Magic) - Life steal
   - ❄️ 冰霜塔 (Frost) - Slow + freeze wave
+- **Tower Specialization System** (满级3选1):
+  - 箭塔: 穿透射击/狙击大师/急速射击
+  - 炮塔: 毁灭轰炸/远程轰炸/速射炮
+  - 魔法塔: 奥术爆发/精神控制/能量倾泻
+  - 冰霜塔: 冰封千里/绝对零度/寒冰风暴
 - Tower Quality System (Common/Rare/Epic)
 - **Tower Selling System** (50% refund, particle effects)
 - **Tower Upgrade Aura** (golden glow effect on upgrade)

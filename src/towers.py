@@ -131,15 +131,31 @@ class Tower:
     
     def get_effective_damage(self):
         """获取实际伤害（考虑专精）"""
-        return self.damage
+        if not self.specialized or not self.specialization:
+            return self.damage
+        spec = TOWER_SPECIALIZATIONS.get(self.name, {}).get(self.specialization, {})
+        return self.damage  # 基础伤害已在specialize中乘过了
     
     def get_effective_range(self):
         """获取实际范围（考虑专精）"""
-        return self.range
+        if not self.specialized or not self.specialization:
+            return self.range
+        spec = TOWER_SPECIALIZATIONS.get(self.name, {}).get(self.specialization, {})
+        return self.range  # 已在specialize中应用
     
     def get_effective_speed(self):
         """获取实际攻速（考虑专精）"""
-        return self.attack_speed
+        if not self.specialized or not self.specialization:
+            return self.attack_speed
+        spec = TOWER_SPECIALIZATIONS.get(self.name, {}).get(self.specialization, {})
+        return self.attack_speed  # 已在specialize中应用
+    
+    def get_specialization_bonus(self, attr):
+        """获取专精加成属性"""
+        if not self.specialized or not self.specialization:
+            return None
+        spec = TOWER_SPECIALIZATIONS.get(self.name, {}).get(self.specialization, {})
+        return spec.get(attr)
     
     def find_target(self, monsters):
         """根据优先级寻找目标"""
@@ -303,6 +319,11 @@ TOWER_SPECIALIZATIONS = {
         "range": {"name": "精神控制", "effect": "+50%范围+减速强化", "damage_mult": 1.0, "range_mult": 1.5, "speed_mult": 1.0, "aoe": False, "slow_boost": 2.0},
         "speed": {"name": "能量倾泻", "effect": "+100%攻速", "damage_mult": 1.0, "range_mult": 1.0, "speed_mult": 2.0, "aoe": False},
     },
+    "冰霜塔": {
+        "damage": {"name": "冰封千里", "effect": "+100%伤害+范围冰冻", "damage_mult": 2.0, "range_mult": 1.0, "speed_mult": 1.0, "freeze_aoe": True},
+        "range": {"name": "绝对零度", "effect": "+50%范围+强化减速", "damage_mult": 1.0, "range_mult": 1.5, "speed_mult": 1.0, "slow_factor": 0.25},
+        "speed": {"name": "寒冰风暴", "effect": "+100%攻速", "damage_mult": 1.0, "range_mult": 1.0, "speed_mult": 2.0, "freeze_wave": True},
+    },
 }
 
 
@@ -313,7 +334,7 @@ class TowerFactory:
         "箭塔": {"damage": 10, "range": 3, "cost": 50, "speed": 2},
         "炮塔": {"damage": 30, "range": 2, "cost": 100, "speed": 0.5},
         "魔法塔": {"damage": 20, "range": 4, "cost": 80, "speed": 1},
-        "减速塔": {"damage": 5, "range": 3, "cost": 60, "speed": 1, "slow": 0.5},
+        "冰霜塔": {"damage": 15, "range": 1.8, "cost": 120, "speed": 0.8, "slow": 0.5},
     }
     
     @classmethod
