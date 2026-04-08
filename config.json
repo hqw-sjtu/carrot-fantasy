@@ -1,282 +1,643 @@
 {
-  "levels": [
-    {
-      "name": "草地平原",
-      "path": [[100, 300], [700, 300]],
-      "waves": 5,
-      "difficulty": 1.0
+    "levels": [
+        {
+            "name": "草地平原",
+            "path": [
+                [
+                    100,
+                    300
+                ],
+                [
+                    700,
+                    300
+                ]
+            ],
+            "waves": 5,
+            "difficulty": 1.0
+        },
+        {
+            "name": "沙漠之路",
+            "path": [
+                [
+                    50,
+                    200
+                ],
+                [
+                    200,
+                    400
+                ],
+                [
+                    500,
+                    400
+                ],
+                [
+                    750,
+                    200
+                ]
+            ],
+            "waves": 7,
+            "difficulty": 1.2
+        },
+        {
+            "name": "冰雪王国",
+            "path": [
+                [
+                    100,
+                    500
+                ],
+                [
+                    300,
+                    100
+                ],
+                [
+                    500,
+                    500
+                ],
+                [
+                    700,
+                    100
+                ]
+            ],
+            "waves": 10,
+            "difficulty": 1.5
+        },
+        {
+            "name": "岩石山脉",
+            "path": [
+                [
+                    100,
+                    100
+                ],
+                [
+                    200,
+                    300
+                ],
+                [
+                    400,
+                    200
+                ],
+                [
+                    600,
+                    400
+                ],
+                [
+                    700,
+                    200
+                ]
+            ],
+            "waves": 12,
+            "difficulty": 1.8
+        },
+        {
+            "name": "沼泽湿地",
+            "path": [
+                [
+                    50,
+                    400
+                ],
+                [
+                    150,
+                    200
+                ],
+                [
+                    350,
+                    300
+                ],
+                [
+                    550,
+                    150
+                ],
+                [
+                    750,
+                    350
+                ]
+            ],
+            "waves": 15,
+            "difficulty": 2.0
+        },
+        {
+            "name": "深海航线",
+            "path": [
+                [
+                    100,
+                    500
+                ],
+                [
+                    300,
+                    500
+                ],
+                [
+                    400,
+                    300
+                ],
+                [
+                    500,
+                    300
+                ],
+                [
+                    700,
+                    500
+                ]
+            ],
+            "waves": 18,
+            "difficulty": 2.3
+        },
+        {
+            "name": "火焰山",
+            "path": [
+                [
+                    100,
+                    200
+                ],
+                [
+                    250,
+                    400
+                ],
+                [
+                    400,
+                    200
+                ],
+                [
+                    550,
+                    400
+                ],
+                [
+                    700,
+                    200
+                ]
+            ],
+            "waves": 20,
+            "difficulty": 2.5
+        },
+        {
+            "name": "天空之城",
+            "path": [
+                [
+                    100,
+                    350
+                ],
+                [
+                    200,
+                    150
+                ],
+                [
+                    400,
+                    450
+                ],
+                [
+                    600,
+                    150
+                ],
+                [
+                    700,
+                    350
+                ]
+            ],
+            "waves": 22,
+            "difficulty": 2.8
+        },
+        {
+            "name": "暗黑森林",
+            "path": [
+                [
+                    50,
+                    500
+                ],
+                [
+                    150,
+                    300
+                ],
+                [
+                    300,
+                    500
+                ],
+                [
+                    450,
+                    200
+                ],
+                [
+                    600,
+                    400
+                ],
+                [
+                    750,
+                    250
+                ]
+            ],
+            "waves": 25,
+            "difficulty": 3.0
+        },
+        {
+            "name": "终极挑战",
+            "path": [
+                [
+                    50,
+                    300
+                ],
+                [
+                    150,
+                    100
+                ],
+                [
+                    300,
+                    300
+                ],
+                [
+                    450,
+                    500
+                ],
+                [
+                    600,
+                    200
+                ],
+                [
+                    700,
+                    400
+                ],
+                [
+                    750,
+                    300
+                ]
+            ],
+            "waves": 30,
+            "difficulty": 3.5
+        }
+    ],
+    "sound": {
+        "enabled": true
     },
-    {
-      "name": "沙漠之路",
-      "path": [[50, 200], [200, 400], [500, 400], [750, 200]],
-      "waves": 7,
-      "difficulty": 1.2
+    "screen": {
+        "SCREEN_WIDTH": 800,
+        "SCREEN_HEIGHT": 600
     },
-    {
-      "name": "冰雪王国",
-      "path": [[100, 500], [300, 100], [500, 500], [700, 100]],
-      "waves": 10,
-      "difficulty": 1.5
+    "colors": {
+        "WHITE": [
+            255,
+            255,
+            255
+        ],
+        "BLACK": [
+            0,
+            0,
+            0
+        ],
+        "GREEN": [
+            0,
+            255,
+            0
+        ],
+        "RED": [
+            255,
+            0,
+            0
+        ],
+        "BLUE": [
+            0,
+            0,
+            255
+        ],
+        "YELLOW": [
+            255,
+            255,
+            0
+        ],
+        "ORANGE": [
+            255,
+            165,
+            0
+        ],
+        "PURPLE": [
+            128,
+            0,
+            128
+        ],
+        "CYAN": [
+            0,
+            255,
+            255
+        ],
+        "GRAY": [
+            128,
+            128,
+            128
+        ],
+        "sky_blue": [
+            135,
+            206,
+            235
+        ],
+        "grass_dark": [
+            0,
+            100,
+            0
+        ],
+        "grass_light": [
+            50,
+            205,
+            50
+        ],
+        "path_brown": [
+            139,
+            69,
+            19
+        ],
+        "path_light": [
+            160,
+            120,
+            90
+        ]
     },
-    {
-      "name": "岩石山脉",
-      "path": [[100, 100], [200, 300], [400, 200], [600, 400], [700, 200]],
-      "waves": 12,
-      "difficulty": 1.8
+    "path": {
+        "start": [
+            100,
+            300
+        ],
+        "end": [
+            700,
+            300
+        ],
+        "width": 100
     },
-    {
-      "name": "沼泽湿地",
-      "path": [[50, 400], [150, 200], [350, 300], [550, 150], [750, 350]],
-      "waves": 15,
-      "difficulty": 2.0
+    "towers": {
+        "箭塔": {
+            "cost": 50,
+            "upgrade_cost": 40,
+            "damage": 10,
+            "range": 2.0,
+            "attack_speed": 1.0,
+            "color": "BLUE"
+        },
+        "炮塔": {
+            "cost": 100,
+            "upgrade_cost": 80,
+            "damage": 30,
+            "range": 1.5,
+            "attack_speed": 0.5,
+            "color": "RED"
+        },
+        "魔法塔": {
+            "cost": 150,
+            "upgrade_cost": 120,
+            "damage": 50,
+            "range": 2.5,
+            "attack_speed": 0.3,
+            "color": "PURPLE"
+        },
+        "减速塔": {
+            "cost": 80,
+            "upgrade_cost": 60,
+            "damage": 5,
+            "range": 2.5,
+            "attack_speed": 1.0,
+            "color": "CYAN",
+            "slow_factor": 0.5
+        },
+        "冰霜塔": {
+            "cost": 120,
+            "upgrade_cost": 100,
+            "damage": 15,
+            "range": 1.8,
+            "attack_speed": 0.8,
+            "color": "CYAN",
+            "slow_factor": 0.5
+        }
     },
-    {
-      "name": "深海航线",
-      "path": [[100, 500], [300, 500], [400, 300], [500, 300], [700, 500]],
-      "waves": 18,
-      "difficulty": 2.3
+    "monsters": {
+        "green": {
+            "health": 50,
+            "speed": 1.0,
+            "reward": 10,
+            "color": "GREEN",
+            "type": "normal"
+        },
+        "yellow": {
+            "health": 80,
+            "speed": 1.5,
+            "reward": 15,
+            "color": "YELLOW",
+            "type": "normal"
+        },
+        "orange": {
+            "health": 120,
+            "speed": 2.0,
+            "reward": 25,
+            "color": "ORANGE",
+            "type": "normal"
+        },
+        "red": {
+            "health": 200,
+            "speed": 2.5,
+            "reward": 40,
+            "color": "RED",
+            "type": "boss"
+        },
+        "purple": {
+            "health": 500,
+            "speed": 3.0,
+            "reward": 100,
+            "color": "PURPLE",
+            "type": "boss"
+        },
+        "fast": {
+            "health": 40,
+            "speed": 2.0,
+            "reward": 15,
+            "color": "CYAN",
+            "type": "fast"
+        },
+        "armor": {
+            "health": 300,
+            "speed": 0.8,
+            "reward": 50,
+            "color": "GRAY",
+            "type": "armor"
+        }
     },
-    {
-      "name": "火焰山",
-      "path": [[100, 200], [250, 400], [400, 200], [550, 400], [700, 200]],
-      "waves": 20,
-      "difficulty": 2.5
+    "waves": [
+        {
+            "monsters": [
+                {
+                    "type": "green",
+                    "count": 10,
+                    "interval": 1.0
+                }
+            ],
+            "delay": 5
+        },
+        {
+            "monsters": [
+                {
+                    "type": "green",
+                    "count": 15,
+                    "interval": 0.8
+                }
+            ],
+            "delay": 5
+        },
+        {
+            "monsters": [
+                {
+                    "type": "green",
+                    "count": 10,
+                    "interval": 1.0
+                },
+                {
+                    "type": "yellow",
+                    "count": 3,
+                    "interval": 1.5
+                }
+            ],
+            "delay": 6
+        },
+        {
+            "monsters": [
+                {
+                    "type": "green",
+                    "count": 8,
+                    "interval": 1.0
+                },
+                {
+                    "type": "yellow",
+                    "count": 5,
+                    "interval": 1.2
+                }
+            ],
+            "delay": 6
+        },
+        {
+            "monsters": [
+                {
+                    "type": "green",
+                    "count": 5,
+                    "interval": 1.0
+                },
+                {
+                    "type": "yellow",
+                    "count": 8,
+                    "interval": 1.0
+                },
+                {
+                    "type": "orange",
+                    "count": 3,
+                    "interval": 1.5
+                }
+            ],
+            "delay": 7
+        },
+        {
+            "monsters": [
+                {
+                    "type": "yellow",
+                    "count": 10,
+                    "interval": 0.8
+                },
+                {
+                    "type": "orange",
+                    "count": 5,
+                    "interval": 1.2
+                }
+            ],
+            "delay": 7
+        },
+        {
+            "monsters": [
+                {
+                    "type": "orange",
+                    "count": 5,
+                    "interval": 1.0
+                },
+                {
+                    "type": "red",
+                    "count": 5,
+                    "interval": 1.2
+                }
+            ],
+            "delay": 8
+        },
+        {
+            "monsters": [
+                {
+                    "type": "red",
+                    "count": 8,
+                    "interval": 0.8
+                },
+                {
+                    "type": "orange",
+                    "count": 3,
+                    "interval": 1.0
+                }
+            ],
+            "delay": 8
+        },
+        {
+            "monsters": [
+                {
+                    "type": "yellow",
+                    "count": 10,
+                    "interval": 0.8
+                },
+                {
+                    "type": "orange",
+                    "count": 8,
+                    "interval": 0.8
+                },
+                {
+                    "type": "red",
+                    "count": 5,
+                    "interval": 1.0
+                }
+            ],
+            "delay": 10
+        },
+        {
+            "monsters": [
+                {
+                    "type": "orange",
+                    "count": 5,
+                    "interval": 0.6
+                },
+                {
+                    "type": "red",
+                    "count": 10,
+                    "interval": 0.6
+                },
+                {
+                    "type": "purple",
+                    "count": 2,
+                    "interval": 2.0
+                }
+            ],
+            "delay": 15
+        }
+    ],
+    "bullet": {
+        "speed": 300,
+        "radius": 5
     },
-    {
-      "name": "天空之城",
-      "path": [[100, 350], [200, 150], [400, 450], [600, 150], [700, 350]],
-      "waves": 22,
-      "difficulty": 2.8
-    },
-    {
-      "name": "暗黑森林",
-      "path": [[50, 500], [150, 300], [300, 500], [450, 200], [600, 400], [750, 250]],
-      "waves": 25,
-      "difficulty": 3.0
-    },
-    {
-      "name": "终极挑战",
-      "path": [[50, 300], [150, 100], [300, 300], [450, 500], [600, 200], [700, 400], [750, 300]],
-      "waves": 30,
-      "difficulty": 3.5
+    "ui": {
+        "info_panel": {
+            "x": 10,
+            "y": 10,
+            "width": 150,
+            "height": 580
+        },
+        "money_display": {
+            "x": 20,
+            "y": 20
+        },
+        "lives_display": {
+            "x": 20,
+            "y": 50
+        },
+        "wave_display": {
+            "x": 20,
+            "y": 80
+        },
+        "tower_buttons": {
+            "x": 650,
+            "y": 10,
+            "width": 140,
+            "height": 580
+        }
     }
-  ],
-  "sound": {
-    "enabled": true
-  },
-  "screen": {
-    "SCREEN_WIDTH": 800,
-    "SCREEN_HEIGHT": 600
-  },
-  "colors": {
-    "WHITE": [255, 255, 255],
-    "BLACK": [0, 0, 0],
-    "GREEN": [0, 255, 0],
-    "RED": [255, 0, 0],
-    "BLUE": [0, 0, 255],
-    "YELLOW": [255, 255, 0],
-    "ORANGE": [255, 165, 0],
-    "PURPLE": [128, 0, 128],
-    "CYAN": [0, 255, 255],
-    "GRAY": [128, 128, 128],
-    "sky_blue": [135, 206, 235],
-    "grass_dark": [0, 100, 0],
-    "grass_light": [50, 205, 50],
-    "path_brown": [139, 69, 19],
-    "path_light": [160, 120, 90]
-  },
-  "path": {
-    "start": [100, 300],
-    "end": [700, 300],
-    "width": 100
-  },
-  "towers": {
-    "箭塔": {
-      "cost": 50,
-      "upgrade_cost": 40,
-      "damage": 10,
-      "range": 2.0,
-      "attack_speed": 1.0,
-      "color": "BLUE"
-    },
-    "炮塔": {
-      "cost": 100,
-      "upgrade_cost": 80,
-      "damage": 30,
-      "range": 1.5,
-      "attack_speed": 0.5,
-      "color": "RED"
-    },
-    "魔法塔": {
-      "cost": 150,
-      "upgrade_cost": 120,
-      "damage": 50,
-      "range": 2.5,
-      "attack_speed": 0.3,
-      "color": "PURPLE"
-    },
-    "减速塔": {
-      "cost": 80,
-      "upgrade_cost": 60,
-      "damage": 5,
-      "range": 2.5,
-      "attack_speed": 1.0,
-      "color": "CYAN",
-      "slow_factor": 0.5
-    }
-  },
-  "monsters": {
-    "green": {
-      "health": 50,
-      "speed": 1.0,
-      "reward": 10,
-      "color": "GREEN",
-      "type": "normal"
-    },
-    "yellow": {
-      "health": 80,
-      "speed": 1.5,
-      "reward": 15,
-      "color": "YELLOW",
-      "type": "normal"
-    },
-    "orange": {
-      "health": 120,
-      "speed": 2.0,
-      "reward": 25,
-      "color": "ORANGE",
-      "type": "normal"
-    },
-    "red": {
-      "health": 200,
-      "speed": 2.5,
-      "reward": 40,
-      "color": "RED",
-      "type": "boss"
-    },
-    "purple": {
-      "health": 500,
-      "speed": 3.0,
-      "reward": 100,
-      "color": "PURPLE",
-      "type": "boss"
-    },
-    "fast": {
-      "health": 40,
-      "speed": 2.0,
-      "reward": 15,
-      "color": "CYAN",
-      "type": "fast"
-    },
-    "armor": {
-      "health": 300,
-      "speed": 0.8,
-      "reward": 50,
-      "color": "GRAY",
-      "type": "armor"
-    }
-  },
-  "waves": [
-    {
-      "monsters": [
-        {"type": "green", "count": 10, "interval": 1.0}
-      ],
-      "delay": 5
-    },
-    {
-      "monsters": [
-        {"type": "green", "count": 15, "interval": 0.8}
-      ],
-      "delay": 5
-    },
-    {
-      "monsters": [
-        {"type": "green", "count": 10, "interval": 1.0},
-        {"type": "yellow", "count": 3, "interval": 1.5}
-      ],
-      "delay": 6
-    },
-    {
-      "monsters": [
-        {"type": "green", "count": 8, "interval": 1.0},
-        {"type": "yellow", "count": 5, "interval": 1.2}
-      ],
-      "delay": 6
-    },
-    {
-      "monsters": [
-        {"type": "green", "count": 5, "interval": 1.0},
-        {"type": "yellow", "count": 8, "interval": 1.0},
-        {"type": "orange", "count": 3, "interval": 1.5}
-      ],
-      "delay": 7
-    },
-    {
-      "monsters": [
-        {"type": "yellow", "count": 10, "interval": 0.8},
-        {"type": "orange", "count": 5, "interval": 1.2}
-      ],
-      "delay": 7
-    },
-    {
-      "monsters": [
-        {"type": "orange", "count": 5, "interval": 1.0},
-        {"type": "red", "count": 5, "interval": 1.2}
-      ],
-      "delay": 8
-    },
-    {
-      "monsters": [
-        {"type": "red", "count": 8, "interval": 0.8},
-        {"type": "orange", "count": 3, "interval": 1.0}
-      ],
-      "delay": 8
-    },
-    {
-      "monsters": [
-        {"type": "yellow", "count": 10, "interval": 0.8},
-        {"type": "orange", "count": 8, "interval": 0.8},
-        {"type": "red", "count": 5, "interval": 1.0}
-      ],
-      "delay": 10
-    },
-    {
-      "monsters": [
-        {"type": "orange", "count": 5, "interval": 0.6},
-        {"type": "red", "count": 10, "interval": 0.6},
-        {"type": "purple", "count": 2, "interval": 2.0}
-      ],
-      "delay": 15
-    }
-  ],
-  "bullet": {
-    "speed": 300,
-    "radius": 5
-  },
-  "ui": {
-    "info_panel": {
-      "x": 10,
-      "y": 10,
-      "width": 150,
-      "height": 580
-    },
-    "money_display": {
-      "x": 20,
-      "y": 20
-    },
-    "lives_display": {
-      "x": 20,
-      "y": 50
-    },
-    "wave_display": {
-      "x": 20,
-      "y": 80
-    },
-    "tower_buttons": {
-      "x": 650,
-      "y": 10,
-      "width": 140,
-      "height": 580
-    }
-  }
 }

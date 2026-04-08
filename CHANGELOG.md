@@ -1,9 +1,48 @@
 # Changelog | 更新日志
 
+> Last updated: 2026-04-08 17:23 (Hourly Maintenance)
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.2.3] - 2026-04-08
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (main.py + 全部模块)
+- ✅ 核心导入测试通过
+- ✅ 塔创建/升级/品质系统测试通过
+
+### Added | 新增功能
+- ❄️ **冰霜塔 (Frost Tower)**:
+  - 第4种防御塔类型
+  - 减速效果 (slow_factor=0.5)
+  - 主动技能: 冰封大地 (freeze_wave)
+  - 快捷键 4 选择
+  - 配置完善: cost=120, damage=15, range=1.8
+
+### Updated | 更新
+- 📝 README塔类型列表完善
+- 📝 CHANGELOG更新
+
+---
+
+## [1.2.2] - 2026-04-08
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (main.py + 全部模块)
+- ✅ 快速测试全部通过 (8/8项)
+- ✅ 性能基准通过 (49.9ms/500更新)
+
+### Added | 新增功能
+- 📝 项目README完善: 快捷键表、特性列表完整
+- 🔧 CI/CD工作流完整: 语法检查、导入测试、pytest单元测试、性能基准、稳定性测试
+
+### Updated | 更新
+- 📝 CHANGELOG更新
 
 ---
 

@@ -47,7 +47,11 @@ bash start.sh
 ## 🎯 Features
 
 - 10+ Levels with different themes
-- 4 Tower Types (Arrow, Cannon, Magic, Frost)
+- **4 Tower Types**:
+  - ⚔️ 箭塔 (Arrow) - Fast attack
+  - 💣 炮塔 (Cannon) - High AOE damage
+  - ✨ 魔法塔 (Magic) - Life steal
+  - ❄️ 冰霜塔 (Frost) - Slow + freeze wave
 - Tower Quality System (Common/Rare/Epic)
 - **Tower Selling System** (50% refund, particle effects)
 - **Tower Upgrade Aura** (golden glow effect on upgrade)

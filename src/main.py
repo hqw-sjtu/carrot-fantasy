@@ -38,7 +38,7 @@ def draw_ui_border():
     pygame.draw.rect(SCREEN, (50, 50, 70), (wave_box_x, wave_box_y, 160, 35), 2, border_radius=8)
     
     # 塔按钮区域（底部）
-    tower_types = ['箭塔', '炮塔', '魔法塔']
+    tower_types = ['箭塔', '炮塔', '魔法塔', '冰霜塔']
     selected = config.get('tower_selection', None)
     for i, tower_type in enumerate(tower_types):
         btn_rect = pygame.Rect(50 + i * 80, SCREEN_HEIGHT - 60, 70, 50)
@@ -52,7 +52,7 @@ def draw_button_hover():
     """按钮悬停/点击效果"""
     mouse_x, mouse_y = pygame.mouse.get_pos()
     
-    tower_types = ['箭塔', '炮塔', '魔法塔']
+    tower_types = ['箭塔', '炮塔', '魔法塔', '冰霜塔']
     for i, tower_type in enumerate(tower_types):
         btn_rect = pygame.Rect(50 + i * 80, SCREEN_HEIGHT - 60, 70, 50)
         if btn_rect.collidepoint(mouse_x, mouse_y):
@@ -2015,6 +2015,8 @@ def main():
                     config['tower_selection'] = '炮塔'
                 elif event.key == pygame.K_3:
                     config['tower_selection'] = '魔法塔'
+                elif event.key == pygame.K_4:
+                    config['tower_selection'] = '冰霜塔'
                 # Q/W/E技能按键
                 elif event.key == pygame.K_q:
                     # 减速技能

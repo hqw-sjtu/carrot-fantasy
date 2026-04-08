@@ -32,6 +32,7 @@ class Tower:
         "箭塔": {"name": "专注射击", "cooldown": 15, "duration": 5, "effect": "attack_speed_boost"},
         "炮塔": {"name": "轰炸", "cooldown": 20, "duration": 3, "effect": "aoe_damage"},
         "魔法塔": {"name": "能量汲取", "cooldown": 18, "duration": 8, "effect": "life_steal"},
+        "冰霜塔": {"name": "冰封大地", "cooldown": 25, "duration": 6, "effect": "freeze_wave"},
     }
     
     def __init__(self, name, damage, range, cost, attack_speed, x=0, y=0, slow_factor=1.0):
