@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ 语法检查通过 (main.py + 全部模块)
 
 ### Added | 新增功能
+- ✨ **萝卜血条显示**: 血量低于70%自动显示萝卜生命值血条，低血量时颜色警示
 - ✨ **防御塔专精系统** (Tower Specialization):
   - 满级(3级)防御塔可选专精方向
   - 箭塔: 穿透射击(×2伤害)/狙击大师(+50%范围)/急速射击(×2攻速)

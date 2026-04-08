@@ -967,6 +967,19 @@ def draw_game():
     # 萝卜叶子
     pygame.draw.line(SCREEN, (50, 180, 50), (700 + shake_x - 5, 300 + shake_y - 22), (700 + shake_x - 8, 300 + shake_y - 32), 3)
     pygame.draw.line(SCREEN, (50, 180, 50), (700 + shake_x + 5, 300 + shake_y - 22), (700 + shake_x + 8, 300 + shake_y - 32), 3)
+    
+    # 萝卜血条显示
+    if show_hp or state.lives <= 7:  # 血量低于70%始终显示
+        carrot_hp_ratio = state.lives / 10.0
+        bar_width = 50
+        bar_height = 8
+        bar_x = 700 - bar_width // 2 + shake_x
+        bar_y = 300 + 35 + shake_y
+        # 血条背景
+        pygame.draw.rect(SCREEN, (40, 40, 40), (bar_x - 1, bar_y - 1, bar_width + 2, bar_height + 2), border_radius=3)
+        # 血条填充
+        hp_color = (50, 200, 50) if carrot_hp_ratio > 0.5 else (255, 180, 0) if carrot_hp_ratio > 0.25 else (255, 60, 60)
+        pygame.draw.rect(SCREEN, hp_color, (bar_x, bar_y, int(bar_width * carrot_hp_ratio), bar_height), border_radius=2)
 
     # 绘制怪物(带震动偏移)- 根据怪物类型显示不同形状
     for monster in state.monsters:
