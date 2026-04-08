@@ -77,6 +77,12 @@ class DamageNumberManager:
     def __init__(self):
         self.damage_numbers = []
         self.max_count = 50  # 最多显示50个
+        # 连击系统
+        self.combo_count = 0
+        self.combo_timer = 0
+        self.combo_max_time = 2.0  # 连击有效时间（秒）
+        self.combo_display_x = 0
+        self.combo_display_y = 0
         
     def add_damage(self, x, y, damage, is_crit=False, is_heal=False):
         """添加伤害数字"""
@@ -90,16 +96,69 @@ class DamageNumberManager:
         
         dmg = DamageNumber(x + offset_x, y + offset_y, damage, is_crit, is_heal)
         self.damage_numbers.append(dmg)
+        
+        # 更新连击显示位置
+        self.combo_display_x = x
+        self.combo_display_y = y - 30
+        
+        # 如果不是治疗，更新连击
+        if not is_heal:
+            if self.combo_timer > 0:
+                self.combo_count += 1
+            else:
+                self.combo_count = 1
+            self.combo_timer = self.combo_max_time
     
     def update(self, dt):
         """更新所有伤害数字"""
         self.damage_numbers = [dmg for dmg in self.damage_numbers if dmg.update(dt)]
+        # 更新连击计时器
+        if self.combo_timer > 0:
+            self.combo_timer -= dt
+            if self.combo_timer <= 0:
+                self.combo_count = 0
         
     def draw(self, screen):
         """绘制所有伤害数字"""
         for dmg in self.damage_numbers:
             dmg.draw(screen)
+        
+        # 绘制连击数
+        if self.combo_count >= 2 and self.combo_timer > 0:
+            self._draw_combo(screen)
+    
+    def _draw_combo(self, screen):
+        """绘制连击数显示"""
+        import pygame
+        font = pygame.font.Font(None, 36)
+        combo_text = f"{self.combo_count}x COMBO!"
+        
+        # 根据连击数变色
+        if self.combo_count >= 10:
+            color = (255, 0, 255)  # 紫色
+        elif self.combo_count >= 5:
+            color = (255, 215, 0)  # 金色
+        else:
+            color = (0, 255, 255)  # 青色
+        
+        # 闪烁效果
+        pulse = abs(pygame.time.get_ticks() % 500 - 250) / 250
+        scale = 1.0 + pulse * 0.2
+        
+        # 阴影
+        shadow = font.render(combo_text, True, (0, 0, 0))
+        screen.blit(shadow, (self.combo_display_x + 2, self.combo_display_y + 2))
+        
+        # 主文字
+        text = font.render(combo_text, True, color)
+        # 放大效果
+        if scale > 1.0:
+            w, h = text.get_size()
+            text = pygame.transform.scale(text, (int(w * scale), int(h * scale)))
+        screen.blit(text, (self.combo_display_x, self.combo_display_y))
     
     def clear(self):
         """清空所有伤害数字"""
         self.damage_numbers.clear()
+        self.combo_count = 0
+        self.combo_timer = 0

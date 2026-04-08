@@ -1,11 +1,27 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-08 17:23 (Hourly Maintenance)
+> Last updated: 2026-04-09 01:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.3.1] - 2026-04-09 01:23
+
+### Added | 新增功能
+- ⚡ **连击系统 (Combo System)**:
+  - 快速击杀怪物累积连击数
+  - 连击数显示 (2x/5x/10x COMBO!)
+  - 连击数颜色分级：青色(2x+) → 金色(5x+) → 紫色(10x+)
+  - 闪烁放大动画效果
+  - 2秒无攻击则连击中断
+- 🔧 代码优化：移除未使用的random导入再重新添加（保持正确导入）
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (damage_numbers.py)
 
 ---
 
