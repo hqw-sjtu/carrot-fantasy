@@ -1,11 +1,28 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-09 03:23 (Hourly Maintenance)
+> Last updated: 2026-04-09 05:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.3.3] - 2026-04-09 05:23
+
+### Added | 新增功能
+- 🎮 **屏幕震动系统 (Screen Shake System)**:
+  - 新增 screen_shake.py 模块
+  - 支持轻/中/强/极致4级震动
+  - 预设效果: light/medium/heavy/extreme/wave_complete/tower_sell/tower_upgrade
+  - 可配置频率和衰减系数
+- 📝 CI/CD完善: 添加性能基准测试
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (全部19个Python模块)
+- ✅ 核心模块单元测试通过 (6/6)
+- 📊 测试覆盖: TowerFactory, Monster, DamageNumber, WaveManager, ParticleSystem, ScreenShake
 
 ---
 
