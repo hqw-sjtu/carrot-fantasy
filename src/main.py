@@ -2383,10 +2383,9 @@ def main():
                                 show_achievement_unlock("击杀50只", "💀")
                     break
 
-        # 计算FPS
-        # 处理签到事件
+        # 处理签到事件 (K键签到)
         for event in pygame.event.get():
-
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_k:
                     success, reward = try_checkin()
                     if success:
