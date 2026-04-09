@@ -1100,6 +1100,17 @@ def draw_game():
             # 金色实线边框
             pygame.draw.circle(SCREEN, YELLOW, (int(tower.x) + shake_x, int(tower.y) + shake_y), 20, 3)
 
+        # 升级动画效果
+        if hasattr(tower, 'upgrade_animation') and tower.upgrade_animation > 0:
+            tower.upgrade_animation -= 1
+            tower.glow_intensity = tower.upgrade_animation / 30.0
+            # 创建扩展的光环
+            glow_radius = 30 + (30 - tower.upgrade_animation) * 2
+            glow_alpha = int(200 * tower.glow_intensity)
+            glow_surf = pygame.Surface((glow_radius*2, glow_radius*2), pygame.SRCALPHA)
+            pygame.draw.circle(glow_surf, (255, 215, 0, glow_alpha), (glow_radius, glow_radius), glow_radius, 4)
+            SCREEN.blit(glow_surf, (int(tower.x) - glow_radius + shake_x, int(tower.y) - glow_radius + shake_y))
+
         # 塔的颜色(被选中时高亮)
         tower_color = YELLOW if is_selected else BLUE
 

@@ -1,6 +1,6 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-09 21:23 (Hourly Maintenance)
+> Last updated: 2026-04-10 06:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.4.3] - 2026-04-09 22:23
+## [1.4.4] - 2026-04-10 06:23
 
 ### Maintenance | 每小时维护
 - ✅ 语法检查: 12个Python模块全部通过py_compile

@@ -81,6 +81,10 @@ class Tower:
         # 专精系统：满级后可选专精方向
         self.specialization = None  # "damage", "range", "speed", "aoe"
         self.specialized = False  # 是否已专精
+        
+        # 升级动画效果
+        self.upgrade_animation = 0  # 升级动画计时器
+        self.glow_intensity = 0  # 发光强度
     
     def get_upgrade_cost(self):
         """获取升级费用"""
@@ -104,6 +108,9 @@ class Tower:
         self.damage *= 1.3
         self.range *= 1.1
         self.attack_speed *= 1.1
+        # 触发升级动画
+        self.upgrade_animation = 30  # 30帧动画
+        self.glow_intensity = 1.0
         return self.level
     
     def can_specialize(self):
