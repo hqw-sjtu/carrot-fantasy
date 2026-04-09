@@ -81,9 +81,9 @@ carrot-fantasy/
 | F12 | 截图 |
 | Ctrl+Shift+R | 隐藏彩蛋 |
 
-## 📝 更新日志
+## 📋 更新日志
 
-See [CHANGELOG.md](CHANGELOG.md)
+See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.3.9**
 
 ## 🤝 贡献指南
 

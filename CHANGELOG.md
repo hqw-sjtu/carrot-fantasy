@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.9] - 2026-04-09 16:23
+
+### Added | 新增功能
+- ✅ 新增配置验证测试 (test_config_validation.py)
+  - 防御塔配置合理性检查 (cost/damage/range/attack_speed)
+  - 怪物配置检查 (health/speed 范围验证)
+  - UI配置检查 (窗口尺寸合理性)
+  - 颜色配置 RGB 验证
+
+### Verified | 验证通过
+- ✅ 全部 Python 模块语法检查通过
+- ✅ 核心模块导入测试通过 (towers/monsters/particle_system/screen_shake/damage_numbers)
+- ✅ 配置数值验证通过 (4种防御塔, 怪物等)
+- ✅ CI 工作流语法正确
+
+---
+
 ## [1.3.8] - 2026-04-09 15:23
 
 ### Fixed | 修复问题

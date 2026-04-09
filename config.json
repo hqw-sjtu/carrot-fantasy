@@ -639,5 +639,28 @@
             "width": 140,
             "height": 580
         }
+    },
+    "visual_effects": {
+        "screen_shake": {
+            "enabled": true,
+            "intensity": 5
+        },
+        "particle_system": {
+            "enabled": true,
+            "max_particles": 200
+        },
+        "damage_flash": {
+            "enabled": true
+        },
+        "combo_sparkle": {
+            "enabled": true,
+            "duration": 500
+        }
+    },
+    "gameplay": {
+        "auto_save": true,
+        "wave_skip_cost": 50,
+        "combo_multiplier_cap": 5.0,
+        "difficulty_scaling": 1.1
     }
 }
