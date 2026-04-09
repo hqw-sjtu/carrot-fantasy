@@ -1,11 +1,27 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-09 15:23 (Hourly Maintenance)
+> Last updated: 2026-04-09 21:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.4.2] - 2026-04-09 21:23
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 全部 Python 模块通过 py_compile
+- ✅ 新增 GitHub Actions CI 工作流 (.github/workflows/ci.yml)
+- ✅ 新增连击伤害数字特效 (combo_count参数)
+  - 连击时伤害数字增大 (最多+50%)
+  - 连击数实时显示 (x2, x3...)
+  - 暴击时星星闪烁特效优化
+
+### Stability | 稳定性
+- ⚡ 核心功能正常运行
+- 🔒 无语法错误或导入失败
 
 ---
 

@@ -9,16 +9,20 @@ import random
 class DamageNumber:
     """伤害数字"""
     
-    def __init__(self, x, y, damage, is_crit=False, is_heal=False):
+    def __init__(self, x, y, damage, is_crit=False, is_heal=False, combo_count=0):
         self.x = x
         self.y = y
         self.damage = damage
         self.is_crit = is_crit
         self.is_heal = is_heal
+        self.combo_count = combo_count  # 连击数
         self.lifetime = 1.0  # 存活时间（秒）
         self.max_lifetime = 1.0
         self.vy = -50  # 向上飘动速度
         self.scale = 1.5 if is_crit else 1.0
+        # 连击时额外缩放
+        if combo_count > 1:
+            self.scale += min(combo_count * 0.1, 0.5)
         
     def update(self, dt):
         """更新位置和透明度"""
@@ -71,12 +75,18 @@ class DamageNumber:
         # 暴击特效（星星）
         if self.is_crit and self.lifetime > self.max_lifetime * 0.5:
             star_size = int(8 * (self.lifetime / self.max_lifetime))
-            pygame.draw.polygon(screen, (255, 255, 0), [
-                (self.x - 15, self.y + 10),
-                (self.x - 10, self.y + 5),
-                (self.x - 15, self.y),
-                (self.x - 10, self.y + 5),
-            ])
+            # 绘制闪烁星星
+            for offset in [(-15, 0), (15, 5), (0, -10)]:
+                px, py = self.x + offset[0], self.y + offset[1]
+                pygame.draw.circle(screen, (255, 255, 0), (px, py), star_size)
+        
+        # 连击数显示
+        if self.combo_count > 1 and self.lifetime > self.max_lifetime * 0.3:
+            combo_text = f"x{self.combo_count}"
+            combo_font = pygame.font.Font(None, int(16 * self.scale * 2))
+            combo_surf = combo_font.render(combo_text, True, (255, 200, 100))
+            combo_surf.set_alpha(alpha)
+            screen.blit(combo_surf, (self.x + 25, self.y - 10))
 
 
 class DamageNumberManager:
