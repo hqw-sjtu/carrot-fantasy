@@ -25,6 +25,9 @@ title: 保卫萝卜 - Carrot Fantasy
 - 🎯 快捷键支持（P暂停、F12截图、Ctrl+Shift+R彩蛋）
 - 💰 金币动画优化
 - 📅 每日挑战与签到系统
+- 🔥 **Combo Strike** 多塔集火系统（每塔额外+5%伤害，最高+50%）
+- ⚡ **Screen Shake** 屏幕震动反馈
+- ⭐ **Tower Specialization** 满级三选一专精系统
 
 ### 视觉效果
 - 血条渐变美化

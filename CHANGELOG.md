@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.3] - 2026-04-09 08:23
+
+### Added | 新增功能
+- 📝 **GitHub Pages文档增强**:
+  - 新增Combo Strike集火系统说明
+  - 新增Screen Shake屏幕震动说明
+  - 新增Tower Specialization专精系统说明
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (全部Python模块)
+- ✅ 测试框架完善
+- ✅ CI/CD工作流稳定运行
+
+---
+
 ## [1.3.3] - 2026-04-09 07:23
 
 ### Added | 新增功能
