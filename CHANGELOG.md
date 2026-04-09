@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.1] - 2026-04-09 19:23
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 全部 Python 模块通过 py_compile (9个模块)
+- ✅ 导入测试: Tower/Monster/Projectile/ParticleSystem/WaveManager/DamageNumberManager/ScreenShake/GameState
+- ✅ GameData测试: 创建/重置/状态机测试全部通过
+- ✅ 代码重构: GameState重命名为GameData，解决与state_machine模块冲突
+- ✅ 新增测试: test_game_data.py (GameData/GameStateMachine单元测试)
+
+### Stability | 稳定性
+- ⚡ 核心功能正常运行
+- 🔒 无语法错误或导入失败
+- 🧪 测试覆盖: GameData创建/重置/状态机
+
+---
+
 ## [1.4.0] - 2026-04-09 18:23
 
 ### Maintenance | 每小时维护

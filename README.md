@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![pygame](https://img.shields.io/badge/pygame-2.5+-green.svg)](https://www.pygame.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.4.0-orange.svg)]
+[![Version](https://img.shields.io/badge/Version-1.4.1-orange.svg)]
 
 > A polished tower defense game based on Python & Pygame - Guard your carrot from waves of monsters!
 
