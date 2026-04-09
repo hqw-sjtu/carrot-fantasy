@@ -800,7 +800,7 @@ wave_wait_duration = 5.0  # 每波间隔5秒
 # 波次击杀计数（用于大量击杀震动）
 kills_this_wave = 0
 
-class GameState:
+class GameData:
     def __init__(self):
         self.money = 200
         self.lives = 10
@@ -836,7 +836,7 @@ class GameState:
         level_select_mode = True  # 重新进入关卡选择
         selected_level = 0
 # 全局游戏状态
-state = GameState()
+state = GameData()
 
 def draw_game():
     """绘制游戏画面"""
