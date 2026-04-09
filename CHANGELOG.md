@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.0] - 2026-04-09 18:23
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 全部 Python 模块通过 py_compile
+- ✅ 导入测试: towers/monsters/particle_system/screen_shake/damage_numbers 正常
+- ✅ 配置验证: 5种防御塔配置检查通过
+- ✅ CI工作流: GitHub Actions 语法正确
+- ✅ Git状态: 无未提交更改 (仅 __pycache__ 自动更新)
+
+### Stability | 稳定性
+- ⚡ 核心功能正常运行
+- 🔒 无语法错误或导入失败
+
+---
+
 ## [1.3.9] - 2026-04-09 16:23
 
 ### Added | 新增功能
