@@ -127,6 +127,12 @@ class UIPanel:
                 priority_text = priority_labels.get(tower.priority, "🔴 最前")
                 priority_info = self.small_font.render(f"按P切换: {priority_text}", True, (200, 200, 255))
                 screen.blit(priority_info, (self.info_panel_rect.x + 10, info_y + 200))
+                
+                # 显示Combo伤害加成
+                combo_bonus = getattr(tower, 'combo_damage_bonus', 0) + getattr(tower, 'adjacent_bonus', 0)
+                if combo_bonus > 0:
+                    combo_text = self.small_font.render(f"⚔️ 集火: +{combo_bonus:.0f}%", True, (255, 200, 100))
+                    screen.blit(combo_text, (self.info_panel_rect.x + 10, info_y + 220))
             else:
                 max_level_text = self.small_font.render(f"已满级 ({tower.max_level})", True, (255, 255, 0))
                 screen.blit(max_level_text, (self.info_panel_rect.x + 10, info_y + 120))
@@ -141,6 +147,12 @@ class UIPanel:
                 priority_text = priority_labels.get(tower.priority, "🔴 最前")
                 priority_info = self.small_font.render(f"按P切换: {priority_text}", True, (200, 200, 255))
                 screen.blit(priority_info, (self.info_panel_rect.x + 10, info_y + 160))
+                
+                # 显示Combo伤害加成（满级塔）
+                combo_bonus = getattr(tower, 'combo_damage_bonus', 0) + getattr(tower, 'adjacent_bonus', 0)
+                if combo_bonus > 0:
+                    combo_text = self.small_font.render(f"⚔️ 集火: +{combo_bonus:.0f}%", True, (255, 200, 100))
+                    screen.blit(combo_text, (self.info_panel_rect.x + 10, info_y + 180))
         
         # 绘制塔按钮面板背景（渐变效果+圆角）
         draw_panel(screen, self.tower_buttons_rect, (70, 40, 30), (50, 30, 20))

@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.4] - 2026-04-09 09:23
+
+### Added | 新增功能
+- 🎨 **UI面板集火伤害显示**:
+  - 选中塔时显示Combo伤害加成百分比
+  - 同时显示相邻同类型塔加成
+  - 升级中/满级塔均显示
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (全部Python模块)
+- ✅ UI面板combo显示逻辑
+
+---
+
 ## [1.3.3] - 2026-04-09 08:23
 
 ### Added | 新增功能
