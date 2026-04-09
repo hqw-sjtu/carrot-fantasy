@@ -30,14 +30,10 @@ class TowerPlacement:
     def get_selected_tower(self) -> Optional[str]:
         """获取当前选择的防御塔"""
         return self.selected_tower
-        
+    
     def clear_selection(self):
         """清除选择"""
         self.selected_tower = None
-        
-    def get_selected_tower(self) -> Optional[str]:
-        """获取当前选择的防御塔"""
-        return self.selected_tower
     
     def is_in_play_area(self, x: int, y: int) -> bool:
         """检查是否在可放置区域"""

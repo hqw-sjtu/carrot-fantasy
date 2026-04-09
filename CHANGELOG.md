@@ -1,11 +1,34 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-09 10:23 (Hourly Maintenance)
+> Last updated: 2026-04-09 15:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.3.8] - 2026-04-09 15:23
+
+### Fixed | 修复问题
+- ✅ 修复 ui_panel.py 缺失 math 导入 (工艺品级别细节)
+- ✅ 修复 tower_placement.py 重复方法定义
+- ✅ 语法检查通过 (全部Python模块)
+- ✅ 快速测试通过 (塔工厂/怪物/粒子/状态机)
+
+### Optimized | 性能优化
+- ⚡ 粒子系统性能基准: <0.5s/500更新
+
+---
+
+## [1.3.7] - 2026-04-09 12:23
+
+### Added | 新增功能
+- ⚙️ **配置系统增强**:
+  - 新增 visual_effects 配置项 (screen_shake, particle_system, damage_flash, combo_sparkle)
+  - 新增 gameplay 配置项 (auto_save, wave_skip_cost, combo_multiplier_cap, difficulty_scaling)
+- ✅ 新增配置完整性测试
 
 ---
 

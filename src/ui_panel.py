@@ -2,6 +2,7 @@
 UI面板系统 - 处理用户界面交互和显示
 """
 import pygame
+import math
 from typing import Optional, Tuple
 from config_loader import get_config
 
