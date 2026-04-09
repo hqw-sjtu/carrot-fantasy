@@ -605,7 +605,7 @@ from checkin_system import checkin_data, try_checkin, draw_checkin_panel
 game_speed = 1.0  # 1.0=正常, 2.0=快进, 0.5=慢放
 speed_labels = {0.5: "🐢 慢放", 1.0: "▶️ 正常", 2.0: "⏩ 快进"}
 from state_machine import GameStateMachine
-from towers import TowerFactory, set_sound_player, set_sound_manager
+from towers import TowerFactory, Tower, set_sound_player, set_sound_manager
 from monsters import MonsterFactory
 from projectiles import Projectile
 from projectiles import set_sound_manager_for_projectiles
@@ -2107,7 +2107,6 @@ def main():
 
                                 if not too_close:
                                     # 创建防御塔
-                                    from towers import Tower
                                     color = tower_info.get('color', 'BLUE')
                                     color_map = {'BLUE': (0, 0, 255), 'RED': (255, 0, 0), 'PURPLE': (128, 0, 128), 'CYAN': (0, 255, 255)}
                                     preview_color = color_map.get(color, (0, 0, 255))
