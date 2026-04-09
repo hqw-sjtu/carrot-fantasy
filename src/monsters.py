@@ -25,6 +25,11 @@ class Monster:
         self.frozen = 0  # 冰冻时间(帧)
         self.slow_timer = 0  # 减速持续时间(秒)
         self.slow_factor = 1.0  # 当前减速因子(1.0=无减速)
+        # DOT (持续伤害) 状态
+        self.burn_damage = 0  # 燃烧伤害/秒
+        self.burn_timer = 0  # 燃烧持续时间
+        self.poison_damage = 0  # 中毒伤害/秒
+        self.poison_timer = 0  # 中毒持续时间
         self.alive = True
         self.x = 100  # 屏幕坐标
         self.y = 300
@@ -57,6 +62,20 @@ class Monster:
             self.speed = self.original_speed * slow_factor
         self.slow_timer = max(self.slow_timer, duration)  # 延长的减速持续时间
 
+    def apply_burn(self, damage_per_sec, duration):
+        """应用燃烧效果 (DOT)"""
+        self.burn_damage = max(self.burn_damage, damage_per_sec)
+        self.burn_timer = max(self.burn_timer, duration)
+    
+    def apply_poison(self, damage_per_sec, duration):
+        """应用中毒效果 (DOT)"""
+        self.poison_damage = max(self.poison_damage, damage_per_sec)
+        self.poison_timer = max(self.poison_timer, duration)
+    
+    def has_status_effect(self):
+        """检查是否有任何状态效果"""
+        return self.slow_timer > 0 or self.burn_timer > 0 or self.poison_timer > 0
+    
     def slow(self, duration):
         """减速效果（兼容旧接口）"""
         self.frozen = duration
@@ -67,6 +86,7 @@ class Monster:
         if self.spawn_scale < 1.0:
             self.spawn_scale = min(1.0, self.spawn_scale + dt * 2)
         
+        # 更新减速计时器
         if self.slow_timer > 0:
             self.slow_timer -= dt
             if self.slow_timer <= 0:
@@ -74,6 +94,28 @@ class Monster:
                 self.slow_timer = 0
                 self.slow_factor = 1.0
                 self.speed = self.original_speed
+        
+        # 更新燃烧DOT
+        if self.burn_timer > 0:
+            self.burn_timer -= dt
+            if self.burn_timer > 0 and self.burn_damage > 0:
+                burn_tick = self.burn_damage * dt
+                self.health -= burn_tick
+                if self.health <= 0:
+                    self.alive = False
+        else:
+            self.burn_damage = 0
+        
+        # 更新中毒DOT
+        if self.poison_timer > 0:
+            self.poison_timer -= dt
+            if self.poison_timer > 0 and self.poison_damage > 0:
+                poison_tick = self.poison_damage * dt
+                self.health -= poison_tick
+                if self.health <= 0:
+                    self.alive = False
+        else:
+            self.poison_damage = 0
 
     def move(self, dt):
         """移动"""

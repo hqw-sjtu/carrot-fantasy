@@ -1,11 +1,27 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-09 05:23 (Hourly Maintenance)
+> Last updated: 2026-04-09 10:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.3.5] - 2026-04-09 10:23
+
+### Added | 新增功能
+- 🔥 **DOT持续伤害系统 (工艺品级别)**:
+  - 燃烧效果 (Burn): 按时间持续造成伤害
+  - 中毒效果 (Poison): 可叠加的持续伤害
+  - 状态效果检查 has_status_effect()
+  - DOT效果在update中逐帧计算
+- ✅ 怪物系统单元测试扩展 (新增3个测试用例)
+
+### Fixed | 修复问题
+- ✅ 语法检查通过 (全部Python模块)
+- ✅ 怪物系统测试通过 (8/8)
 
 ---
 

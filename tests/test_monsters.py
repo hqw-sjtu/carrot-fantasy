@@ -83,6 +83,62 @@ def test_monster_slow():
     assert m.slow_factor == 0.5
     print("✓ test_monster_slow passed")
 
+def test_monster_burn_dot():
+    """测试燃烧DOT效果"""
+    from monsters import Monster
+    
+    m = Monster("测试怪", 100, 0.01, 10)
+    assert m.burn_damage == 0
+    assert m.burn_timer == 0
+    
+    # 应用燃烧: 10伤害/秒，持续2秒
+    m.apply_burn(10, 2.0)
+    assert m.burn_damage == 10
+    assert m.burn_timer == 2.0
+    
+    # 测试更强燃烧效果会覆盖
+    m.apply_burn(20, 1.0)  # 更高伤害，会覆盖
+    assert m.burn_damage == 20
+    print("✓ test_monster_burn_dot passed")
+
+def test_monster_poison_dot():
+    """测试中毒DOT效果"""
+    from monsters import Monster
+    
+    m = Monster("测试怪", 100, 0.01, 10)
+    assert m.poison_damage == 0
+    assert m.poison_timer == 0
+    
+    # 应用中毒: 5伤害/秒，持续3秒
+    m.apply_poison(5, 3.0)
+    assert m.poison_damage == 5
+    assert m.poison_timer == 3.0
+    
+    # 测试更强中毒效果会覆盖
+    m.apply_poison(15, 2.0)
+    assert m.poison_damage == 15
+    print("✓ test_monster_poison_dot passed")
+
+def test_monster_status_effect_check():
+    """测试状态效果检查"""
+    from monsters import Monster
+    
+    m = Monster("测试怪", 100, 0.01, 10)
+    assert m.has_status_effect() == False
+    
+    # 添加减速
+    m.apply_slow(0.5, 1.0)
+    assert m.has_status_effect() == True
+    
+    # 添加燃烧
+    m.apply_burn(10, 2.0)
+    assert m.has_status_effect() == True
+    
+    # 添加中毒
+    m.apply_poison(5, 3.0)
+    assert m.has_status_effect() == True
+    print("✓ test_monster_status_effect_check passed")
+
 def run_all_tests():
     """运行所有测试"""
     print("Running monster tests...")
@@ -91,6 +147,9 @@ def run_all_tests():
     test_monster_health_bar()
     test_monster_factory()
     test_monster_slow()
+    test_monster_burn_dot()
+    test_monster_poison_dot()
+    test_monster_status_effect_check()
     print("\n✅ All tests passed!")
 
 if __name__ == "__main__":
