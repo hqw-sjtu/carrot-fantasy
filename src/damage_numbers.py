@@ -47,6 +47,14 @@ class DamageNumber:
         base_size = 24 if self.is_crit else 18
         font = pygame.font.Font(None, int(base_size * self.scale * 2))
         
+        # 暴击时添加闪光特效
+        if self.is_crit:
+            # 绘制闪光背景
+            flash_radius = 20 + (self.lifetime / self.max_lifetime) * 15
+            flash_surface = pygame.Surface((int(flash_radius * 4), int(flash_radius * 4)), pygame.SRCALPHA)
+            pygame.draw.circle(flash_surface, (255, 200, 0, 100), (int(flash_radius * 2), int(flash_radius * 2)), int(flash_radius))
+            screen.blit(flash_surface, (self.x - flash_radius * 2, self.y - flash_radius * 2))
+        
         # 创建带阴影的文字
         text = str(int(self.damage))
         
