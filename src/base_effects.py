@@ -358,6 +358,32 @@ class BaseEffectManager:
         """触发升级光柱特效"""
         self.add_upgrade_beam(tower.x, tower.y)
         
+    def add_pulse_warning(self, x, y, radius=None, color=None):
+        """添加脉冲警告特效"""
+        if radius is None:
+            radius = 80
+        if color is None:
+            color = (255, 80, 80)
+        effect = PulseWarningEffect(x, y, radius, color)
+        self.effects.append(effect)
+        
+    def trigger_shield_effect(self, tower):
+        """触发护盾特效（受击时调用）"""
+        color_map = {
+            "箭": (200, 180, 100),
+            "炮": (255, 120, 50),
+            "魔法": (180, 80, 255),
+            "减速": (100, 180, 255),
+            "冰霜": (150, 220, 255)
+        }
+        tower_name = getattr(tower, 'name', '') or ''
+        color = (200, 200, 200)
+        for key, c in color_map.items():
+            if key in tower_name:
+                color = c
+                break
+        self.add_shield_effect(tower.x, tower.y, color)
+        
     def add_upgrade_beam(self, x, y, color=(255, 215, 0)):
         """添加升级光柱特效"""
         self.effects.append(UpgradeBeamEffect(x, y, color))
@@ -491,6 +517,83 @@ class TowerIdleParticles(BaseEffect):
             size = p['size'] * (1 - p['life'] / p['max_life'] * 0.5)
             pygame.draw.circle(screen, (*self.color, alpha), 
                              (int(p['x']), int(p['y'])), int(size))
+
+
+class ShieldEffect(BaseEffect):
+    """护盾特效 - 防御塔受击时显示护盾光环"""
+    
+    def __init__(self, x, y, color=(100, 150, 255), duration=30):
+        super().__init__(x, y)
+        self.color = color
+        self.max_life = duration
+        self.max_alpha = 180
+        self.rings = [
+            {'radius': 25, 'width': 3, 'phase': 0},
+            {'radius': 35, 'width': 2, 'phase': 1},
+            {'radius': 45, 'width': 1, 'phase': 2}
+        ]
+        
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        # 计算当前透明度 - 快速淡出
+        progress = self.life / self.max_life
+        self.current_alpha = int(self.max_alpha * (1 - progress * progress))
+        
+    def draw(self, screen):
+        if not self.active or self.current_alpha <= 0:
+            return
+        
+        for ring in self.rings:
+            # 波动效果
+            wave = math.sin(self.life * 0.3 + ring['phase']) * 0.1 + 1
+            radius = ring['radius'] * wave
+            
+            # 绘制半透明圆环
+            color = (*self.color, self.current_alpha // len(self.rings))
+            pygame.draw.circle(screen, color,
+                             (int(self.x), int(self.y)),
+                             int(radius), ring['width'])
+
+
+class PulseWarningEffect(BaseEffect):
+    """脉冲警告特效 - 危险区域警示"""
+    
+    def __init__(self, x, y, radius=80, color=(255, 80, 80), pulses=3):
+        super().__init__(x, y)
+        self.radius = radius
+        self.color = color
+        self.pulses = pulses
+        self.max_life = pulses * 20
+        self.current_pulse = 0
+        
+    def update(self, dt):
+        self.life += dt
+        self.current_pulse = int(self.life / 20)
+        if self.life >= self.max_life:
+            self.active = False
+            
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        # 计算当前脉冲进度
+        pulse_progress = (self.life % 20) / 20
+        pulse_radius = self.radius * pulse_progress
+        
+        # 透明度随脉冲向外扩散递减
+        alpha = int(200 * (1 - pulse_progress) * (self.current_pulse < self.pulses))
+        
+        if alpha > 0:
+            # 绘制扩散圈
+            pygame.draw.circle(screen, (*self.color, alpha),
+                             (int(self.x), int(self.y)),
+                             int(pulse_radius), 2)
+            # 中心点
+            pygame.draw.circle(screen, (*self.color, alpha // 2),
+                             (int(self.x), int(self.y)), 3, 0)
 
 
 # 单例实例

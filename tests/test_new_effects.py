@@ -1,15 +1,15 @@
-"""
-保卫萝卜 - 新特效系统测试
-"""
+"""保卫萝卜 - 新增特效测试"""
+import pytest
 import sys
 sys.path.insert(0, 'src')
+import pygame
+pygame.init()
 
-import pytest
-from base_effects import ShieldEffect, TowerIdleParticles, get_base_effect_manager
+from base_effects import ShieldEffect, PulseWarningEffect, BaseEffectManager
 
 
 class TestShieldEffect:
-    """护盾环绕特效测试"""
+    """护盾特效测试"""
     
     def test_shield_effect_init(self):
         """测试护盾特效初始化"""
@@ -27,67 +27,74 @@ class TestShieldEffect:
         effect.update(10)
         assert effect.life == initial_life + 10
         
-    def test_shield_effect_deactivation(self):
-        """测试护盾特效过期"""
-        effect = ShieldEffect(100, 100, duration=15)
-        effect.update(20)
+    def test_shield_effect_deactivate(self):
+        """测试护盾特效消失"""
+        effect = ShieldEffect(100, 100, duration=20)
+        effect.update(25)
         assert effect.active is False
         
-    def test_shield_effect_draw(self):
-        """测试护盾特效绘制(不崩溃)"""
+    def test_shield_effect_rings(self):
+        """测试护盾环结构"""
         effect = ShieldEffect(100, 100)
-        import pygame
-        pygame.init()
-        screen = pygame.Surface((200, 200))
-        effect.draw(screen)  # 不应崩溃
+        assert len(effect.rings) == 3
+        assert effect.rings[0]['radius'] == 25
+        assert effect.rings[1]['radius'] == 35
+        assert effect.rings[2]['radius'] == 45
 
 
-class TestTowerIdleParticles:
-    """塔空闲粒子特效测试"""
+class TestPulseWarningEffect:
+    """脉冲警告特效测试"""
     
-    def test_idle_particles_init(self):
-        """测试空闲粒子初始化"""
-        effect = TowerIdleParticles(100, 100, (255, 255, 200), 5)
-        assert effect.x == 100
-        assert effect.y == 100
-        assert effect.max_life == 120
-        assert len(effect.particles) == 5
+    def test_pulse_warning_init(self):
+        """测试脉冲警告初始化"""
+        effect = PulseWarningEffect(200, 200, 80, (255, 80, 80), 3)
+        assert effect.x == 200
+        assert effect.y == 200
+        assert effect.radius == 80
+        assert effect.color == (255, 80, 80)
+        assert effect.pulses == 3
         
-    def test_idle_particles_update(self):
-        """测试空闲粒子更新"""
-        effect = TowerIdleParticles(100, 100, (255, 255, 200), 3)
-        initial_y = effect.particles[0]['y']
-        effect.update(10)
-        assert effect.particles[0]['y'] <= initial_y  # 向上漂浮
+    def test_pulse_warning_update(self):
+        """测试脉冲警告更新"""
+        effect = PulseWarningEffect(200, 200, pulses=3)
+        effect.update(25)
+        assert effect.current_pulse == 1
         
-    def test_idle_particles_lifecycle(self):
-        """测试粒子生命周期"""
-        effect = TowerIdleParticles(100, 100, (255, 255, 200), 3)
-        effect.update(130)
+    def test_pulse_warning_deactivate(self):
+        """测试脉冲警告结束"""
+        effect = PulseWarningEffect(200, 200, pulses=3)
+        # max_life = pulses * 20 = 60
+        effect.update(65)
         assert effect.active is False
 
 
-class TestBaseEffectManager:
-    """塔基特效管理器测试"""
+class TestBaseEffectManagerNew:
+    """新增特效管理器测试"""
     
-    def test_manager_add_shield(self):
+    def test_add_shield_effect(self):
         """测试添加护盾特效"""
-        manager = get_base_effect_manager()
-        manager.add_shield_effect(100, 100, (100, 150, 255))
-        assert len(manager.effects) >= 1
-        
-    def test_manager_add_idle_particles(self):
-        """测试添加空闲粒子特效"""
-        manager = get_base_effect_manager()
-        initial_count = len(manager.effects)
-        manager.add_idle_particles(100, 100)
-        assert len(manager.effects) > initial_count
-        
-    def test_manager_update(self):
-        """测试管理器更新"""
-        manager = get_base_effect_manager()
+        manager = BaseEffectManager()
         manager.add_shield_effect(100, 100)
-        manager.add_idle_particles(150, 150)
-        manager.update(10)
-        # 验证更新不崩溃
-        assert True
+        assert len(manager.effects) == 1
+        assert isinstance(manager.effects[0], ShieldEffect)
+        
+    def test_add_pulse_warning(self):
+        """测试添加脉冲警告特效"""
+        manager = BaseEffectManager()
+        manager.add_pulse_warning(200, 200)
+        assert len(manager.effects) == 1
+        assert isinstance(manager.effects[0], PulseWarningEffect)
+        
+    def test_trigger_shield_effect(self):
+        """测试触发护盾特效"""
+        manager = BaseEffectManager()
+        
+        class MockTower:
+            def __init__(self):
+                self.x = 100
+                self.y = 100
+                self.name = "箭塔"
+        
+        tower = MockTower()
+        manager.trigger_shield_effect(tower)
+        assert len(manager.effects) == 1

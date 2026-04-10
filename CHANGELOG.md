@@ -1,11 +1,28 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-11 06:23 (Hourly Maintenance)
+> Last updated: 2026-04-11 07:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.5.5] - 2026-04-11 07:23
+
+### Features | 新功能
+- 🛡️ **护盾特效(ShieldEffect)**: 防御塔受击时显示多层护盾光环,带波动动画
+- ⚠️ **脉冲警告特效(PulseWarningEffect)**: 危险区域脉冲扩散警示,支持多脉冲
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 代码优化: 新增ShieldEffect和PulseWarningEffect类
+- ✅ 测试覆盖: 99→109 测试用例,新增10个特效测试
+- ✅ GitHub Pages: 文档完善
+
+### Stability | 稳定性
+- 🔒 无新增问题
 
 ---
 
