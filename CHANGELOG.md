@@ -1,11 +1,27 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-11 04:23 (Hourly Maintenance)
+> Last updated: 2026-04-11 06:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.5.4] - 2026-04-11 06:23
+
+### Features | 新功能
+- ⚡ **波次预警特效(WaveWarningEffect)**: 怪物波次来临前路径闪烁警告,最后3秒高强度提示
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 代码优化: 新增WaveWarningEffect类,支持脉冲动画和路径追踪
+- ✅ 测试覆盖: 91→95 测试用例,新增4个波次预警测试
+- ✅ GitHub Pages: 文档完善
+
+### Stability | 稳定性
+- 🔒 无新增问题
 
 ---
 

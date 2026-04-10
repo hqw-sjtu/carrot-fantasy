@@ -275,6 +275,10 @@ class BaseEffectManager:
         effect = ChainLightningEffect(x, y, target_x, target_y)
         self.effects.append(effect)
         
+    def add_wave_warning(self, path_points, time_left):
+        """添加波次预警特效"""
+        self.effects.append(WaveWarningEffect(path_points, time_left))
+        
     def add_shield_effect(self, x, y, color=None):
         """添加护盾环绕特效"""
         if color is None:
@@ -405,6 +409,48 @@ class ShieldEffect(BaseEffect):
             py = self.y + math.sin(rad) * 32
             points.append((int(px), int(py)))
         pygame.draw.polygon(screen, (*self.color, int(80 * fade_factor)), points, 2)
+
+
+class WaveWarningEffect(BaseEffect):
+    """波次预警特效 - 怪物来临前路径闪烁警告"""
+    
+    def __init__(self, path_points, time_left):
+        super().__init__(path_points[0][0], path_points[0][1])
+        self.path_points = path_points
+        self.time_left = time_left  # 剩余秒数
+        self.max_time = time_left
+        self.max_life = time_left * 60  # 转换为帧数
+        self.warning_color = (255, 100, 100)
+        self.pulse_phase = 0
+        
+    def update(self, dt):
+        self.life += dt
+        self.time_left = self.max_time - self.life / 60
+        self.pulse_phase += 0.15 * dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        # 检查是否即将到达(最后3秒)
+        self.warning_intensity = 1.0 if self.time_left <= 3 else 0.5
+        
+    def draw(self, screen):
+        if not self.active:
+            return
+        alpha = int(255 * self.warning_intensity * (1 - self.life / self.max_life))
+        pulse = (math.sin(self.pulse_phase) + 1) / 2
+        
+        # 沿路径绘制警告点
+        for i, point in enumerate(self.path_points):
+            x, y = point
+            # 脉冲效果
+            radius = 8 + pulse * 6
+            # 距离当前怪物位置越近越亮
+            color = (*self.warning_color, alpha)
+            pygame.draw.circle(screen, color, (int(x), int(y)), int(radius), 2)
+            # 中心点
+            center_alpha = alpha // 2
+            pygame.draw.circle(screen, (*self.warning_color, center_alpha), 
+                             (int(x), int(y)), 3)
 
 
 class TowerIdleParticles(BaseEffect):
