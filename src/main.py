@@ -8,6 +8,48 @@ import datetime
 sys.path.append(os.path.dirname(__file__))
 from daily_challenge import daily_challenge, CHALLENGES, get_today_challenge, check_challenge_completion, draw_daily_challenge_panel
 
+# ==================== 中文字体支持 ====================
+# Windows 常用中文字体列表
+CHINESE_FONTS = [
+    "Microsoft YaHei",
+    "Microsoft YaHei UI",
+    "SimHei",
+    "SimSun",
+    "DengXian",
+    "FangSong",
+    "KaiTi",
+    "NSimSun",
+    "YouYuan",
+    "STKaiti",
+    "STSong",
+    "STZhongsong",
+]
+
+def get_font(size, bold=False):
+    """获取支持中文的字体
+    
+    Args:
+        size: 字体大小
+        bold: 是否粗体
+    
+    Returns:
+        pygame.font.Font 对象
+    """
+    # 尝试使用中文字体
+    for font_name in CHINESE_FONTS:
+        try:
+            font = pygame.font.SysFont(font_name, size, bold=bold)
+            # 测试字体是否能渲染中文
+            test_surface = font.render("中", True, (255, 255, 255))
+            if test_surface.get_width() > 0:
+                return font
+        except:
+            continue
+    
+    # 回退到默认字体
+    return get_font( size)
+
+
 # ==================== 精致UI边框和动画系统 ====================
 
 def draw_ui_border():
@@ -68,7 +110,7 @@ def animate_text(text, x, y, color, flicker=False):
     else:
         alpha = 255
     
-    font = pygame.font.Font(None, 28)
+    font = get_font( 28)
     surf = font.render(text, True, color)
     surf.set_alpha(int(alpha))
     SCREEN.blit(surf, (x, y))
@@ -260,7 +302,7 @@ def draw_end_report(screen, won, stats, time_seconds):
     screen.blit(overlay, (0, 0))
     
     # 标题
-    font_title = pygame.font.Font(None, 60)
+    font_title = get_font( 60)
     if won:
         title = font_title.render("🎉 胜利!", True, GOLD)
     else:
@@ -268,7 +310,7 @@ def draw_end_report(screen, won, stats, time_seconds):
     screen.blit(title, (SCREEN_WIDTH//2 - 80, 80))
     
     # 统计内容
-    font_info = pygame.font.Font(None, 32)
+    font_info = get_font( 32)
     y = 180
     lines = [
         f"游戏时间: {time_seconds//60}:{time_seconds%60:02d}",
@@ -287,7 +329,7 @@ def draw_end_report(screen, won, stats, time_seconds):
         y += 35
     
     # 评价
-    font_eval = pygame.font.Font(None, 40)
+    font_eval = get_font( 40)
     kills = stats.get('kills', 0)
     if won and kills >= 50:
         eval_text = "⭐⭐⭐ 完美通关! ⭐⭐⭐"
@@ -363,11 +405,11 @@ def draw_quest_panel():
     pygame.draw.rect(SCREEN, GOLD, panel_rect, 2, border_radius=5)
     
     # 标题
-    font_title = pygame.font.Font(None, 24)
+    font_title = get_font( 24)
     title = font_title.render("📋 每日任务", True, GOLD)
     SCREEN.blit(title, (quest_x, quest_y))
     
-    font_quest = pygame.font.Font(None, 18)
+    font_quest = get_font( 18)
     for key, quest in daily_quests.items():
         quest_y += 25
         
@@ -436,7 +478,7 @@ def draw_achievement_unlock():
     pygame.draw.rect(SCREEN, GOLD, (x, y, 190, 60), 3, border_radius=10)
     
     # 图标和文字
-    font = pygame.font.Font(None, 28)
+    font = get_font( 28)
     icon = achievement_unlock_anim["icon"]
     name = achievement_unlock_anim["name"]
     
@@ -472,13 +514,13 @@ def draw_achievement_badges():
             "fast_win": "⚡",
         }
         icon = icon_map.get(achievement_key, "⭐")
-        font_icon = pygame.font.Font(None, 20)
+        font_icon = get_font( 20)
         icon_surf = font_icon.render(icon, True, WHITE)
         SCREEN.blit(icon_surf, (badge_x - 8, badge_y - 10))
         
         # 成就名称（左侧显示）
         name = achievements[achievement_key].get("name", achievement_key)
-        font_name = pygame.font.Font(None, 18)
+        font_name = get_font( 18)
         name_surf = font_name.render(name[:4], True, WHITE)
         SCREEN.blit(name_surf, (badge_x - 50, badge_y - 5))
 
@@ -504,7 +546,7 @@ def draw_level_select():
     """绘制关卡选择界面"""
     SCREEN.fill((20, 25, 45))
     
-    font_title = pygame.font.Font(None, 50)
+    font_title = get_font( 50)
     title = font_title.render("选择关卡", True, GOLD)
     SCREEN.blit(title, (SCREEN_WIDTH//2 - 60, 30))
     
@@ -522,13 +564,13 @@ def draw_level_select():
             color = WHITE
         
         # 关卡信息
-        font = pygame.font.Font(None, 30)
+        font = get_font( 30)
         level_text = f"{i+1}. {level['name']} - {level['waves']}波 (x{level['difficulty']})"
         surf = font.render(level_text, True, color)
         SCREEN.blit(surf, (70, y))
     
     # 提示
-    font_tip = pygame.font.Font(None, 24)
+    font_tip = get_font( 24)
     tip = font_tip.render("↑↓选择  Enter确认  ESC退出", True, GRAY)
     SCREEN.blit(tip, (SCREEN_WIDTH//2 - 100, SCREEN_HEIGHT - 50))
 
@@ -552,7 +594,7 @@ def draw_difficulty_screen():
     """绘制难度选择界面"""
     SCREEN.fill((20, 20, 40))
 
-    font_title = pygame.font.Font(None, 60)
+    font_title = get_font( 60)
     title = font_title.render("选择难度", True, YELLOW)
     SCREEN.blit(title, (SCREEN_WIDTH//2 - 80, 100))
 
@@ -563,11 +605,11 @@ def draw_difficulty_screen():
     ]
 
     for text, pos, color in difficulties:
-        font = pygame.font.Font(None, 36)
+        font = get_font( 36)
         surf = font.render(text, True, color)
         SCREEN.blit(surf, pos)
 
-    font_tip = pygame.font.Font(None, 24)
+    font_tip = get_font( 24)
     tip = font_tip.render("按 1/2/3 选择难度", True, GRAY)
     SCREEN.blit(tip, (SCREEN_WIDTH//2 - 80, 450))
 
@@ -582,7 +624,7 @@ def draw_difficulty_screen():
         selected_text = "已选择: 困难"
         selected_color = (200, 100, 100)
 
-    font_selected = pygame.font.Font(None, 28)
+    font_selected = get_font( 28)
     selected_surf = font_selected.render(selected_text, True, selected_color)
     SCREEN.blit(selected_surf, (SCREEN_WIDTH//2 - 60, 500))
 
@@ -784,7 +826,7 @@ def draw_inventory_panel():
     pygame.draw.rect(SCREEN, (100, 100, 150), (panel_x, panel_y, panel_w, panel_h), 2, border_radius=5)
     
     # 标题
-    font = pygame.font.Font(None, 22)
+    font = get_font( 22)
     title = font.render("🎒 背包 (B)", True, (255, 215, 0))
     SCREEN.blit(title, (panel_x + 10, panel_y + 5))
     
@@ -1012,7 +1054,7 @@ def draw_game():
     
     # 起点传送门(绿色)
     draw_portal(100, 300, (0, 200, 100), (100, 255, 150), 0)
-    font_mark = pygame.font.Font(None, 20)
+    font_mark = get_font( 20)
     start_text = font_mark.render("S", True, WHITE)
     SCREEN.blit(start_text, (95, 260))
 
@@ -1107,7 +1149,7 @@ def draw_game():
 
         # 详细血量显示(按H切换)
         if show_health_detail:
-            font_health = pygame.font.Font(None, 18)
+            font_health = get_font( 18)
             health_text = font_health.render(f"{int(monster.health)}/{int(monster.max_health)}", True, WHITE)
             SCREEN.blit(health_text, (x - 20 + shake_x, y - 42 + shake_y))
 
@@ -1130,7 +1172,7 @@ def draw_game():
             pygame.draw.rect(SCREEN, (255, 50, 50), (boss_bar_x + 2, boss_bar_y + 2, boss_hp_width, 16))
 
             # Boss文字
-            font_boss = pygame.font.Font(None, 24)
+            font_boss = get_font( 24)
             boss_text = font_boss.render("👹 BOSS", True, RED)
             SCREEN.blit(boss_text, (boss_bar_x - 50, boss_bar_y))
 
@@ -1221,7 +1263,7 @@ def draw_game():
                     in_range_count += 1
 
             if in_range_count > 0:
-                font_count = pygame.font.Font(None, 20)
+                font_count = get_font( 20)
                 count_text = f"👾{in_range_count}"
                 count_surf = font_count.render(count_text, True, RED)
                 SCREEN.blit(count_surf, (int(tower.x) + 20 + shake_x, int(tower.y) - 25 + shake_y))
@@ -1235,7 +1277,7 @@ def draw_game():
                 synergy_text = "组合: 无"
                 synergy_color = GRAY
             
-            font_synergy = pygame.font.Font(None, 20)
+            font_synergy = get_font( 20)
             synergy_surf = font_synergy.render(synergy_text, True, synergy_color)
             SCREEN.blit(synergy_surf, (int(tower.x) + 20 + shake_x, int(tower.y) + 5 + shake_y))
 
@@ -1248,7 +1290,7 @@ def draw_game():
                 next_cost = tower.get_upgrade_cost()
                 
                 # 显示预览
-                font_preview = pygame.font.Font(None, 22)
+                font_preview = get_font( 22)
                 preview_y = int(tower.y) + 30
                 
                 # 箭头
@@ -1362,7 +1404,7 @@ def draw_game():
 
     # 绘制连杀提示(顶部中央)
     if combo_text and kill_streak_timer > 0:
-        font_combo = pygame.font.Font(None, 36)
+        font_combo = get_font( 36)
         combo_surf = font_combo.render(combo_text, True, (255, 100, 0))
         SCREEN.blit(combo_surf, (SCREEN_WIDTH//2 - 60, 150))
 
@@ -1372,7 +1414,7 @@ def draw_game():
         ctimer -= dt * game_speed
         cy -= 30 * dt * game_speed  # 上浮
 
-        font_ct = pygame.font.Font(None, 28)
+        font_ct = get_font( 28)
         ct_surf = font_ct.render(ctext, True, ccolor)
         # 文字描边效果
         outline_surf = font_ct.render(ctext, True, BLACK)
@@ -1386,7 +1428,7 @@ def draw_game():
 
     # 绘制金币不足警告
     if no_money_timer > 0:
-        font_warn = pygame.font.Font(None, 36)
+        font_warn = get_font( 36)
         warn_text = font_warn.render(no_money_warning, True, RED)
         # 闪烁效果
         if int(no_money_timer * 10) % 2 == 0:
@@ -1394,7 +1436,7 @@ def draw_game():
 
     # 绘制速度状态
     if game_speed != 1.0:
-        font_speed = pygame.font.Font(None, 32)
+        font_speed = get_font( 32)
         speed_text = font_speed.render(speed_labels[game_speed], True, YELLOW)
         SCREEN.blit(speed_text, (SCREEN_WIDTH - 100, 10))
 
@@ -1438,24 +1480,24 @@ def draw_game():
         pygame.draw.polygon(SCREEN, place_color, points)
         
         # 费用显示
-        font_cost = pygame.font.Font(None, 20)
+        font_cost = get_font( 20)
         cost_text = f"${tower_cost}"
         cost_surf = font_cost.render(cost_text, True, place_color)
         SCREEN.blit(cost_surf, (mx - 15, my + 15))
 
     # 显示游戏时间(右上角)
-    font_time = pygame.font.Font(None, 32)
+    font_time = get_font( 32)
     time_text = font_time.render(time_str, True, WHITE)
     SCREEN.blit(time_text, (SCREEN_WIDTH - 80, 50))
 
     # 显示FPS
-    font_fps = pygame.font.Font(None, 24)
+    font_fps = get_font( 24)
     fps_text = font_fps.render(f"FPS: {fps}", True, (100, 255, 100))
     SCREEN.blit(fps_text, (10, 10))
 
     # 绘制波次提示(最终波提示)
     if wave_tip and wave_tip_timer > 0:
-        font_tip = pygame.font.Font(None, 48)
+        font_tip = get_font( 48)
         tip_surf = font_tip.render(wave_tip, True, (255, 50, 50))
         SCREEN.blit(tip_surf, (SCREEN_WIDTH//2 - 100, 100))
 
@@ -1464,7 +1506,7 @@ def draw_game():
         next_wave = state.wave_manager.get_next_wave_index()
         wave_data = state.wave_manager.waves[next_wave] if next_wave < len(state.wave_manager.waves) else None
         if wave_data:
-            font_preview = pygame.font.Font(None, 24)
+            font_preview = get_font( 24)
             # 获取怪物类型名称
             monsters_list = wave_data.get('monsters', [])
             if monsters_list:
@@ -1501,7 +1543,7 @@ def draw_game():
     global achievement_timer
     if achievement_timer > 0:
         achievement_timer -= dt * game_speed
-        font_ach = pygame.font.Font(None, 32)
+        font_ach = get_font( 32)
         ach_text = font_ach.render(achievement_notify, True, YELLOW)
         SCREEN.blit(ach_text, (SCREEN_WIDTH//2 - 100, 180))
     
@@ -1512,7 +1554,7 @@ def draw_game():
     global quest_timer
     if quest_timer > 0:
         quest_timer -= dt * game_speed
-        font_quest_notif = pygame.font.Font(None, 28)
+        font_quest_notif = get_font( 28)
         quest_text = font_quest_notif.render(quest_notify, True, CYAN)
         SCREEN.blit(quest_text, (SCREEN_WIDTH//2 - 120, 210))
 
@@ -1520,7 +1562,7 @@ def draw_game():
     event_y = 80
     for event_key, event_data in random_events.items():
         if event_data["active"]:
-            font_event = pygame.font.Font(None, 28)
+            font_event = get_font( 28)
             # 显示事件名称和剩余时间
             timer_text = f"{event_data['name']} ({event_data['timer']:.1f}s)"
             event_text = font_event.render(timer_text, True, event_data["color"])
@@ -1529,7 +1571,7 @@ def draw_game():
 
     # 生命值不足警告
     if low_life_warning and low_life_timer > 0:
-        font_warn = pygame.font.Font(None, 48)
+        font_warn = get_font( 48)
         warn_text = font_warn.render("❤️ 生命值告急!", True, RED)
         # 闪烁效果
         if int(low_life_timer * 5) % 2 == 0:
@@ -1565,17 +1607,17 @@ def draw_game():
         pygame.draw.rect(SCREEN, color, (bx, by, 80, 35), 2, border_radius=5)
         
         # 文字
-        font_skill = pygame.font.Font(None, 28)
+        font_skill = get_font( 28)
         key_surf = font_skill.render(f"{key}: {name}", True, color)
         SCREEN.blit(key_surf, (bx + 5, by + 8))
 
     # 提示
-    font_tip = pygame.font.Font(None, 20)
+    font_tip = get_font( 20)
     tip_surf = font_tip.render("快捷技能", True, GRAY)
     SCREEN.blit(tip_surf, (80, skill_bar_y + 10))
 
     # 底部操作提示
-    font_hint = pygame.font.Font(None, 24)
+    font_hint = get_font( 24)
     hint_text = f"Tab:速度 | 1-3:选塔 | U:升级 | H:血量 | T:统计 | M:音效 | 点击:放置  金币:{state.money}  生命:{state.lives}  波次:{state.wave}"
     hint_surf = font_hint.render(hint_text, True, GRAY)
     SCREEN.blit(hint_surf, (10, SCREEN_HEIGHT - 30))
@@ -1617,7 +1659,7 @@ def draw_game():
         # 文字上浮效果
         float_y = y - 40 - int((1 - timer / 2.0) * 20)  # 上浮20像素
 
-        font_up = pygame.font.Font(None, 24)
+        font_up = get_font( 24)
         up_surf = font_up.render(upgrade_text, True, YELLOW)
         # 文字描边效果
         outline_surf = font_up.render(upgrade_text, True, BLACK)
@@ -1662,7 +1704,7 @@ def draw_game():
         cx, cy, timer = ce
         
         # 暴击文字
-        font_crit = pygame.font.Font(None, 40)
+        font_crit = get_font( 40)
         crit_text = font_crit.render("暴击!", True, (255, 0, 0))
         SCREEN.blit(crit_text, (int(cx) - 30 + shake_x, int(cy) - 30 + shake_y))
         
@@ -1684,7 +1726,7 @@ def draw_game():
         countdown = int(wave_wait_timer) + 1
         if countdown > 0 and countdown <= 5:
             # 大字倒计时
-            font_big = pygame.font.Font(None, 120)
+            font_big = get_font( 120)
             countdown_text = str(countdown)
 
             # 闪烁效果
@@ -1704,7 +1746,7 @@ def draw_game():
             SCREEN.blit(text_surf, text_rect)
 
             # "下一波即将来临" 提示
-            font_tip = pygame.font.Font(None, 36)
+            font_tip = get_font( 36)
             tip_surf = font_tip.render("下一波即将来临!", True, WHITE)
             tip_rect = tip_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 60))
             SCREEN.blit(tip_surf, tip_rect)
@@ -1715,7 +1757,7 @@ def draw_game():
         pygame.draw.rect(SCREEN, (0, 0, 180), stats_rect)
         pygame.draw.rect(SCREEN, YELLOW, stats_rect, 2)
 
-        font_stats = pygame.font.Font(None, 28)
+        font_stats = get_font( 28)
         y = stats_rect.y + 20
         for key, label in [("kills", "击杀"), ("towers_built", "建造"), ("towers_upgraded", "升级"), ("gold_spent", "花费"), ("gold_earned", "获得")]:
             text = font_stats.render(f"{label}: {stats[key]}", True, WHITE)
@@ -1775,7 +1817,7 @@ def draw_wave_preview_panel():
     pygame.draw.rect(SCREEN, (100, 150, 255), (panel_x, panel_y, panel_w, panel_h), 2, border_radius=8)
     
     # 标题
-    font = pygame.font.Font(None, 26)
+    font = get_font( 26)
     title = font.render("📋 波次预览 (Tab)", True, (255, 215, 0))
     SCREEN.blit(title, (panel_x + 20, panel_y + 10))
     
@@ -1783,7 +1825,7 @@ def draw_wave_preview_panel():
     current_wave = state.wave_manager.current_wave + 1 if hasattr(state, 'wave_manager') else 1
     total_waves = len(state.wave_manager.waves) if hasattr(state, 'wave_manager') else 8
     
-    font2 = pygame.font.Font(None, 20)
+    font2 = get_font( 20)
     info = font2.render(f"当前: 第 {current_wave} 波 / 共 {total_waves} 波", True, (200, 200, 200))
     SCREEN.blit(info, (panel_x + 20, panel_y + 40))
     
@@ -1812,7 +1854,7 @@ def draw_tower_book():
     SCREEN.blit(overlay, (0, 0))
     
     # 标题
-    font_title = pygame.font.Font(None, 50)
+    font_title = get_font( 50)
     title = font_title.render("📖 塔图鉴", True, GOLD)
     SCREEN.blit(title, (SCREEN_WIDTH//2 - 60, 50))
     
@@ -1824,7 +1866,7 @@ def draw_tower_book():
         ("减速塔", "减速敌人", "青色菱形", "辅助塔"),
     ]
     
-    font_info = pygame.font.Font(None, 28)
+    font_info = get_font( 28)
     for i, (name, type_, shape, feature) in enumerate(towers_info):
         y = 130 + i * 80
         
@@ -1850,7 +1892,7 @@ def draw_tower_book():
         SCREEN.blit(detail_surf, (200, y + 30))
     
     # 关闭提示
-    font_tip = pygame.font.Font(None, 24)
+    font_tip = get_font( 24)
     tip = font_tip.render("按 I 键关闭图鉴", True, YELLOW)
     SCREEN.blit(tip, (SCREEN_WIDTH//2 - 60, SCREEN_HEIGHT - 50))
 
@@ -1862,7 +1904,7 @@ def draw_monster_book():
     overlay.fill((0, 0, 0, 200))
     SCREEN.blit(overlay, (0, 0))
     
-    font_title = pygame.font.Font(None, 50)
+    font_title = get_font( 50)
     title = font_title.render("🐛 怪物图鉴", True, GOLD)
     SCREEN.blit(title, (SCREEN_WIDTH//2 - 70, 30))
     
@@ -1876,7 +1918,7 @@ def draw_monster_book():
         ("超级Boss", "终极", "200", "0.2", "大红圆+光环"),
     ]
     
-    font_info = pygame.font.Font(None, 26)
+    font_info = get_font( 26)
     for i, (name, type_, hp, speed, shape) in enumerate(monsters_info):
         y = 90 + i * 40
         
@@ -1900,7 +1942,7 @@ def draw_monster_book():
         surf = font_info.render(text, True, WHITE)
         SCREEN.blit(surf, (150, y))
     
-    font_tip = pygame.font.Font(None, 24)
+    font_tip = get_font( 24)
     tip = font_tip.render("按 J 键关闭图鉴", True, YELLOW)
     SCREEN.blit(tip, (SCREEN_WIDTH//2 - 60, SCREEN_HEIGHT - 50))
 
@@ -1970,25 +2012,33 @@ def main():
                     elif event.key == pygame.K_DOWN:
                         selected_level = (selected_level + 1) % len(levels)
                     elif event.key == pygame.K_RETURN:
-                        # 确认选择关卡
+                        # 确认选择关卡，进入难度选择
                         level_select_mode = False
+                        difficulty_selected = False  # 进入难度选择
                         selected_level_data = levels[selected_level]
-                        print(f"已选择关卡: {selected_level_data['name']}")
+                        print(f"已选择关卡: {selected_level_data['name']}, 请选择难度")
                     elif event.key == pygame.K_ESCAPE:
                         # 退出游戏
                         running = False
-                    return
                 
                 # 难度选择(关卡选择后)
                 if not difficulty_selected:
                     if event.key == pygame.K_1:
                         game_difficulty = DIFFICULTY_EASY
+                        difficulty_selected = True
                     elif event.key == pygame.K_2:
                         game_difficulty = DIFFICULTY_NORMAL
+                        difficulty_selected = True
                     elif event.key == pygame.K_3:
                         game_difficulty = DIFFICULTY_HARD
-                    elif event.key == pygame.K_SPACE:
                         difficulty_selected = True
+                    elif event.key == pygame.K_RETURN:
+                        # 按回车也确认当前难度
+                        difficulty_selected = True
+                    elif event.key == pygame.K_ESCAPE:
+                        # 返回关卡选择
+                        level_select_mode = True
+                        difficulty_selected = False
 
                 # Tab切换速度
                 if event.key == pygame.K_TAB:
@@ -2512,12 +2562,12 @@ def main():
             pause_overlay.fill((0, 0, 0, 150))
             SCREEN.blit(pause_overlay, (0, 0))
 
-            font_title = pygame.font.Font(None, 64)
+            font_title = get_font( 64)
             title = font_title.render("⏸️ 暂停", True, WHITE)
             SCREEN.blit(title, (SCREEN_WIDTH//2 - 80, 100))
 
             # 显示当前状态
-            font_info = pygame.font.Font(None, 28)
+            font_info = get_font( 28)
             y = 200
             info_lines = [
                 f"波次: {state.wave + 1}/10",
@@ -2534,7 +2584,7 @@ def main():
                 y += 35
 
             # 操作提示
-            font_hint = pygame.font.Font(None, 24)
+            font_hint = get_font( 24)
             hints = [
                 "ESC - 继续",
                 "S - 保存",
