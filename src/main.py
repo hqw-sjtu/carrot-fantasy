@@ -593,10 +593,20 @@ BGMusic = None
 
 from sound_manager import SoundManager
 
-pygame.mixer.init()
+def init_audio():
+    """初始化音频系统 - 延迟到游戏启动时调用"""
+    global sound_manager
+    try:
+        pygame.mixer.init()
+        # 初始化音效管理器
+        sound_manager = SoundManager()
+    except pygame.error as e:
+        print(f"⚠️ 音频初始化失败: {e}")
+        sound_manager = None
+    return sound_manager is not None
 
-# 初始化音效管理器
-sound_manager = SoundManager()
+# 音效管理器 - 延迟到main()中初始化
+sound_manager = None
 
 from config_loader import load_config, get_config
 from checkin_system import checkin_data, try_checkin, draw_checkin_panel
@@ -662,14 +672,30 @@ GRASS_LIGHT = tuple(config['colors']['grass_light'])
 PATH_BROWN = tuple(config['colors']['path_brown'])
 PATH_LIGHT_BROWN = tuple(config['colors']['path_light'])
 
-pygame.init()
+shoot_sound = None
 
-# 尝试加载音效(可选)
-SHOOT_SOUND_PATH = '/usr/share/sounds/pygame/stereo/player_shot.wav'
-try:
-    shoot_sound = pygame.mixer.Sound(SHOOT_SOUND_PATH) if os.path.exists(SHOOT_SOUND_PATH) else None
-except:
-    shoot_sound = None
+def init_game():
+    """初始化游戏 - 在main()开头调用"""
+    global shoot_sound
+    
+    # 初始化pygame
+    try:
+        pygame.init()
+    except pygame.error as e:
+        print(f"⚠️ Pygame初始化失败: {e}")
+    
+    # 初始化音频
+    init_audio()
+    
+    # 尝试加载音效(可选)
+    SHOOT_SOUND_PATH = '/usr/share/sounds/pygame/stereo/player_shot.wav'
+    try:
+        shoot_sound = pygame.mixer.Sound(SHOOT_SOUND_PATH) if os.path.exists(SHOOT_SOUND_PATH) else None
+    except:
+        shoot_sound = None
+    
+    # 设置全局音效播放器
+    set_sound_player(lambda: play_sound(shoot_sound))
 
 def play_sound(sound):
     if sound:
@@ -677,9 +703,6 @@ def play_sound(sound):
             sound.play()
         except:
             pass
-
-# 设置全局音效播放器
-set_sound_player(lambda: play_sound(shoot_sound))
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("保卫萝卜 - Carrot Fantasy v0.3")
@@ -1870,6 +1893,10 @@ def main():
     global wave_tip, egg_input_buffer, easter_egg_active
     global lights, particles, lines
     global screen_shake_offset, time_str, show_achievement_unlock
+    
+    # 初始化游戏
+    init_game()
+    
     # 初始化粒子系统
     particle_system = get_particle_system()
     # 初始化塔基特效系统
