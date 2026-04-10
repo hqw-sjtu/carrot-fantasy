@@ -912,6 +912,25 @@ class GameData:
 # 全局游戏状态
 state = GameData()
 
+# 游戏对象 - 在init_new_game()中初始化
+global_base_effect_manager = None
+global_particle_system = None
+global_damage_number_manager = None
+
+def init_new_game():
+    """初始化新游戏 - 在难度选择完成后调用"""
+    global global_base_effect_manager, global_particle_system, global_damage_number_manager
+    
+    # 初始化粒子系统
+    global_particle_system = get_particle_system()
+    # 初始化塔基特效系统
+    global_base_effect_manager = get_base_effect_manager()
+    # 初始化伤害数字系统
+    global_damage_number_manager = DamageNumberManager()
+    
+    print("游戏初始化完成!")
+    return global_base_effect_manager, global_particle_system, global_damage_number_manager
+
 def draw_game():
     """绘制游戏画面"""
     # 应用屏幕震动
@@ -1347,7 +1366,7 @@ def draw_game():
             pygame.draw.circle(SCREEN, border_color, (tx, ty), 17, border_width)
     
     # 绘制塔基持续发光效果
-    base_effect_manager.draw_tower_base_glows(SCREEN, state.towers)
+    global_base_effect_manager.draw_tower_base_glows(SCREEN, state.towers)
 
     # 绘制防御塔攻击线(锁定目标) - 增强版
     for tower in state.towers:
@@ -1809,13 +1828,13 @@ def draw_game():
     # 绘制粒子特效
     draw_particles()
     # 绘制塔基特效
-    base_effect_manager.draw(SCREEN)
+    global_base_effect_manager.draw(SCREEN)
     # 绘制伤害数字
-    damage_number_manager.draw(SCREEN)
+    global_damage_number_manager.draw(SCREEN)
     
     # 更新和绘制升级光晕特效
-    particle_system.update_upgrade_aura()
-    particle_system.draw_upgrade_aura(SCREEN)
+    global_particle_system.update_upgrade_aura()
+    global_particle_system.draw_upgrade_aura(SCREEN)
 
 # 波次预览系统
 def draw_wave_preview_panel():
@@ -1989,16 +2008,13 @@ def main():
     global wave_tip, egg_input_buffer, easter_egg_active
     global lights, particles, lines
     global screen_shake_offset, time_str, show_achievement_unlock
+    global global_base_effect_manager, global_particle_system, global_damage_number_manager
     
     # 初始化游戏
     init_game()
     
-    # 初始化粒子系统
-    particle_system = get_particle_system()
-    # 初始化塔基特效系统
-    base_effect_manager = get_base_effect_manager()
-    # 初始化伤害数字系统
-    damage_number_manager = DamageNumberManager()
+    # 初始化粒子系统（等待难度选择完成后重新初始化）
+    # 注意：这里不直接初始化，等难度选择完成后再初始化完整游戏对象
     
     clock = pygame.time.Clock()
     running = True
@@ -2046,15 +2062,19 @@ def main():
                     if event.key == pygame.K_1:
                         game_difficulty = DIFFICULTY_EASY
                         difficulty_selected = True
+                        init_new_game()
                     elif event.key == pygame.K_2:
                         game_difficulty = DIFFICULTY_NORMAL
                         difficulty_selected = True
+                        init_new_game()
                     elif event.key == pygame.K_3:
                         game_difficulty = DIFFICULTY_HARD
                         difficulty_selected = True
+                        init_new_game()
                     elif event.key == pygame.K_RETURN:
                         # 按回车也确认当前难度
                         difficulty_selected = True
+                        init_new_game()
                     elif event.key == pygame.K_ESCAPE:
                         # 返回关卡选择
                         level_select_mode = True
@@ -2349,8 +2369,9 @@ def main():
             wave_wait_timer = wave_wait_duration
             
             # ===== 波次完成庆祝动画 =====
-            particle_system.emit_explosion(SCREEN_WIDTH//2, 100, (255, 215, 0), count=30)
-            particle_system.emit(SCREEN_WIDTH//2, 100, 20, (255, 255, 255), lifetime=1.5, size=8, speed=80, upward=True)
+            if global_particle_system:
+                global_particle_system.emit_explosion(SCREEN_WIDTH//2, 100, (255, 215, 0), count=30)
+                global_particle_system.emit(SCREEN_WIDTH//2, 100, 20, (255, 255, 255), lifetime=1.5, size=8, speed=80, upward=True)
             
             # ===== 每日任务进度更新 =====
             update_quest("wave_5")
@@ -2397,9 +2418,11 @@ def main():
         # 更新粒子特效
         update_particles(effective_dt)
         # 更新塔基特效
-        base_effect_manager.update(effective_dt)
+        if global_base_effect_manager:
+            global_base_effect_manager.update(effective_dt)
         # 更新伤害数字
-        damage_number_manager.update(effective_dt)
+        if global_damage_number_manager:
+            global_damage_number_manager.update(effective_dt)
 
         # 更新怪物位置
         for monster in state.monsters[:]:
@@ -2427,7 +2450,8 @@ def main():
             tower.attack(state.monsters, state.projectiles, state.towers)
             # 检测是否发射了新子弹，触发塔基特效
             if len(state.projectiles) > old_projectile_count:
-                base_effect_manager.trigger_attack_effect(tower)
+                if global_base_effect_manager:
+                    global_base_effect_manager.trigger_attack_effect(tower)
         
         # 清空Combo Strike计数（每帧重新计算）
         Tower._combo_targets.clear()
@@ -2447,7 +2471,8 @@ def main():
                     actual_damage = int(projectile.damage * damage_mult)
                     monster.health -= actual_damage
                     # 显示伤害数字
-                    damage_number_manager.add_damage(int(mx_monster), 280, actual_damage, is_crit)
+                    if global_damage_number_manager:
+                        global_damage_number_manager.add_damage(int(mx_monster), 280, actual_damage, is_crit)
                     # 记录击杀来源塔
                     source_tower = getattr(projectile, 'source_tower', None)
                     if monster.health <= 0:  # 怪物死亡
