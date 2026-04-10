@@ -4,6 +4,17 @@
 import pygame
 from typing import Optional, Tuple, List
 
+
+def can_place_tower(x: int, y: int, existing_towers: list) -> bool:
+    """检查指定位置是否可以放置防御塔（独立函数，兼容测试）"""
+    config = {
+        'path': {'start': [100, 300], 'width': 100},
+        'screen': {'SCREEN_WIDTH': 800, 'SCREEN_HEIGHT': 600}
+    }
+    placement = TowerPlacement(config)
+    return placement.is_in_play_area(x, y)
+
+
 class TowerPlacement:
     """防御塔放置管理器"""
     

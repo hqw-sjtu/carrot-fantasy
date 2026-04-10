@@ -613,6 +613,7 @@ from waves import WaveManager
 from tower_placement import TowerPlacement
 from particle_system import get_particle_system
 from damage_numbers import DamageNumberManager
+from base_effects import get_base_effect_manager
 
 # 设置全局音效管理器给towers模块
 set_sound_manager(sound_manager)
@@ -1245,6 +1246,9 @@ def draw_game():
                 border_color = WHITE
                 border_width = 1
             pygame.draw.circle(SCREEN, border_color, (tx, ty), 17, border_width)
+    
+    # 绘制塔基持续发光效果
+    base_effect_manager.draw_tower_base_glows(SCREEN, state.towers)
 
     # 绘制防御塔攻击线(锁定目标) - 增强版
     for tower in state.towers:
@@ -1685,6 +1689,8 @@ def draw_game():
     
     # 绘制粒子特效
     draw_particles()
+    # 绘制塔基特效
+    base_effect_manager.draw(SCREEN)
     # 绘制伤害数字
     damage_number_manager.draw(SCREEN)
     
@@ -1866,6 +1872,8 @@ def main():
     global screen_shake_offset, time_str, show_achievement_unlock
     # 初始化粒子系统
     particle_system = get_particle_system()
+    # 初始化塔基特效系统
+    base_effect_manager = get_base_effect_manager()
     # 初始化伤害数字系统
     damage_number_manager = DamageNumberManager()
     
@@ -2257,6 +2265,8 @@ def main():
 
         # 更新粒子特效
         update_particles(effective_dt)
+        # 更新塔基特效
+        base_effect_manager.update(effective_dt)
         # 更新伤害数字
         damage_number_manager.update(effective_dt)
 
@@ -2282,7 +2292,11 @@ def main():
 
         # 塔攻击逻辑 - 添加组合系统
         for tower in state.towers:
+            old_projectile_count = len(state.projectiles)
             tower.attack(state.monsters, state.projectiles, state.towers)
+            # 检测是否发射了新子弹，触发塔基特效
+            if len(state.projectiles) > old_projectile_count:
+                base_effect_manager.trigger_attack_effect(tower)
         
         # 清空Combo Strike计数（每帧重新计算）
         Tower._combo_targets.clear()

@@ -23,6 +23,7 @@ class WaveManager:
         self.current_wave = 0
         self.waves = WAVES
         self.is_waving = False
+        self.wave_in_progress = False  # 兼容测试
         self.spawn_timer = 0
         self.spawn_interval = 0
         self.monster_queue = []
@@ -48,12 +49,14 @@ class WaveManager:
                 self.monster_queue.append(monster_type)
                 
         self.is_waving = True
+        self.wave_in_progress = True  # 兼容测试
         self.wave_complete = False
         self.wave_start_time = time.time()
         return True
         
     def update(self, dt, state, difficulty=1.0):
         """更新波次系统"""
+        self.wave_in_progress = self.is_waving and not self.wave_complete
         if not self.is_waving or self.wave_complete:
             return
             
@@ -80,6 +83,7 @@ class WaveManager:
         # 检查波次是否完成
         if not self.monster_queue and not state.monsters:
             self.is_waving = False
+            self.wave_in_progress = False
             self.wave_complete = True
             
     def is_wave_complete(self):
