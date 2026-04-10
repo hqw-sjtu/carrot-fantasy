@@ -1070,7 +1070,7 @@ def draw_game():
     pygame.draw.line(SCREEN, (50, 180, 50), (700 + shake_x + 5, 300 + shake_y - 22), (700 + shake_x + 8, 300 + shake_y - 32), 3)
     
     # 萝卜血条显示
-    if show_hp or state.lives <= 7:  # 血量低于70%始终显示
+    if show_health_detail or state.lives <= 7:  # 血量低于70%始终显示
         carrot_hp_ratio = state.lives / 10.0
         bar_width = 50
         bar_height = 8
