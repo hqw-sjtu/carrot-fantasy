@@ -5,11 +5,13 @@
 import sys
 sys.path.insert(0, 'src')
 
+from particle_system import Particle, ParticleSystem, ScreenShake
+
 def test_particle_system_import():
     """测试粒子系统导入"""
     from particle_system import Particle, ParticleSystem, ScreenShake
     print("✓ 粒子系统模块导入成功")
-    return True
+    
 
 def test_particle_creation():
     """测试粒子创建"""
@@ -18,7 +20,7 @@ def test_particle_creation():
     assert p.y == 100
     assert p.color == (255, 0, 0)
     print("✓ 粒子创建测试通过")
-    return True
+    
 
 def test_particle_update():
     """测试粒子更新"""
@@ -27,7 +29,7 @@ def test_particle_update():
     assert alive == True
     assert p.lifetime < 1.0
     print("✓ 粒子更新测试通过")
-    return True
+    
 
 def test_particle_system():
     """测试粒子系统"""
@@ -41,7 +43,7 @@ def test_particle_system():
     # 更新
     ps.update(0.1)
     print(f"✓ 粒子系统测试通过，护盾特效触发{len(ps.particles)}个粒子")
-    return True
+    
 
 def test_freeze_effect():
     """测试冰冻特效"""
@@ -55,7 +57,7 @@ def test_freeze_effect():
         ps.update(0.1)
     
     print(f"✓ 冰冻特效测试通过，粒子数从{initial_count}减少到{len(ps.particles)}")
-    return True
+    
 
 def test_screen_shake():
     """测试屏幕震动"""
@@ -68,7 +70,7 @@ def test_screen_shake():
     assert ss.current_time > 0
     
     print("✓ 屏幕震动测试通过")
-    return True
+    
 
 def run_all_tests():
     """运行所有测试"""

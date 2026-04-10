@@ -12,8 +12,8 @@ def test_combo_bonus_display():
     """测试Combo伤害加成显示逻辑"""
     from towers import Tower
     
-    # 创建塔并模拟集火加成
-    tower = Tower('arrow', 100, 100)
+    # 创建塔并模拟集火加成 (使用正确的初始化参数)
+    tower = Tower('箭塔', 10, 100, 50, 1.0, 200, 200)
     tower.combo_damage_bonus = 15  # 3塔集火
     tower.adjacent_bonus = 10      # 相邻同类型塔
     
@@ -22,28 +22,28 @@ def test_combo_bonus_display():
     
     assert combo_bonus == 25, f"Combo加成应为25%, 实际为{combo_bonus}%"
     print(f"✅ Combo加成显示: +{combo_bonus}%")
-    return True
+    
 
 
 def test_no_combo_display():
     """测试无集火加成时不应显示"""
     from towers import Tower
     
-    tower = Tower('arrow', 100, 100)
+    tower = Tower('箭塔', 10, 100, 50, 1.0, 200, 200)
     # 未设置combo属性
     combo_bonus = getattr(tower, 'combo_damage_bonus', 0) + getattr(tower, 'adjacent_bonus', 0)
     
     assert combo_bonus == 0, f"无加成时应为0, 实际为{combo_bonus}%"
     print("✅ 无集火加成时不显示")
-    return True
+    
 
 
 def test_tower_selection_combo():
     """测试选中塔时的Combo信息"""
     from towers import Tower
     
-    # 测试各级别塔的Combo显示
-    tower = Tower('arrow', 100, 100)
+    # 测试各级别塔的Combo显示 (使用正确的初始化参数)
+    tower = Tower('箭塔', 10, 100, 50, 1.0, 200, 200)
     tower.level = 2
     tower.combo_damage_bonus = 20
     tower.adjacent_bonus = 10
@@ -52,7 +52,7 @@ def test_tower_selection_combo():
     assert combo_text == "⚔️ 集火: +30%", f"Combo文本错误: {combo_text}"
     
     print("✅ 选中塔Combo信息显示正确")
-    return True
+    
 
 
 def run_all_tests():

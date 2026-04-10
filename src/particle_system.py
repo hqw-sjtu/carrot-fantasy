@@ -382,6 +382,48 @@ class ParticleSystem:
                 size=random.uniform(4, 8),
                 fade=True
             ))
+
+    def emit_wave_complete(self, x, y, wave_num):
+        """波次完成庆祝特效 - 大规模烟花效果"""
+        # 多色烟花绽放
+        colors = [
+            (255, 80, 80),   # 红
+            (80, 255, 80),   # 绿
+            (80, 80, 255),   # 蓝
+            (255, 255, 80),  # 黄
+            (255, 80, 255),  # 粉
+            (80, 255, 255),  # 青
+            (255, 180, 80),  # 橙
+        ]
+        
+        # 每种颜色放一组
+        for color in colors:
+            for _ in range(15):
+                angle = random.uniform(0, 360)
+                speed = random.uniform(100, 250)
+                self.particles.append(Particle(
+                    x, y,
+                    math.cos(math.radians(angle)) * speed,
+                    math.sin(math.radians(angle)) * speed - 50,  # 向上偏移
+                    color,
+                    lifetime=random.uniform(0.8, 1.5),
+                    size=random.uniform(5, 12),
+                    fade=True
+                ))
+        
+        # 金色星星闪烁
+        for _ in range(30):
+            angle = random.uniform(0, 360)
+            speed = random.uniform(50, 150)
+            self.particles.append(Particle(
+                x, y,
+                math.cos(math.radians(angle)) * speed,
+                math.sin(math.radians(angle)) * speed - 80,
+                (255, 215, 0),  # 金色
+                lifetime=random.uniform(1.0, 2.0),
+                size=random.uniform(3, 6),
+                fade=True
+            ))
         # 白色火花
         for _ in range(15):
             self.particles.append(Particle(

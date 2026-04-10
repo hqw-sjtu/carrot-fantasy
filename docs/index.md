@@ -127,7 +127,7 @@ python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK'
 
 ## 📋 更新日志
 
-See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.4.3**
+See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.4.9**
 
 ## 🤝 贡献指南
 

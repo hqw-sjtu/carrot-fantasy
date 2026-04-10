@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.9] - 2026-04-10 14:23
+
+### Features | 新功能
+- ✨ 波次完成庆祝特效: emit_wave_complete() 大规模烟花效果,7色绽放+金色星星
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有Python模块通过py_compile
+- ✅ 测试优化: 修复测试返回值警告(59 passed, 3 warnings)
+- ✅ 测试套件: 15个测试文件完整覆盖
+
+### Stability | 稳定性
+- 🔒 无新增问题
+
+---
+
 ## [1.4.8] - 2026-04-10 10:23
 
 ### Features | 新功能

@@ -26,7 +26,7 @@ def test_particle_performance():
     
     print(f"✅ 粒子性能测试: 1000次更新耗时 {elapsed:.3f}s")
     assert elapsed < 2.0, f"粒子更新过慢: {elapsed:.3f}s"
-    return True
+    
 
 
 def test_tower_creation_stress():
@@ -50,7 +50,7 @@ def test_tower_creation_stress():
     
     print(f"✅ 塔创建压力测试: 100个塔耗时 {elapsed:.3f}s")
     assert elapsed < 1.0
-    return True
+    
 
 
 def test_monster_pathfinding():
@@ -77,7 +77,7 @@ def test_monster_pathfinding():
             m.position = 0.0
     
     print(f"✅ 路径计算测试: 50个怪物更新正常")
-    return True
+    
 
 
 def test_config_loading():
@@ -90,7 +90,7 @@ def test_config_loading():
         assert config is not None
     
     print(f"✅ 配置加载测试: 10次重复加载正常")
-    return True
+    
 
 
 def test_state_machine_transitions():
@@ -105,7 +105,7 @@ def test_state_machine_transitions():
         sm.set_state(state)
     
     print(f"✅ 状态机测试: {len(states)}次状态转换正常")
-    return True
+    
 
 
 def run_all_stability_tests():

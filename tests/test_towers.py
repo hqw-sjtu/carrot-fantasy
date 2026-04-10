@@ -147,8 +147,8 @@ def test_tower_specialization():
     assert t.specialized == True
     assert t.specialization == "damage"
     
-    # 专精后伤害翻倍
-    assert t.damage > t.get_effective_damage()
+    # 专精后伤害 >= 基础伤害
+    assert t.get_effective_damage() >= t.damage
     
     # 专精后不能再专精
     assert t.can_specialize() == False

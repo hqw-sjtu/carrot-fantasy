@@ -33,7 +33,7 @@ def test_config_loads():
         assert 'range' in tower, f"{name} missing range"
     
     print("✅ 配置加载测试通过")
-    return True
+    
 
 if __name__ == '__main__':
     test_config_loads()

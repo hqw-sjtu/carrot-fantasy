@@ -16,9 +16,9 @@ def test_imports():
         from towers import Tower
         from projectiles import Projectile
         from monsters import Monster
-        return True, "All imports successful"
+        assert True, "All imports successful"
     except Exception as e:
-        return False, f"Import error: {e}"
+        assert False, f"Import error: {e}"
 
 def test_particle_pool():
     """测试粒子对象池"""
@@ -34,13 +34,13 @@ def test_particle_pool():
     ps._release_particle(p)
     assert p['active'] == False, "Particle should be released"
     
-    return True, "Particle pool working"
+    assert True, "Particle pool working"
 
 def test_tower_creation():
     """测试塔创建"""
     from towers import Tower
     
-    tower = Tower('箭塔', 100, 100)
+    tower = Tower('箭塔', 10, 100, 50, 1.0, 200, 200)
     assert tower.name == '箭塔', "Tower name should match"
     assert tower.level == 1, "Initial level should be 1"
     
@@ -48,19 +48,22 @@ def test_tower_creation():
     tower.upgrade()
     assert tower.level == 2, "Level should be 2 after upgrade"
     
-    return True, "Tower creation and upgrade working"
+    assert True, "Tower creation and upgrade working"
 
 def test_projectile_flight():
     """测试子弹飞行"""
     from projectiles import Projectile
+    from monsters import Monster
     
-    proj = Projectile(0, 0, 100, 50, 10, '箭塔')
+    target = Monster('小怪', 100, 2, 10)
+    target.x, target.y = 100, 50
+    proj = Projectile(0, 0, target, 10, 5, 1.0, None, '箭塔')
     
     # 模拟更新
     for _ in range(10):
         alive = proj.update(0.016)  # 60fps
     
-    return True, "Projectile flight working"
+    assert True, "Projectile flight working"
 
 def benchmark_particles():
     """粒子系统基准测试"""
