@@ -7,6 +7,54 @@ import random
 import math
 
 
+class ShatterParticle:
+    """怪物死亡时的破碎碎片"""
+    
+    def __init__(self, x, y, color, count=8):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.max_life = 40
+        self.life = self.max_life
+        self.shards = []
+        for i in range(count):
+            angle = (360 / count) * i + random.uniform(-15, 15)
+            speed = random.uniform(2, 5)
+            rad = math.radians(angle)
+            self.shards.append({
+                'x': x, 'y': y,
+                'vx': math.cos(rad) * speed,
+                'vy': math.sin(rad) * speed,
+                'size': random.uniform(3, 7),
+                'rotation': random.uniform(0, 360),
+                'rot_speed': random.uniform(-10, 10)
+            })
+            
+    def update(self, dt):
+        self.life -= dt
+        for shard in self.shards:
+            shard['x'] += shard['vx'] * dt
+            shard['y'] += shard['vy'] * dt
+            shard['vy'] += 0.2 * dt
+            shard['rotation'] += shard['rot_speed'] * dt
+        return self.life > 0
+    
+    def draw(self, screen):
+        if self.life <= 0:
+            return
+        alpha = int(255 * (self.life / self.max_life))
+        for shard in self.shards:
+            points = []
+            size = shard['size'] * (self.life / self.max_life)
+            for a in [0, 90, 180, 270]:
+                rad = math.radians(a + shard['rotation'])
+                px = shard['x'] + math.cos(rad) * size
+                py = shard['y'] + math.sin(rad) * size
+                points.append((px, py))
+            color = (*self.color, alpha)
+            pygame.draw.polygon(screen, color, points)
+
+
 class Particle:
     """单个粒子"""
     
