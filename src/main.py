@@ -1381,7 +1381,6 @@ def draw_game():
             pygame.draw.circle(SCREEN, WHITE, (tx + shake_x, ty + shake_y), 3)
 
             # 目标锁定框特效
-            import math
             time_now = pygame.time.get_ticks() / 200
             size = 20 + math.sin(time_now) * 3
 
@@ -1425,6 +1424,27 @@ def draw_game():
         ct[4] = ctimer
         if ctimer <= 0:
             combo_texts.remove(ct)
+
+    # 绘制金币动画(怪物死亡时掉落金币显示)
+    for ca in coin_animations[:]:
+        cx, cy, ctext, ctimer = ca
+        ctimer -= dt * game_speed
+        cy -= 40 * dt * game_speed  # 上浮效果
+        alpha = min(255, int(ctimer * 255 * 2))  # 渐隐
+        
+        font_ca = get_font(24)
+        # 金色文字带描边
+        ca_surf = font_ca.render(ctext, True, (255, 215, 0))
+        ca_outline = font_ca.render(ctext, True, (139, 69, 19))
+        # 模拟透明度(创建带alpha的表面)
+        ca_surf.set_alpha(alpha)
+        SCREEN.blit(ca_outline, (int(cx) - 18 + 1, int(cy) + 1))
+        SCREEN.blit(ca_surf, (int(cx) - 18, int(cy)))
+        
+        ca[1] = cy
+        ca[3] = ctimer
+        if ctimer <= 0:
+            coin_animations.remove(ca)
 
     # 绘制金币不足警告
     if no_money_timer > 0:
@@ -1957,7 +1977,7 @@ def main():
     global show_wave_preview, wave_wait_timer, final_wave_announced
     global boss_bar_drawn, music_enabled, screen_shake
     global total_kills, achievement_timer, quest_timer
-    global wave_no_damage, level_select_mode, selected_level
+    global wave_no_damage, level_select_mode, selected_level, difficulty_selected
     global fps_counter, fps_timer, fps
     global kills_this_wave, wave_wait_duration
     global gold_rain_active, double_damage_active, slow_all_active
