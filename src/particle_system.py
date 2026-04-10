@@ -620,3 +620,100 @@ def create_trail_particles(x, y, tower_type):
     
     color = colors.get(tower_type, (200, 200, 200))
     ps.emit_trail(x, y, color)
+
+
+class DiamondSparkle:
+    """钻石收集时的闪烁特效"""
+    
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.max_life = 30
+        self.life = self.max_life
+        # 创建多个菱形粒子
+        self.diamonds = []
+        for i in range(6):
+            angle = (360 / 6) * i + random.uniform(-10, 10)
+            speed = random.uniform(1.5, 3)
+            rad = math.radians(angle)
+            self.diamonds.append({
+                'x': x, 'y': y,
+                'vx': math.cos(rad) * speed,
+                'vy': math.sin(rad) * speed - 1,  # 向上漂移
+                'size': random.uniform(4, 8),
+                'rotation': random.uniform(0, 360),
+                'rot_speed': random.uniform(-5, 5),
+                'color': (random.randint(100, 255), random.randint(200, 255), random.randint(200, 255))
+            })
+    
+    def update(self, dt):
+        self.life -= dt
+        for d in self.diamonds:
+            d['x'] += d['vx'] * dt
+            d['y'] += d['vy'] * dt
+            d['vy'] -= 0.15 * dt  # 减速上升
+            d['rotation'] += d['rot_speed'] * dt
+        return self.life > 0
+    
+    def draw(self, screen):
+        if self.life <= 0:
+            return
+        alpha = int(255 * (self.life / self.max_life))
+        for d in self.diamonds:
+            size = d['size'] * (self.life / self.max_life)
+            cx, cy = d['x'], d['y']
+            # 绘制菱形
+            points = [
+                (cx, cy - size),
+                (cx + size * 0.6, cy),
+                (cx, cy + size),
+                (cx - size * 0.6, cy)
+            ]
+            color = (*d['color'], alpha)
+            pygame.draw.polygon(screen, color, points)
+
+
+class GoldRainEffect:
+    """金币雨特效 - 大量金币从天而降"""
+    
+    def __init__(self, x, y, count=20):
+        self.max_life = 60
+        self.life = self.max_life
+        self.coins = []
+        for i in range(count):
+            self.coins.append({
+                'x': x + random.uniform(-100, 100),
+                'y': y + random.uniform(-50, 50),
+                'vy': random.uniform(3, 8),
+                'size': random.uniform(3, 6),
+                'rotation': random.uniform(0, 360),
+                'rot_speed': random.uniform(-10, 10),
+                'delay': i * 2  # 错开下落时间
+            })
+    
+    def update(self, dt):
+        self.life -= dt
+        for coin in self.coins:
+            if coin['delay'] > 0:
+                coin['delay'] -= dt
+                continue
+            coin['y'] += coin['vy'] * dt
+            coin['vy'] += 0.3 * dt  # 重力加速
+            coin['rotation'] += coin['rot_speed'] * dt
+        return self.life > 0
+    
+    def draw(self, screen):
+        if self.life <= 0:
+            return
+        for coin in self.coins:
+            if coin['delay'] > 0:
+                continue
+            alpha = min(255, int(255 * (self.life / self.max_life)))
+            size = coin['size']
+            cx, cy = coin['x'], coin['y']
+            # 绘制圆形金币
+            color = (255, 215, 0, alpha)
+            pygame.draw.circle(screen, color, (int(cx), int(cy)), int(size))
+            # 金币高光
+            highlight = (255, 255, 200, alpha)
+            pygame.draw.circle(screen, highlight, (int(cx - size*0.3), int(cy - size*0.3)), int(size*0.3))

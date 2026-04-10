@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.11] - 2026-04-10 20:23
+
+### Features | 新功能
+- 💎 钻石闪烁特效(DiamondSparkle): 收集钻石时6颗菱形粒子向外扩散,带旋转和透明度渐变
+- 🌧️ 金币雨特效(GoldRainEffect): 大量金币从天而降,带重力加速和错开下落时间
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 测试套件: 78 passed (新增 6 个特效测试)
+- ✅ 代码质量: 72→78 测试用例覆盖
+
+### Stability | 稳定性
+- 🔒 无新增问题
+
+---
+
 ## [1.4.10] - 2026-04-10 19:23
 
 ### Features | 新功能
