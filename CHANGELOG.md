@@ -9,15 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.4.10] - 2026-04-10 18:23
+## [1.4.10] - 2026-04-10 19:23
 
 ### Features | 新功能
+- 💰 金币掉落动画: 怪物死亡时显示金色"+10"浮动文字,上浮+渐隐效果,描边细节
 - 💀 血条升级版: 低血量(≤25%)闪烁警告, 渐变色(绿→黄→红), 阴影+高光细节
 - 🌀 传送门特效: 入口(蓝)和出口(橙)旋转光环+发光核心动画
 
 ### Maintenance | 每小时维护
-- ✅ 语法检查: main.py, monsters.py 通过py_compile
-- ✅ Git提交: 2文件50行新增
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 测试套件: 72 passed (新增 coin_animations 测试)
+- ✅ GitHub Pages: docs/index.md 完善
 
 ### Stability | 稳定性
 - 🔒 无新增问题
