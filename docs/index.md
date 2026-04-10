@@ -130,7 +130,12 @@ python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK'
 
 ## 📋 更新日志
 
-See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.4.9**
+See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.5.3**
+
+### 最新特性: 连击链特效
+- 连续击杀怪物时触发连击数字显示
+- 连击数越高，火花特效越密集
+- 带文字发光效果和重力物理模拟
 
 ## 🤝 贡献指南
 

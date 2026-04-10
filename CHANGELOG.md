@@ -1,11 +1,27 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-11 03:23 (Hourly Maintenance)
+> Last updated: 2026-04-11 04:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.5.3] - 2026-04-11 04:23
+
+### Features | 新功能
+- ⚡ **连击链特效(ComboChainEffect)**: 连续击杀时显示连击数字+火花特效,连击数越多火花越密集
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 代码优化: 新增ComboChainEffect类,支持combo_count动态调整火花数量
+- ✅ 测试覆盖: 87→91 测试用例,新增4个连击链特效测试
+- ✅ GitHub Pages: 文档完善
+
+### Stability | 稳定性
+- 🔒 无新增问题
 
 ---
 

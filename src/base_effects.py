@@ -275,6 +275,20 @@ class BaseEffectManager:
         effect = ChainLightningEffect(x, y, target_x, target_y)
         self.effects.append(effect)
         
+    def add_shield_effect(self, x, y, color=None):
+        """添加护盾环绕特效"""
+        if color is None:
+            color = (100, 150, 255)
+        effect = ShieldEffect(x, y, color)
+        self.effects.append(effect)
+        
+    def add_idle_particles(self, x, y, color=None):
+        """添加塔空闲粒子特效"""
+        if color is None:
+            color = (255, 255, 200)
+        effect = TowerIdleParticles(x, y, color)
+        self.effects.append(effect)
+        
     def set_tower_base_glow(self, tower_id, color):
         """设置塔基持续发光"""
         self.tower_base_glows[tower_id] = color
@@ -348,6 +362,89 @@ class BaseEffectManager:
         """触发连锁闪电特效"""
         if hasattr(target, 'x') and hasattr(target, 'y'):
             self.add_chain_lightning(tower.x, tower.y, target.x, target.y)
+
+
+class ShieldEffect(BaseEffect):
+    """护盾环绕特效 - 防御塔被攻击时显示保护罩"""
+    
+    def __init__(self, x, y, color=(100, 150, 255), duration=30):
+        super().__init__(x, y)
+        self.color = color
+        self.max_life = duration
+        self.angle = 0
+        self.rings = [
+            {'radius': 30, 'alpha': 40, 'width': 2},
+            {'radius': 35, 'alpha': 25, 'width': 1},
+            {'radius': 40, 'alpha': 15, 'width': 1},
+        ]
+        
+    def update(self, dt):
+        self.life += dt
+        self.angle += dt * 2  # 旋转效果
+        if self.life >= self.max_life:
+            self.active = False
+            
+    def draw(self, screen):
+        if not self.active:
+            return
+        fade_factor = 1 - (self.life / self.max_life)
+        center = (int(self.x), int(self.y))
+        
+        for ring in self.rings:
+            # 旋转的椭圆效果
+            alpha = int(ring['alpha'] * fade_factor)
+            pygame.draw.circle(screen, (*self.color, alpha), 
+                             center, int(ring['radius']), ring['width'])
+        
+        # 绘制六边形护盾符文
+        points = []
+        for i in range(6):
+            angle = self.angle + (60 * i)
+            rad = math.radians(angle)
+            px = self.x + math.cos(rad) * 32
+            py = self.y + math.sin(rad) * 32
+            points.append((int(px), int(py)))
+        pygame.draw.polygon(screen, (*self.color, int(80 * fade_factor)), points, 2)
+
+
+class TowerIdleParticles(BaseEffect):
+    """防御塔空闲时漂浮粒子特效"""
+    
+    def __init__(self, x, y, color=(255, 255, 200), count=5):
+        super().__init__(x, y)
+        self.color = color
+        self.particles = []
+        self.max_life = 120  # 2秒
+        # 初始化粒子
+        for _ in range(count):
+            self.particles.append({
+                'x': x + random.uniform(-15, 15),
+                'y': y + random.uniform(-15, 15),
+                'vy': random.uniform(-0.5, -1.5),  # 向上漂浮
+                'life': random.uniform(0, 60),
+                'max_life': random.uniform(40, 80),
+                'size': random.uniform(1, 3)
+            })
+            
+    def update(self, dt):
+        self.life += dt
+        for p in self.particles:
+            p['y'] += p['vy'] * dt
+            p['life'] += dt
+            p['x'] += math.sin(self.life * 0.1 + p['y'] * 0.1) * 0.3
+        if self.life >= self.max_life:
+            self.active = False
+            
+    def draw(self, screen):
+        if not self.active:
+            return
+        for p in self.particles:
+            if p['life'] > p['max_life']:
+                continue
+            alpha = int(150 * (1 - p['life'] / p['max_life']))
+            size = p['size'] * (1 - p['life'] / p['max_life'] * 0.5)
+            pygame.draw.circle(screen, (*self.color, alpha), 
+                             (int(p['x']), int(p['y'])), int(size))
 
 
 # 单例实例

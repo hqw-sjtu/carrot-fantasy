@@ -717,3 +717,69 @@ class GoldRainEffect:
             # 金币高光
             highlight = (255, 255, 200, alpha)
             pygame.draw.circle(screen, highlight, (int(cx - size*0.3), int(cy - size*0.3)), int(size*0.3))
+
+
+class ComboChainEffect:
+    """连击链特效 - 连续击杀时显示连击数字和火花特效"""
+    
+    def __init__(self, x, y, combo_count):
+        self.x = x
+        self.y = y
+        self.combo_count = combo_count
+        self.max_life = 45
+        self.life = self.max_life
+        self.sparks = []
+        # 根据连击数生成更多火花
+        spark_count = min(combo_count * 2, 20)
+        for i in range(spark_count):
+            angle = random.uniform(0, 360)
+            speed = random.uniform(3, 8)
+            rad = math.radians(angle)
+            self.sparks.append({
+                'x': x, 'y': y,
+                'vx': math.cos(rad) * speed,
+                'vy': math.sin(rad) * speed - 2,  # 向上倾向
+                'life': random.uniform(20, 35),
+                'max_life': 35,
+                'color': random.choice([(255, 200, 50), (255, 150, 0), (255, 255, 100)]),
+                'size': random.uniform(2, 5)
+            })
+    
+    def update(self, dt):
+        self.life -= dt
+        alive = False
+        for spark in self.sparks:
+            if spark['life'] <= 0:
+                continue
+            alive = True
+            spark['life'] -= dt
+            spark['x'] += spark['vx'] * dt
+            spark['y'] += spark['vy'] * dt
+            spark['vy'] += 0.15 * dt  # 重力
+            spark['vx'] *= 0.96  # 空气阻力
+        return alive or self.life > 0
+    
+    def draw(self, screen):
+        if self.life <= 0:
+            return
+        
+        # 绘制连击数字
+        if self.life > 20:
+            font = pygame.font.SysFont('microsoftyahei', 28, bold=True)
+            text = f"{self.combo_count}x COMBO!"
+            # 文字发光效果
+            for offset in [(-2,-2), (2,-2), (-2,2), (2,2)]:
+                glow_surf = font.render(text, True, (255, 150, 0))
+                screen.blit(glow_surf, (self.x + offset[0], self.y + offset[1]))
+            # 主体文字
+            text_surf = font.render(text, True, (255, 255, 255))
+            screen.blit(text_surf, (self.x, self.y))
+        
+        # 绘制火花
+        for spark in self.sparks:
+            if spark['life'] <= 0:
+                continue
+            alpha = int(255 * (spark['life'] / spark['max_life']))
+            color = (*spark['color'], alpha)
+            size = int(spark['size'] * (spark['life'] / spark['max_life']))
+            pygame.draw.circle(screen, color, (int(spark['x']), int(spark['y'])), max(1, size))
