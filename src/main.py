@@ -79,11 +79,11 @@ def draw_ui_border():
     SCREEN.blit(wave_surf, (wave_box_x, wave_box_y))
     pygame.draw.rect(SCREEN, (50, 50, 70), (wave_box_x, wave_box_y, 160, 35), 2, border_radius=8)
     
-    # 塔按钮区域（底部）
-    tower_types = ['箭塔', '炮塔', '魔法塔', '冰霜塔']
+    # 塔按钮区域（底部） - 5种塔
+    tower_types = ['箭塔', '炮塔', '魔法塔', '减速塔', '冰霜塔']
     selected = config.get('tower_selection', None)
     for i, tower_type in enumerate(tower_types):
-        btn_rect = pygame.Rect(50 + i * 80, SCREEN_HEIGHT - 60, 70, 50)
+        btn_rect = pygame.Rect(30 + i * 85, SCREEN_HEIGHT - 60, 75, 50)
         # 普通按钮边框
         pygame.draw.rect(SCREEN, (60, 60, 80), btn_rect, 2, border_radius=8)
         # 选中高亮
@@ -94,9 +94,9 @@ def draw_button_hover():
     """按钮悬停/点击效果"""
     mouse_x, mouse_y = pygame.mouse.get_pos()
     
-    tower_types = ['箭塔', '炮塔', '魔法塔', '冰霜塔']
+    tower_types = ['箭塔', '炮塔', '魔法塔', '减速塔', '冰霜塔']
     for i, tower_type in enumerate(tower_types):
-        btn_rect = pygame.Rect(50 + i * 80, SCREEN_HEIGHT - 60, 70, 50)
+        btn_rect = pygame.Rect(30 + i * 85, SCREEN_HEIGHT - 60, 75, 50)
         if btn_rect.collidepoint(mouse_x, mouse_y):
             # 悬停发光效果
             glow_surf = pygame.Surface((70, 50), pygame.SRCALPHA)
