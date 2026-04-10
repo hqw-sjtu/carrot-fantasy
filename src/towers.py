@@ -2,6 +2,7 @@ import pygame
 import random
 from config_loader import get_config
 from sound_manager import SoundManager
+from base_effects import get_base_effect_manager
 
 """ 
 保卫萝卜 - 防御塔系统
@@ -38,13 +39,14 @@ class Tower:
         "冰霜塔": {"name": "冰封大地", "cooldown": 25, "duration": 6, "effect": "freeze_wave"},
     }
     
-    def __init__(self, name, damage, range, cost, attack_speed, x=0, y=0, slow_factor=1.0):
+    def __init__(self, name, damage, range, cost, attack_speed, x=0, y=0, slow_factor=1.0, freeze_duration=0):
         self.name = name
         self.damage = damage
         self.range = range
         self.cost = cost
         self.attack_speed = attack_speed
         self.slow_factor = slow_factor  # 减速因子
+        self.freeze_duration = freeze_duration  # 冰冻时长（帧数）
         self.level = 1
         self.target = None
         self.x = x
@@ -111,6 +113,9 @@ class Tower:
         # 触发升级动画
         self.upgrade_animation = 30  # 30帧动画
         self.glow_intensity = 1.0
+        # 触发升级光柱特效
+        base_effects = get_base_effect_manager()
+        base_effects.trigger_upgrade_effect(self)
         return self.level
     
     def can_specialize(self):
@@ -220,9 +225,9 @@ class Tower:
                 
                 actual_damage = int(self.damage * synergy)
                 
-                # 创建子弹
+                # 创建子弹（带冰冻效果）
                 from projectiles import Projectile
-                p = Projectile(self.x, self.y, target, actual_damage, slow_factor=self.slow_factor, source_tower=self, tower_type=self.name)
+                p = Projectile(self.x, self.y, target, actual_damage, slow_factor=self.slow_factor, source_tower=self, tower_type=self.name, freeze_duration=self.freeze_duration)
                 # 记录组合加成用于UI显示
                 p.synergy = synergy
                 p.is_combo = Tower._combo_targets.get(target_id, 1) > 1  # 标记集火
@@ -364,7 +369,9 @@ class TowerFactory:
             return None
         stats = cls.TOWERS[name]
         slow_factor = stats.get("slow", 1.0)  # 获取减速因子
-        return Tower(name, stats["damage"], stats["range"], stats["cost"], stats["speed"], slow_factor=slow_factor)
+        # 冰霜塔特殊属性
+        freeze_duration = 30 if "冰霜" in name else 0  # 冰霜塔子弹冰冻30帧
+        return Tower(name, stats["damage"], stats["range"], stats["cost"], stats["speed"], slow_factor=slow_factor, freeze_duration=freeze_duration)
     
     @classmethod
     def list_towers(cls):

@@ -141,6 +141,65 @@ class CritFlashEffect(BaseEffect):
                              (int(self.x), int(self.y)), 8, 0)
 
 
+class UpgradeBeamEffect(BaseEffect):
+    """升级光柱特效 - 金色光柱直冲云霄"""
+    
+    def __init__(self, x, y, color=(255, 215, 0)):
+        super().__init__(x, y)
+        self.color = color
+        self.max_life = 45
+        self.beam_width = 8
+        self.max_height = 120
+        self.particles = []
+        # 初始化光柱粒子
+        for _ in range(12):
+            self.particles.append({
+                'offset_x': random.uniform(-15, 15),
+                'offset_y': random.uniform(-100, 0),
+                'size': random.randint(2, 5),
+                'speed': random.uniform(2, 4),
+                'alpha': random.randint(150, 255)
+            })
+        
+    def update(self, dt):
+        self.life += dt
+        # 粒子向上流动
+        for p in self.particles:
+            p['offset_y'] -= p['speed']
+            if p['offset_y'] < -self.max_height:
+                p['offset_y'] = 0
+                p['offset_x'] = random.uniform(-15, 15)
+        if self.life >= self.max_life:
+            self.active = False
+            
+    def draw(self, screen):
+        if not self.active:
+            return
+        # 透明度渐变
+        progress = self.life / self.max_life
+        fade_alpha = int(255 * (1 - progress * 0.5))
+        # 绘制光柱
+        center_x = int(self.x)
+        bottom_y = int(self.y)
+        # 光柱主体
+        for i in range(3):
+            width = self.beam_width - i * 2
+            alpha = fade_alpha - i * 40
+            if alpha > 0:
+                beam_surface = pygame.Surface((width * 2, self.max_height), pygame.SRCALPHA)
+                pygame.draw.rect(beam_surface, (*self.color, alpha), 
+                               (width - i, 0, width + i, self.max_height))
+                screen.blit(beam_surface, (center_x - width, bottom_y - self.max_height))
+        # 绘制粒子
+        for p in self.particles:
+            px = int(self.x + p['offset_x'])
+            py = int(self.y + p['offset_y'])
+            pygame.draw.circle(screen, (*self.color, int(p['alpha'] * (1 - progress * 0.5))), (px, py), p['size'])
+        # 底部光环
+        pygame.draw.circle(screen, (*self.color, fade_alpha), (center_x, bottom_y), 20, 2)
+        pygame.draw.circle(screen, (*self.color, fade_alpha // 2), (center_x, bottom_y), 15, 0)
+
+
 class ChainLightningEffect(BaseEffect):
     """连锁闪电特效"""
     
@@ -276,6 +335,14 @@ class BaseEffectManager:
     def trigger_crit_effect(self, tower, is_crit=True):
         """触发暴击特效"""
         self.add_crit_flash(tower.x, tower.y, is_crit)
+        
+    def trigger_upgrade_effect(self, tower):
+        """触发升级光柱特效"""
+        self.add_upgrade_beam(tower.x, tower.y)
+        
+    def add_upgrade_beam(self, x, y, color=(255, 215, 0)):
+        """添加升级光柱特效"""
+        self.effects.append(UpgradeBeamEffect(x, y, color))
         
     def trigger_chain_lightning(self, tower, target):
         """触发连锁闪电特效"""

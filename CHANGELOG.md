@@ -1,11 +1,42 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-10 10:23 (Hourly Maintenance)
+> Last updated: 2026-04-11 03:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.5.2] - 2026-04-11 03:23
+
+### Features | 新功能
+- 🌟 **升级光柱特效**: 防御塔升级时金色光柱直冲云霄,带粒子流动效果
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 代码优化: 新增升级光柱特效类UpgradeBeamEffect
+- ✅ 测试覆盖: 87测试全部通过
+- ✅ GitHub Pages: 文档完善
+
+### Stability | 稳定性
+- 🔒 无新增问题
+
+---
+
+## [1.5.1] - 2026-04-11 02:23
+
+### Features | 新功能
+- ❄️ **冰霜塔冰冻特效**: 冰霜塔子弹命中后怪物被冰冻,显示旋转冰环+6颗冰晶粒子动画
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 代码优化: 新增冰霜塔冰冻系统和冰冻视觉特效
+- ✅ 测试覆盖: 86→87 测试用例,新增冰霜塔冰冻测试
+
+### Stability | 稳定性
+- 🔒 无新增问题
 
 ---
 

@@ -188,3 +188,46 @@ def run_all_tests():
 
 if __name__ == "__main__":
     run_all_tests()
+def test_ice_tower_freeze():
+    """测试冰霜塔冰冻效果"""
+    from towers import TowerFactory
+    from projectiles import Projectile
+    
+    # 创建冰霜塔
+    ice_tower = TowerFactory.create("冰霜塔")
+    assert ice_tower is not None
+    assert "冰霜" in ice_tower.name
+    
+    # 验证冰霜塔有freeze_duration属性
+    assert hasattr(ice_tower, 'freeze_duration')
+    assert ice_tower.freeze_duration == 30  # 冰霜塔冰冻30帧
+    
+    # 验证子弹带冰冻效果
+    class MockTarget:
+        def __init__(self):
+            self.x = 200
+            self.y = 300
+            self.alive = True
+            self.health = 100
+            self.frozen = 0
+            self.position = 0.5
+            self.slow_timer = 0
+            self.slow_factor = 1.0
+        
+        def apply_slow(self, factor, duration):
+            self.slow_factor = factor
+            self.slow_timer = duration
+        
+        def take_damage(self, dmg):
+            self.health -= dmg
+    
+    target = MockTarget()
+    proj = Projectile(100, 300, target, 10, freeze_duration=20, source_tower=ice_tower, tower_type="冰霜塔")
+    
+    assert proj.freeze_duration == 20
+    
+    # 模拟命中
+    proj.hit_target()
+    assert target.frozen == 20  # 冰冻20帧
+    
+    print("✓ test_ice_tower_freeze passed")

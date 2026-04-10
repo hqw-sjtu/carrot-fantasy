@@ -23,13 +23,14 @@ CRITICAL_DAMAGE_MULT = 1.5  # 暴击伤害倍率
 class Projectile:
     """子弹类"""
     
-    def __init__(self, x, y, target, damage, speed=5, slow_factor=1.0, source_tower=None, tower_type=None):
+    def __init__(self, x, y, target, damage, speed=5, slow_factor=1.0, source_tower=None, tower_type=None, freeze_duration=0):
         self.x = x
         self.y = y
         self.target = target
         self.damage = damage
         self.speed = speed
         self.slow_factor = slow_factor  # 减速因子 (1.0=无减速)
+        self.freeze_duration = freeze_duration  # 冰冻时长（帧数）
         self.active = True
         self.hit_effect = 0  # 命中特效持续时间
         self.hit_x = 0
@@ -85,6 +86,9 @@ class Projectile:
             # 应用减速效果 (持续3秒)
             if self.slow_factor < 1.0:
                 self.target.apply_slow(self.slow_factor, 3.0)
+            # 应用冰冻效果
+            if self.freeze_duration > 0:
+                self.target.frozen = max(self.target.frozen, self.freeze_duration)
             # 播放击中音效
             if _sound_manager:
                 _sound_manager.play('hit')

@@ -1173,6 +1173,24 @@ def draw_game():
         else:
             # 普通怪: 蓝色圆形
             pygame.draw.circle(SCREEN, (50, 100, 200), (x + shake_x, y + shake_y), 14)
+        
+        # 冰冻视觉效果
+        frozen_frames = getattr(monster, 'frozen', 0)
+        if frozen_frames > 0:
+            # 冰冻时显示蓝色光环+冰晶
+            ice_alpha = min(180, frozen_frames * 8)
+            freeze_pulse = int(math.sin(pygame.time.get_ticks() * 0.02) * 20 + 100)
+            # 外层冰环
+            ice_surf = pygame.Surface((50, 50), pygame.SRCALPHA)
+            pygame.draw.circle(ice_surf, (100, 200, 255, freeze_pulse), (25, 25), 22, 3)
+            SCREEN.blit(ice_surf, (x - 25 + shake_x, y - 25 + shake_y))
+            # 冰晶粒子
+            time_offset = pygame.time.get_ticks() * 0.01
+            for i in range(6):
+                angle = i * 60 + time_offset * 20
+                ix = x + math.cos(math.radians(angle)) * 18 + shake_x
+                iy = y + math.sin(math.radians(angle)) * 18 + shake_y
+                pygame.draw.circle(SCREEN, (150, 230, 255), (int(ix), int(iy)), 3)
 
         # 绘制血条背景(带边框 - 更高更显眼) - 美化版本
         # 外边框白色
