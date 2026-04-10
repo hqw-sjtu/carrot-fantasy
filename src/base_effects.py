@@ -101,6 +101,89 @@ class ParticleRing(BaseEffect):
                              (int(px), int(py)), 3)
 
 
+class CritFlashEffect(BaseEffect):
+    """暴击闪光特效"""
+    
+    def __init__(self, x, y, color=(255, 215, 0), is_crit=True):
+        super().__init__(x, y)
+        self.color = color
+        self.is_crit = is_crit
+        self.max_life = 30 if is_crit else 20
+        self.flash_count = 3 if is_crit else 2
+        self.current_flash = 0
+        self.flash_interval = self.max_life / self.flash_count
+        
+    def update(self, dt):
+        self.life += dt
+        # 计算当前闪光状态
+        self.current_flash = int(self.life / self.flash_interval)
+        if self.life >= self.max_life:
+            self.active = False
+            
+    def draw(self, screen):
+        if not self.active:
+            return
+        # 闪光效果
+        flash_phase = self.life % self.flash_interval
+        if flash_phase < self.flash_interval * 0.3:  # 亮期
+            alpha = 200 if self.is_crit else 150
+            # 十字闪光
+            length = 40 if self.is_crit else 25
+            width = 4 if self.is_crit else 2
+            # 水平线
+            pygame.draw.line(screen, (*self.color, alpha), 
+                           (self.x - length, self.y), (self.x + length, self.y), width)
+            # 垂直线
+            pygame.draw.line(screen, (*self.color, alpha), 
+                           (self.x, self.y - length), (self.x, self.y + length), width)
+            # 中心圆
+            pygame.draw.circle(screen, (*self.color, alpha), 
+                             (int(self.x), int(self.y)), 8, 0)
+
+
+class ChainLightningEffect(BaseEffect):
+    """连锁闪电特效"""
+    
+    def __init__(self, x, y, target_x, target_y, color=(180, 140, 255)):
+        super().__init__(x, y)
+        self.start_x = x
+        self.start_y = y
+        self.target_x = target_x
+        self.target_y = target_y
+        self.color = color
+        self.max_life = 15
+        self.generate_lightning_points()
+        
+    def generate_lightning_points(self):
+        """生成闪电路径点"""
+        self.points = []
+        segments = 6
+        for i in range(segments + 1):
+            t = i / segments
+            px = self.start_x + (self.target_x - self.start_x) * t
+            py = self.start_y + (self.target_y - self.start_y) * t
+            # 添加随机偏移
+            if i > 0 and i < segments:
+                offset = random.randint(-15, 15)
+                px += offset
+                py += offset * 0.5
+            self.points.append((px, py))
+            
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            
+    def draw(self, screen):
+        if not self.active:
+            return
+        alpha = int(255 * (1 - self.life / self.max_life))
+        # 绘制闪电
+        for i in range(len(self.points) - 1):
+            pygame.draw.line(screen, (*self.color, alpha), 
+                           self.points[i], self.points[i + 1], 2)
+
+
 class BaseEffectManager:
     """塔基特效管理器"""
     
@@ -120,6 +203,17 @@ class BaseEffectManager:
         if color is None:
             color = (255, 200, 100)
         effect = ParticleRing(x, y, color)
+        self.effects.append(effect)
+        
+    def add_crit_flash(self, x, y, is_crit=True):
+        """添加暴击闪光特效"""
+        color = (255, 215, 0) if is_crit else (255, 255, 255)
+        effect = CritFlashEffect(x, y, color, is_crit)
+        self.effects.append(effect)
+        
+    def add_chain_lightning(self, x, y, target_x, target_y):
+        """添加连锁闪电特效"""
+        effect = ChainLightningEffect(x, y, target_x, target_y)
         self.effects.append(effect)
         
     def set_tower_base_glow(self, tower_id, color):
@@ -173,8 +267,20 @@ class BaseEffectManager:
             self.add_particle_ring(tower.x, tower.y, (200, 100, 255))
         elif "减速" in tower_name:
             self.add_glow_ring(tower.x, tower.y, (100, 200, 255))
+        elif "冰霜" in tower_name:
+            self.add_glow_ring(tower.x, tower.y, (180, 220, 255))
+            self.add_particle_ring(tower.x, tower.y, (200, 240, 255))
         else:
             self.add_glow_ring(tower.x, tower.y, (255, 255, 200))
+            
+    def trigger_crit_effect(self, tower, is_crit=True):
+        """触发暴击特效"""
+        self.add_crit_flash(tower.x, tower.y, is_crit)
+        
+    def trigger_chain_lightning(self, tower, target):
+        """触发连锁闪电特效"""
+        if hasattr(target, 'x') and hasattr(target, 'y'):
+            self.add_chain_lightning(tower.x, tower.y, target.x, target.y)
 
 
 # 单例实例
