@@ -1,11 +1,29 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-10 08:23 (Hourly Maintenance)
+> Last updated: 2026-04-10 10:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.4.8] - 2026-04-10 10:23
+
+### Features | 新功能
+- 🧪 测试套件完善: CI集成测试，15个测试文件覆盖核心/配置/粒子/伤害数字
+- 📦 模块化验证: 核心模块独立导入测试通过(towers, monsters, projectiles, particle_system)
+- 🔄 GitHub CI工作流: 多Python版本测试(3.8/3.10/3.12) + lint + build
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: main.py, towers.py, monsters.py, projectiles.py 全部通过py_compile
+- ✅ 导入测试: pygame 2.6.1正常加载，所有核心模块导入成功
+- ✅ CI配置: GitHub Actions工作流已就绪
+
+### Stability | 稳定性
+- ⚡ 代码总行数: 3578行(main.py 2480行)
+- 🔒 无语法错误
 
 ---
 
