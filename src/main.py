@@ -2548,6 +2548,9 @@ def main():
 
             pygame.display.flip()
             continue
+        
+        # 每帧刷新显示
+        pygame.display.flip()
 
     pygame.quit()
 
