@@ -91,7 +91,7 @@ def draw_ui_border():
             pygame.draw.rect(SCREEN, GOLD, btn_rect, 3, border_radius=8)
 
 def draw_button_hover():
-    """按钮悬停/点击效果"""
+    """按钮悬停/点击效果 + 攻击范围预览"""
     mouse_x, mouse_y = pygame.mouse.get_pos()
     
     tower_types = ['箭塔', '炮塔', '魔法塔', '减速塔', '冰霜塔']
@@ -102,6 +102,37 @@ def draw_button_hover():
             glow_surf = pygame.Surface((70, 50), pygame.SRCALPHA)
             glow_surf.fill((255, 255, 200, 50))
             SCREEN.blit(glow_surf, (50 + i * 80, SCREEN_HEIGHT - 60))
+            
+            # 悬停时在鼠标位置显示攻击范围预览
+            tower_stats = config.get('towers', {}).get(tower_type, {})
+            if tower_stats:
+                tower_range = tower_stats.get('range', 1.5)
+                range_radius = int(tower_range * 50)
+                
+                # 根据塔类型选择颜色
+                if "箭" in tower_type:
+                    range_color = (*BLUE, 60)
+                    border_color = BLUE
+                elif "炮" in tower_type:
+                    range_color = (*RED, 60)
+                    border_color = RED
+                elif "魔法" in tower_type:
+                    range_color = (*PURPLE, 60)
+                    border_color = PURPLE
+                elif "减速" in tower_type or "冰霜" in tower_type:
+                    range_color = (*CYAN, 60)
+                    border_color = CYAN
+                else:
+                    range_color = (100, 100, 100, 60)
+                    border_color = WHITE
+                
+                # 绘制半透明范围圆
+                range_surf = pygame.Surface((range_radius*2, range_radius*2), pygame.SRCALPHA)
+                pygame.draw.circle(range_surf, range_color, (range_radius, range_radius), range_radius)
+                SCREEN.blit(range_surf, (mouse_x - range_radius, mouse_y - range_radius))
+                
+                # 实线边框
+                pygame.draw.circle(SCREEN, border_color, (mouse_x, mouse_y), range_radius, 2)
 
 def animate_text(text, x, y, color, flicker=False):
     """带闪烁效果的文字"""
