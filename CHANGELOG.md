@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.10] - 2026-04-10 18:23
+
+### Features | 新功能
+- 💀 血条升级版: 低血量(≤25%)闪烁警告, 渐变色(绿→黄→红), 阴影+高光细节
+- 🌀 传送门特效: 入口(蓝)和出口(橙)旋转光环+发光核心动画
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: main.py, monsters.py 通过py_compile
+- ✅ Git提交: 2文件50行新增
+
+### Stability | 稳定性
+- 🔒 无新增问题
+
+---
+
 ## [1.4.9] - 2026-04-10 14:23
 
 ### Features | 新功能

@@ -684,7 +684,8 @@ def init_game():
     except pygame.error as e:
         print(f"⚠️ Pygame初始化失败: {e}")
     
-    # 初始化音频
+    # 初始化显示和音频
+    init_display()
     init_audio()
     
     # 尝试加载音效(可选)
@@ -704,8 +705,15 @@ def play_sound(sound):
         except:
             pass
 
-SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("保卫萝卜 - Carrot Fantasy v0.3")
+# 全局屏幕对象 - 延迟到init_game()中初始化
+SCREEN = None
+
+def init_display():
+    """初始化显示系统"""
+    global SCREEN
+    SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("保卫萝卜 - Carrot Fantasy v0.3")
+    return SCREEN
 
 # 放置特效
 place_effects = []  # [(x, y, color, timer), ...]
