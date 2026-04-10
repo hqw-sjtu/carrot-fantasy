@@ -3,11 +3,13 @@ UI面板系统 - 处理用户界面交互和显示
 """
 import pygame
 import math
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict, List
 from config_loader import get_config
 
 # 颜色定义
 GOLD = (255, 215, 0)
+DARK_PANEL = (20, 20, 40)
+LIGHT_PANEL = (40, 40, 70)
 
 # 呼吸效果动画（工艺品级别增强）
 def get_breathing_color(base_color, time_ms: float, speed: float = 0.003, amplitude: float = 30):
@@ -283,7 +285,71 @@ class UIPanel:
         # 保存按钮区域供点击检测
         self.wave_button_rect = btn_rect
         
+        # 绘制塔属性一览面板（工艺品级别新功能）
+        self._draw_tower_showcase(screen, game_state, tower_types)
+        
         # 绘制操作提示（底部）
         hint_text = "1-3:选塔 | 鼠标:放塔 | U:升级 | D:出售 | 空格:波次 | S:保存 | L:读取 | ESC:暂停"
         hint = self.small_font.render(hint_text, True, (200, 200, 200))
         screen.blit(hint, (10, SCREEN_HEIGHT - 25))
+
+    def _draw_tower_showcase(self, screen, game_state, tower_types: List[str]):
+        """绘制塔属性一览面板（工艺品级别功能）"""
+        # 面板位置：右上角
+        panel_x = SCREEN_WIDTH - 200
+        panel_y = 100
+        panel_w = 190
+        panel_h = len(tower_types) * 60 + 30
+        
+        # 绘制面板背景
+        panel_surf = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
+        panel_surf.fill((20, 25, 45, 230))
+        screen.blit(panel_surf, (panel_x, panel_y))
+        
+        # 金色边框
+        pygame.draw.rect(screen, GOLD, (panel_x, panel_y, panel_w, panel_h), 2, border_radius=8)
+        
+        # 标题
+        title_font = pygame.font.Font(None, 22)
+        title = title_font.render("🏰 塔属性一览", True, GOLD)
+        screen.blit(title, (panel_x + 10, panel_y + 5))
+        
+        # 获取配置中的塔属性
+        from config_loader import get_config
+        config = get_config()
+        towers_config = config.get('towers', {})
+        
+        # 绘制每个塔的属性
+        stats_font = pygame.font.Font(None, 18)
+        for i, tower_type in enumerate(tower_types):
+            tower_info = towers_config.get(tower_type, {})
+            y_offset = panel_y + 30 + i * 60
+            
+            # 塔名称（带颜色标识）
+            tower_colors = {
+                '箭塔': (100, 255, 100),
+                '炮塔': (255, 150, 50),
+                '魔法塔': (150, 100, 255),
+                '减速塔': (100, 200, 255),
+                '冰霜塔': (200, 230, 255)
+            }
+            color = tower_colors.get(tower_type, (255, 255, 255))
+            name_text = stats_font.render(tower_type, True, color)
+            screen.blit(name_text, (panel_x + 10, y_offset))
+            
+            # 属性数值
+            damage = tower_info.get('damage', '?')
+            range_val = tower_info.get('range', '?')
+            speed = tower_info.get('attack_speed', '?')
+            cost = tower_info.get('cost', '?')
+            
+            attr_text = f"⚔️{damage} 📐{range_val} ⚡{speed} 💰{cost}"
+            attr_surf = stats_font.render(attr_text, True, (200, 200, 200))
+            screen.blit(attr_surf, (panel_x + 10, y_offset + 20))
+            
+            # 当前放置数量
+            placed_count = 0
+            if hasattr(game_state, 'towers'):
+                placed_count = sum(1 for t in game_state.towers if t.name == tower_type)
+            count_text = stats_font.render(f"已放置: {placed_count}座", True, (180, 180, 180))
+            screen.blit(count_text, (panel_x + 10, y_offset + 40))
