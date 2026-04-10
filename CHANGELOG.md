@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.0] - 2026-04-11 01:23
+
+### Features | 新功能
+- ✨ **血条发光特效**: 怪物低血量(≤30%)时触发红色呼吸光晕,增强视觉反馈
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 代码优化: 添加低血量怪物血条发光效果
+- ✅ GitHub Pages: 文档完善
+
+### Stability | 稳定性
+- 🔒 无新增问题
+
+---
+
 ## [1.4.11] - 2026-04-10 20:23
 
 ### Features | 新功能

@@ -1191,6 +1191,13 @@ def draw_game():
             health_color = (255, 180, 0)  # 橙黄
         else:
             health_color = (255, 60, 60)  # 红色
+        # 低血量发光效果
+        if health_ratio <= 0.3:
+            glow_intensity = int((math.sin(pygame.time.get_ticks() * 0.01) + 1) * 30 + 60)
+            glow_color = (glow_intensity, 0, 0)
+            # 绘制发光层
+            glow_rect = pygame.Rect(x - 19 + shake_x, y - 31 + shake_y, 40, 16)
+            pygame.draw.rect(SCREEN, glow_color, glow_rect, 3, border_radius=4)
         # 绘制主体血条
         pygame.draw.rect(SCREEN, health_color, (x - 16 + shake_x, y - 28 + shake_y, health_width, 10), border_radius=2)
         # 高光效果
