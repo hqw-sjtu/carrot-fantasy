@@ -64,6 +64,7 @@ class ParticleSystem:
     def __init__(self):
         self.particles = []
         self.upgrade_aura = []
+        self._hit_rings = []  # 命中特效圆环列表
         # 对象池：预分配粒子对象减少GC
         self._particle_pool = []
         self._pool_size = 200
@@ -96,6 +97,37 @@ class ParticleSystem:
         """归还粒子到池"""
         p['active'] = False
     
+    def add_hit_effect(self, x, y, tower_type=''):
+        """塔攻击命中特效 - 工艺品级别新增"""
+        # 根据塔类型选择不同颜色
+        colors = {
+            'arrow': (50, 200, 50),      # 箭塔-绿色
+            'cannon': (255, 140, 0),     # 炮塔-橙色
+            'magic': (180, 100, 255),    # 魔法塔-紫色
+            'ice': (150, 230, 255),      # 冰霜塔-浅蓝
+            'freeze': (200, 240, 255),   # 减速塔-白色
+        }
+        color = colors.get(tower_type, (255, 220, 100))
+        
+        # 小型爆发
+        for _ in range(8):
+            angle = random.uniform(0, math.pi * 2)
+            speed = random.uniform(30, 80)
+            vx = math.cos(angle) * speed
+            vy = math.sin(angle) * speed
+            particle = Particle(x, y, vx, vy, color, 0.3, random.uniform(2, 5))
+            self.particles.append(particle)
+        
+        # 命中中心圆环
+        self._hit_rings.append({
+            'x': x, 'y': y,
+            'radius': 5,
+            'max_radius': 25,
+            'alpha': 180,
+            'color': color,
+            'start_time': pygame.time.get_ticks()
+        })
+
     def add_critical_effect(self, x, y):
         """添加暴击特效 - 红色爆炸效果"""
         for _ in range(15):
@@ -377,10 +409,28 @@ class ParticleSystem:
         """更新所有粒子"""
         self.particles = [p for p in self.particles if p.update(dt)]
         
+        # 更新命中特效圆环
+        current_time = pygame.time.get_ticks()
+        self._hit_rings = [r for r in self._hit_rings 
+                          if current_time - r['start_time'] < 300]
+        for r in self._hit_rings:
+            elapsed = (current_time - r['start_time']) / 300.0
+            r['radius'] = r['radius'] + (r['max_radius'] - r['radius']) * 0.2
+            r['alpha'] = int(180 * (1 - elapsed))
+        
     def draw(self, screen):
         """绘制所有粒子"""
         for p in self.particles:
             p.draw(screen)
+        
+        # 绘制命中圆环
+        for r in self._hit_rings:
+            if r['alpha'] > 5:
+                ring_surf = pygame.Surface((int(r['radius'] * 2), int(r['radius'] * 2)), pygame.SRCALPHA)
+                pygame.draw.circle(ring_surf, (*r['color'], r['alpha']), 
+                                  (int(r['radius']), int(r['radius'])), 
+                                  int(r['radius']), 3)
+                screen.blit(ring_surf, (r['x'] - r['radius'], r['y'] - r['radius']))
     
     def clear(self):
         """清除所有粒子"""

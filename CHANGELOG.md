@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.7] - 2026-04-10 09:23
+
+### Features | 新功能
+- ✨ 塔攻击命中特效: 子弹击中怪物时显示塔类型专属颜色爆发特效
+  - 箭塔: 绿色粒子爆发
+  - 炮塔: 橙色粒子爆发
+  - 魔法塔: 紫色粒子爆发
+  - 冰霜塔: 浅蓝色粒子爆发
+- 💫 命中圆环: 攻击命中时产生扩散圆环视觉效果
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: particle_system.py, projectiles.py 通过
+- ✅ 导入测试: ParticleSystem 正常加载
+- ✅ 功能测试: add_hit_effect() 方法正常运行
+
+### Stability | 稳定性
+- ⚡ 命中特效系统已集成到Projectile.hit_target()
+- 🔒 无新增依赖
+
+---
+
 ## [1.4.6] - 2026-04-10 08:23
 
 ### Features | 新功能

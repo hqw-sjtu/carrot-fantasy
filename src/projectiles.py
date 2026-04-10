@@ -89,6 +89,13 @@ class Projectile:
             if _sound_manager:
                 _sound_manager.play('hit')
             
+            # 命中特效 - 工艺品级别新增
+            if hasattr(self.source_tower, 'particle_system'):
+                tower_type_name = getattr(self.source_tower, 'name', '') or ''
+                self.source_tower.particle_system.add_hit_effect(
+                    self.target.x, self.target.y, tower_type_name
+                )
+            
             # 暴击时触发特效
             if self.is_critical and hasattr(self.source_tower, 'particle_system'):
                 self.source_tower.particle_system.add_critical_effect(self.target.x, self.target.y)
