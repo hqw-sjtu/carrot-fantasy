@@ -134,31 +134,47 @@ class Monster:
         return max(0, self.health / self.max_health)
     
     def draw_health_bar(self, screen, x, y, width=40, height=6):
-        """绘制血条"""
+        """绘制血条 - 升级版:低血量闪烁+渐变效果"""
         import pygame
         ratio = self.get_health_ratio()
         if ratio >= 1.0:
             return  # 满血不显示
         
-        # 血条背景
+        # 低血量闪烁效果
+        if ratio <= 0.25:
+            blink = math.sin(pygame.time.get_ticks() * 0.015) * 0.5 + 0.5
+            if blink < 0.3:
+                return  # 闪烁时短暂隐藏
+        
+        # 血条背景（带阴影）
         bg_rect = pygame.Rect(x - width//2, y - 20, width, height)
+        shadow_rect = bg_rect.move(1, 1)
+        pygame.draw.rect(screen, (20, 20, 20), shadow_rect)
         pygame.draw.rect(screen, (50, 50, 50), bg_rect)
         
-        # 血条前景（根据血量变色）
+        # 血条前景渐变效果（根据血量变色）
         if ratio > 0.5:
-            color = (50, 200, 50)  # 绿色
+            # 绿色到黄色渐变
+            color = (int(255 * (1 - ratio) * 2), 200, 50)
         elif ratio > 0.25:
-            color = (255, 200, 0)  # 黄色
+            # 黄色到橙色渐变
+            color = (255, int(200 * ratio * 2), 0)
         else:
-            color = (255, 50, 50)  # 红色
+            # 红色闪烁效果
+            pulse = int(math.sin(pygame.time.get_ticks() * 0.01) * 30 + 225)
+            color = (pulse, 30, 30)
         
         fill_width = int(width * ratio)
         if fill_width > 0:
             fill_rect = pygame.Rect(x - width//2, y - 20, fill_width, height)
             pygame.draw.rect(screen, color, fill_rect)
+            # 高光效果
+            highlight_rect = pygame.Rect(x - width//2, y - 19, fill_width, 2)
+            pygame.draw.rect(screen, (min(255, color[0]+80), min(255, color[1]+80), min(255, color[2]+80)), highlight_rect)
         
-        # 边框
-        pygame.draw.rect(screen, (100, 100, 100), bg_rect, 1)
+        # 边框（根据血量变色）
+        border_color = (100, 100, 100) if ratio > 0.25 else (255, 100, 100)
+        pygame.draw.rect(screen, border_color, bg_rect, 1)
 
 
 class MonsterFactory:

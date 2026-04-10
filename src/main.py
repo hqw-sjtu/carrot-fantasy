@@ -926,6 +926,32 @@ def draw_game():
         x = 100 + i * 60 + 30
         pygame.draw.line(SCREEN, (90, 90, 90), (x, path_y - 15), (x, path_y + 15), 2)
 
+    # ====== 传送门特效 ======
+    # 入口传送门 (左侧发光)
+    portal_time = pygame.time.get_ticks() * 0.003
+    # 外圈旋转光环
+    for i in range(3):
+        radius = 25 + i * 8 + int(math.sin(portal_time + i) * 5)
+        alpha = max(0, 150 - i * 40)
+        portal_surf = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(portal_surf, (100, 200, 255, alpha), (radius, radius), radius, 3)
+        SCREEN.blit(portal_surf, (100 - radius, path_y - radius))
+    # 入口闪光核心
+    pygame.draw.circle(SCREEN, (150, 220, 255), (100, path_y), 12)
+    pygame.draw.circle(SCREEN, WHITE, (100, path_y), 6)
+    
+    # 出口传送门 (右侧发光)
+    exit_x = 700
+    for i in range(3):
+        radius = 25 + i * 8 + int(math.cos(portal_time + i) * 5)
+        alpha = max(0, 150 - i * 40)
+        portal_surf = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(portal_surf, (255, 150, 100, alpha), (radius, radius), radius, 3)
+        SCREEN.blit(portal_surf, (exit_x - radius, path_y - radius))
+    # 出口闪光核心
+    pygame.draw.circle(SCREEN, (255, 180, 120), (exit_x, path_y), 12)
+    pygame.draw.circle(SCREEN, (255, 255, 200), (exit_x, path_y), 6)
+
     # 绘制塔基座格子(8x4网格)
     TILE_SIZE = 60
     TILE_START_X = 80
