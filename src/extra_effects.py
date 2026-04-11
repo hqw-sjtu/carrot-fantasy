@@ -488,3 +488,113 @@ class PoisonCloudEffect:
     def get_affected_area(self):
         """获取影响区域"""
         return {'x': self.x, 'y': self.y, 'radius': self.radius}
+
+
+class ShieldEffect:
+    """护盾保护特效 - 能量护盾环绕保护"""
+    
+    def __init__(self, x, y, color=(100, 200, 255), radius=40):
+        self.x = x
+        self.y = y
+        self.color = color  # 护盾颜色
+        self.radius = radius
+        self.max_life = 3.0  # 3秒持续时间
+        self.life = 0
+        self.active = True
+        self.rotation = 0
+        self.rings = [
+            {'angle': 0, 'speed': 30, 'size': 0.8},
+            {'angle': 120, 'speed': -20, 'size': 0.6},
+            {'angle': 240, 'speed': 40, 'size': 0.4},
+        ]
+        self.particles = []
+        # 初始化粒子
+        for _ in range(12):
+            self.particles.append({
+                'angle': random.uniform(0, 360),
+                'dist': random.uniform(0.7, 1.0),
+                'size': random.uniform(2, 5),
+                'speed': random.uniform(0.5, 1.5),
+                'alpha': random.uniform(150, 255),
+            })
+    
+    def update(self, dt):
+        self.life += dt
+        self.rotation += 60 * dt  # 旋转速度
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        # 更新环形
+        for ring in self.rings:
+            ring['angle'] += ring['speed'] * dt
+        # 更新粒子
+        for p in self.particles:
+            p['angle'] += p['speed'] * 30 * dt
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        progress = self.life / self.max_life
+        base_alpha = int(255 * (1 - progress * 0.3))  # 慢慢淡出
+        
+        # 绘制外圈护盾
+        pygame.draw.circle(screen, (*self.color, base_alpha // 4),
+                          (int(self.x), int(self.y)), int(self.radius), 3)
+        
+        # 绘制能量环
+        for ring in self.rings:
+            ring_radius = self.radius * ring['size']
+            start_angle = math.radians(ring['angle'] - 30)
+            end_angle = math.radians(ring['angle'] + 30)
+            pygame.draw.arc(screen, (*self.color, base_alpha // 2),
+                           (self.x - ring_radius, self.y - ring_radius,
+                            ring_radius * 2, ring_radius * 2),
+                           start_angle, end_angle, 2)
+        
+        # 绘制旋转粒子
+        for p in self.particles:
+            angle_rad = math.radians(p['angle'])
+            px = self.x + math.cos(angle_rad) * self.radius * p['dist']
+            py = self.y + math.sin(angle_rad) * self.radius * p['dist']
+            alpha = int(p['alpha'] * (1 - progress))
+            color = (*self.color, alpha)
+            pygame.draw.circle(screen, color, (int(px), int(py)), int(p['size']))
+        
+        # 绘制核心高亮
+        center_alpha = int(base_alpha * 0.5)
+        pygame.draw.circle(screen, (*self.color, center_alpha),
+                          (int(self.x), int(self.y)), 5)
+
+
+class RippleEffect:
+    """波纹扩散特效 - 攻击命中时的水波扩散效果"""
+    
+    def __init__(self, x, y, color=(255, 255, 255), max_radius=60):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.max_radius = max_radius
+        self.max_life = 0.5  # 500ms
+        self.life = 0
+        self.active = True
+        self.rings = [0, 0.2, 0.4]  # 三个波纹的时间偏移
+    
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        for offset in self.rings:
+            ring_time = self.life - offset
+            if ring_time < 0 or ring_time > 0.15:
+                continue
+            progress = ring_time / 0.15
+            radius = self.max_radius * progress
+            alpha = int(255 * (1 - progress))
+            pygame.draw.circle(screen, (*self.color, alpha),
+                              (int(self.x), int(self.y)), int(radius), 2)

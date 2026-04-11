@@ -119,6 +119,20 @@ find src -name "*.py" -exec python -m py_compile {} +
 python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK')"
 ```
 
+## 💫 高级特效系统
+
+### 护盾保护 (ShieldEffect)
+- 能量护盾环绕保护防御塔
+- 多层旋转能量环
+- 粒子环绕动画
+
+### 波纹扩散 (RippleEffect)
+- 攻击命中时的水波扩散
+- 多重波纹叠加
+- 淡出动画效果
+
+---
+
 ## 🎯 GitHub Actions CI
 
 项目配置了完整的CI/CD流程:
