@@ -9,6 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.8] - 2026-04-11 10:23
+
+### Features | 新功能
+- 🎯 **攻击拖尾特效(TowerAttackTrailEffect)**: 子弹轨迹拖尾效果,带发光效果
+- 💰 **金币雨特效(GoldRainEffect)**: 大量金币从天而降,带旋转动画
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 测试覆盖: 112→120 测试用例,新增8个特效测试
+- ✅ CI配置: GitHub Actions多版本Python测试
+- ✅ 代码优化: 新增extra_effects.py独立特效模块
+
+---
+
+## [1.5.9] - 2026-04-11 11:23
+
+### Features | 新功能
+- ✨ **经验球特效(ExperienceOrb)**: 怪物死亡后飞向玩家的光球,带拖尾效果
+- 📊 **经验管理器(ExperienceManager)**: 经验收集、等级成长系统
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 测试覆盖: 120→126 测试用例,新增6个经验球测试
+- ✅ 特效系统: 完善extra_effects.py高级特效模块
+- ✅ GitHub Pages: 文档同步更新
+
+### Stability | 稳定性
+- 🔒 无新增问题
+
+---
+
 ## [1.5.7] - 2026-04-11 09:23
 
 ### Features | 新功能

@@ -132,10 +132,13 @@ python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK'
 
 See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.5.3**
 
-### 最新特性: 连击链特效
-- 连续击杀怪物时触发连击数字显示
-- 连击数越高，火花特效越密集
-- 带文字发光效果和重力物理模拟
+### 最新特性: 攻击拖尾 & 金币雨
+- **TowerAttackTrailEffect**: 子弹轨迹拖尾,带发光效果
+- **GoldRainEffect**: 金币从天而降,旋转动画
+- **ExperienceOrb**: 经验球特效,怪物死亡后飞向玩家,带拖尾
+- **ExperienceManager**: 经验收集与等级成长系统
+- 连击链特效: 连续击杀怪物时触发连击数字显示
+- 连击数越高，火花特效越密集,带文字发光效果和重力物理模拟
 
 ## 🤝 贡献指南
 

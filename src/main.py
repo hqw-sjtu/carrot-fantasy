@@ -79,16 +79,28 @@ def draw_ui_border():
     SCREEN.blit(wave_surf, (wave_box_x, wave_box_y))
     pygame.draw.rect(SCREEN, (50, 50, 70), (wave_box_x, wave_box_y, 160, 35), 2, border_radius=8)
     
-    # 塔按钮区域（底部） - 5种塔
+    # 修复：塔按钮区域移到右侧，避免与底部提示栏重叠
+    # 右侧塔按钮面板
+    tower_panel_x = SCREEN_WIDTH - 100
+    tower_panel_y = 80
+    tower_button_width = 90
+    tower_button_height = 40
     tower_types = ['箭塔', '炮塔', '魔法塔', '减速塔', '冰霜塔']
     selected = config.get('tower_selection', None)
     for i, tower_type in enumerate(tower_types):
-        btn_rect = pygame.Rect(30 + i * 85, SCREEN_HEIGHT - 60, 75, 50)
+        btn_rect = pygame.Rect(tower_panel_x, tower_panel_y + i * (tower_button_height + 5), tower_button_width, tower_button_height)
+        # 背景
+        pygame.draw.rect(SCREEN, (60, 60, 80), btn_rect, border_radius=6)
         # 普通按钮边框
-        pygame.draw.rect(SCREEN, (60, 60, 80), btn_rect, 2, border_radius=8)
+        pygame.draw.rect(SCREEN, (80, 80, 100), btn_rect, 2, border_radius=6)
         # 选中高亮
         if selected == tower_type:
-            pygame.draw.rect(SCREEN, GOLD, btn_rect, 3, border_radius=8)
+            pygame.draw.rect(SCREEN, GOLD, btn_rect, 3, border_radius=6)
+        # 塔名称
+        btn_font = get_font(20)
+        btn_text = btn_font.render(tower_type[:2], True, WHITE)  # 只显示前2个字符
+        text_rect = btn_text.get_rect(center=btn_rect.center)
+        SCREEN.blit(btn_text, text_rect)
 
 def draw_button_hover():
     """按钮悬停/点击效果 + 攻击范围预览"""
@@ -426,23 +438,24 @@ def update_quest(quest_key, amount=1):
 # 绘制任务面板
 def draw_quest_panel():
     quest_x = 10
-    quest_y = 200
+    # 修复：每日任务面板放到右下方，避免与怪物路径(y=300)和底部提示栏重叠
+    quest_y = 430
     
-    # 面板背景
+    # 面板背景 - 调整为更小的高度适应底部
     panel_width = 180
-    panel_height = 140
+    panel_height = 120  # 从140改为120以避免与底部重叠
     panel_rect = pygame.Rect(quest_x - 5, quest_y - 5, panel_width, panel_height)
     pygame.draw.rect(SCREEN, (30, 30, 50), panel_rect, border_radius=5)
     pygame.draw.rect(SCREEN, GOLD, panel_rect, 2, border_radius=5)
     
     # 标题
-    font_title = get_font( 24)
+    font_title = get_font( 22)
     title = font_title.render("📋 每日任务", True, GOLD)
     SCREEN.blit(title, (quest_x, quest_y))
     
-    font_quest = get_font( 18)
+    font_quest = get_font( 16)  # 字体稍小以适应小面板
     for key, quest in daily_quests.items():
-        quest_y += 25
+        quest_y += 22  # 减少间距
         
         if quest["completed"]:
             color = GREEN
@@ -452,7 +465,7 @@ def draw_quest_panel():
             status = f"{quest['progress']}/{quest['target']}"
         
         # 任务名称（截断过长）
-        name = quest["name"][:10] + ".." if len(quest["name"]) > 10 else quest["name"]
+        name = quest["name"][:8] + ".." if len(quest["name"]) > 8 else quest["name"]
         text = f"{name} {status}"
         surf = font_quest.render(text, True, color)
         SCREEN.blit(surf, (quest_x, quest_y))
@@ -961,6 +974,10 @@ def init_new_game():
     global_base_effect_manager = get_base_effect_manager()
     # 初始化伤害数字系统
     global_damage_number_manager = DamageNumberManager()
+    
+    # 修复：自动开始第一波
+    global wave_wait_timer
+    wave_wait_timer = 2.0  # 2秒后自动开始第一波
     
     print("游戏初始化完成!")
     return global_base_effect_manager, global_particle_system, global_damage_number_manager
@@ -1715,9 +1732,10 @@ def draw_game():
     SCREEN.blit(tip_surf, (80, skill_bar_y + 10))
 
     # 底部操作提示
-    font_hint = get_font( 24)
-    hint_text = f"Tab:速度 | 1-3:选塔 | U:升级 | H:血量 | T:统计 | M:音效 | 点击:放置  金币:{state.money}  生命:{state.lives}  波次:{state.wave}"
-    hint_surf = font_hint.render(hint_text, True, GRAY)
+    font_hint = get_font( 22)
+    # 修复：更清晰的提示，说明需要先按1-5选择塔，再点击地图放置
+    hint_text = f"📌 先按1-5选择塔，再点击地图放置 | 波次: {state.wave} | 金币: {state.money} | 生命: {state.lives}"
+    hint_surf = font_hint.render(hint_text, True, (180, 180, 180))
     SCREEN.blit(hint_surf, (10, SCREEN_HEIGHT - 30))
 
     # ==================== 精致UI边框和动画效果 ====================
