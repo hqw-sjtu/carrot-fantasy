@@ -1044,3 +1044,104 @@ class TrailFadeEffect:
             color = (*self.color, point_alpha)
             # 绘制拖尾线段
             pygame.draw.line(screen, color, p1, p2, self.width)
+
+
+class UpgradeBeamEffect:
+    """升级光柱特效 - 升级时的光柱直冲云霄"""
+    
+    def __init__(self, x, y, level=2):
+        self.x = x
+        self.y = y
+        self.level = level  # 升级到的等级
+        self.max_life = 0.8  # 800ms
+        self.life = 0
+        self.active = True
+        # 光柱颜色基于等级
+        self.colors = [
+            (255, 215, 0),   # Lv2: 金色
+            (138, 43, 226),  # Lv3: 紫色
+            (255, 69, 0),    # Lv4+: 橙红色
+        ]
+        self.color = self.colors[min(level - 2, 2)]
+        # 粒子系统
+        self.particles = []
+        for _ in range(20):
+            self.particles.append({
+                'x': x + random.uniform(-20, 20),
+                'y': y + random.uniform(-30, 0),
+                'vy': random.uniform(-200, -100),
+                'vx': random.uniform(-30, 30),
+                'size': random.randint(2, 5),
+                'alpha': random.randint(150, 255),
+            })
+    
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        # 更新粒子
+        for p in self.particles:
+            p['y'] += p['vy'] * dt
+            p['x'] += p['vx'] * dt
+            p['alpha'] = int(p['alpha'] * 0.95)
+            p['size'] = max(1, p['size'] * 0.98)
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        progress = self.life / self.max_life
+        alpha = int(255 * (1 - progress))
+        
+        # 绘制光柱（从塔基向上扩散的光环）
+        beam_height = int(100 * (1 - progress))
+        for i in range(5):
+            y_offset = i * 20
+            radius = int(30 + i * 10) * (1 - progress * 0.5)
+            ring_alpha = alpha * (1 - i * 0.15)
+            color = (*self.color, ring_alpha)
+            pygame.draw.ellipse(screen, color, 
+                              (self.x - radius, self.y - beam_height - y_offset - radius,
+                               radius * 2, radius * 2), 2)
+        
+        # 绘制粒子
+        for p in self.particles:
+            if p['alpha'] <= 0:
+                continue
+            color = (*self.color, p['alpha'])
+            glow_color = (*self.color, p['alpha'] // 3)
+            pygame.draw.circle(screen, glow_color, (int(p['x']), int(p['y'])), p['size'] + 2)
+            pygame.draw.circle(screen, color, (int(p['x']), int(p['y'])), p['size'])
+
+
+class TowerSelectionPulse:
+    """塔选中脉冲特效 - 选中塔时的呼吸光环"""
+    
+    def __init__(self, x, y, radius=50):
+        self.x = x
+        self.y = y
+        self.base_radius = radius
+        self.max_life = 1.5  # 1.5秒循环
+        self.life = 0
+        self.active = True
+        self.color = (100, 200, 255)
+    
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.life = 0  # 循环
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        # 呼吸效果
+        pulse = math.sin(self.life * 4) * 0.3 + 0.7
+        radius = int(self.base_radius * pulse)
+        alpha = int(100 * pulse)
+        
+        # 外圈
+        color = (*self.color, alpha)
+        pygame.draw.circle(screen, color, (int(self.x), int(self.y)), radius, 2)
+        # 内圈
+        inner_color = (*self.color, alpha // 2)
+        pygame.draw.circle(screen, inner_color, (int(self.x), int(self.y)), radius // 2, 2)

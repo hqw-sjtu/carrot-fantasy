@@ -7,6 +7,7 @@ import math
 import datetime
 sys.path.append(os.path.dirname(__file__))
 from daily_challenge import daily_challenge, CHALLENGES, get_today_challenge, check_challenge_completion, draw_daily_challenge_panel
+from extra_effects import UpgradeBeamEffect, TowerSelectionPulse, TrailFadeEffect, BlackHoleEffect
 
 # ==================== 中文字体支持 ====================
 # Windows 常用中文字体列表
@@ -812,6 +813,12 @@ death_effects = []  # [(x, y, timer, color), ...]
 
 # 升级特效
 upgrade_effects = []  # [(x, y, timer), ...]
+
+# 升级光柱特效列表 (新)
+upgrade_beam_effects = []  # [UpgradeBeamEffect, ...]
+
+# 塔选中脉冲特效列表 (新)
+tower_selection_pulses = []  # [TowerSelectionPulse, ...]
 
 # 升级属性变化显示 [(x, y, old_damage, new_damage, old_range, new_range, timer)]
 upgrade_info_display = []
@@ -1863,6 +1870,31 @@ def draw_game():
         if timer <= 0:
             upgrade_effects.remove(ef)
 
+    # 绘制升级光柱特效 (新)
+    for effect in upgrade_beam_effects[:]:
+        effect.update(dt)
+        effect.draw(SCREEN)
+        if not effect.active:
+            upgrade_beam_effects.remove(effect)
+
+    # 绘制塔选中脉冲特效 (新) - 选中塔时持续显示
+    if state.selected_tower and state.selected_tower.alive:
+        # 检查是否已有该塔的脉冲效果
+        existing_pulse = None
+        for pulse in tower_selection_pulses:
+            if pulse.x == int(state.selected_tower.x) and pulse.y == int(state.selected_tower.y):
+                existing_pulse = pulse
+                break
+        if existing_pulse:
+            existing_pulse.update(dt)
+            existing_pulse.draw(SCREEN)
+        else:
+            # 创建新的脉冲效果
+            new_pulse = TowerSelectionPulse(int(state.selected_tower.x), int(state.selected_tower.y), 60)
+            tower_selection_pulses.append(new_pulse)
+            new_pulse.update(dt)
+            new_pulse.draw(SCREEN)
+
     # 绘制升级属性变化显示
     for info in upgrade_info_display[:]:
         info[6] -= dt * game_speed  # timer
@@ -2317,6 +2349,8 @@ def main():
                             # 升级成功特效
                             upgrade_effects.append([int(tower.x), int(tower.y), 1.0])
                             particle_system.add_upgrade_aura(int(tower.x), int(tower.y), tower.level)
+                            # 新增：升级光柱特效
+                            upgrade_beam_effects.append(UpgradeBeamEffect(int(tower.x), int(tower.y), tower.level))
                             trigger_screen_shake(3, 0.1)
                             print("⬆️ 升级成功")
 

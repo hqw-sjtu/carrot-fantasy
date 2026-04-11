@@ -1,11 +1,33 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-11 17:23 (Hourly Maintenance)
+> Last updated: 2026-04-12 00:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.6.8] - 2026-04-12 00:23
+
+### Features | 新功能
+- ✨ **升级光柱特效(UpgradeBeamEffect)**:
+  - 升级时金色(Lv2)/紫色(Lv3)/橙红色(Lv4+)光柱直冲云霄
+  - 20粒子环绕上升
+  - 多层光环扩散
+- 🌟 **塔选中脉冲特效(TowerSelectionPulse)**:
+  - 选中塔时呼吸光环持续显示
+  - 双圈同心圆设计
+  - 1.5秒循环动画
+
+### Testing | 测试
+- ✅ 156测试用例全部通过
+- ✅ 语法检查通过
+- ✅ 新增7个特效单元测试
+
+---
+
 
 ---
 

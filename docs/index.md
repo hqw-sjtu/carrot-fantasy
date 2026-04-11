@@ -144,14 +144,16 @@ python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK'
 
 ## 📋 更新日志
 
-See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.6.7**
+See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.6.8**
 
-### 最新特性: 星爆发散 & 渐变拖尾
+### 最新特性: 升级光柱 & 塔选中脉冲 (v1.6.8)
+- **UpgradeBeamEffect**: 升级时金色(Lv2)/紫色(Lv3)/橙红色(Lv4+)光柱直冲云霄,20粒子环绕
+- **TowerSelectionPulse**: 选中塔时呼吸光环,双圈同心圆设计,1.5秒循环
 - **StarburstEffect**: 高连击庆祝烟火,12条光线粒子爆发,中心光环+重力
 - **TrailFadeEffect**: 消失式路径效果,点对点渐变淡出
 - **BlackHoleEffect**: 黑洞吸引特效,30粒子+36段吸积盘,核心脉动
 - **BossHealthBarEffect**: Boss血条暴击效果,闪红+震动+暴击数字
-- 162测试用例覆盖,全部通过
+- 156测试用例覆盖,全部通过
 
 ## 🤝 贡献指南
 
