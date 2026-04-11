@@ -596,6 +596,63 @@ class PulseWarningEffect(BaseEffect):
                              (int(self.x), int(self.y)), 3, 0)
 
 
+class BossWarningEffect(BaseEffect):
+    """Boss警告特效 - Boss出现时全屏红色脉冲警告"""
+    
+    def __init__(self, x, y, screen_width=1000, screen_height=700):
+        super().__init__(x, y)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.color = (255, 50, 50)
+        self.max_life = 90  # 1.5秒警告
+        self.pulse_count = 3
+        self.center_x = screen_width // 2
+        self.center_y = screen_height // 2
+        
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        # 屏幕震动偏移
+        self.shake_x = random.randint(-5, 5) if self.life < 60 else 0
+        self.shake_y = random.randint(-5, 5) if self.life < 60 else 0
+        
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        # 计算当前脉冲
+        pulse_phase = (self.life / self.max_life) * self.pulse_count * 2 * math.pi
+        intensity = (math.sin(pulse_phase) + 1) / 2  # 0-1
+        
+        # 绘制全屏红色闪烁边框
+        border_width = int(20 * intensity)
+        if border_width > 5:
+            # 上边框
+            pygame.draw.rect(screen, (*self.color, int(100 * intensity)),
+                           (0, 0, self.screen_width, border_width))
+            # 下边框
+            pygame.draw.rect(screen, (*self.color, int(100 * intensity)),
+                           (0, self.screen_height - border_width, self.screen_width, border_width))
+            # 左边框
+            pygame.draw.rect(screen, (*self.color, int(100 * intensity)),
+                           (0, 0, border_width, self.screen_height))
+            # 右边框
+            pygame.draw.rect(screen, (*self.color, int(100 * intensity)),
+                           (self.screen_width - border_width, 0, border_width, self.screen_height))
+        
+        # 绘制BOSS警告文字
+        if self.life < 70:
+            font = pygame.font.SysFont("Arial", 48, bold=True)
+            text = font.render("⚠ BOSS WARNING ⚠", True, (255, 255, 255))
+            text_rect = text.get_rect(center=(self.center_x + self.shake_x, self.center_y + self.shake_y - 50))
+            # 文字阴影
+            shadow = font.render("⚠ BOSS WARNING ⚠", True, (150, 0, 0))
+            screen.blit(shadow, (text_rect.x + 3, text_rect.y + 3))
+            screen.blit(text, text_rect)
+
+
 # 单例实例
 _base_effect_manager = None
 

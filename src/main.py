@@ -706,6 +706,9 @@ set_sound_manager_for_projectiles(sound_manager)
 screen_shake = 0
 screen_shake_offset = [0, 0]
 
+# Boss警告特效列表
+boss_warning_effects = []  # [BossWarningEffect, ...]
+
 def trigger_screen_shake(intensity=10, duration=0.3):
     """触发屏幕震动"""
     global screen_shake
@@ -1888,6 +1891,10 @@ def draw_game():
     # 绘制伤害数字
     global_damage_number_manager.draw(SCREEN)
     
+    # 绘制Boss警告特效
+    for effect in boss_warning_effects:
+        effect.draw(SCREEN)
+    
     # 更新和绘制升级光晕特效
     global_particle_system.update_upgrade_aura()
     global_particle_system.draw_upgrade_aura(SCREEN)
@@ -2479,6 +2486,12 @@ def main():
         # 更新伤害数字
         if global_damage_number_manager:
             global_damage_number_manager.update(effective_dt)
+        
+        # 更新Boss警告特效
+        for effect in boss_warning_effects[:]:
+            effect.update(effective_dt)
+            if not effect.active:
+                boss_warning_effects.remove(effect)
 
         # 更新怪物位置
         for monster in state.monsters[:]:

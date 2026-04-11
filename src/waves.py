@@ -75,10 +75,16 @@ class WaveManager:
                 state.monsters.append(monster)
                 self.spawn_timer = 0
                 
-                # Boss出现时触发屏幕震动
+                # Boss出现时触发屏幕震动和警告特效
                 if getattr(monster, 'is_boss', False):
                     import main
                     main.trigger_screen_shake(15, 0.5)
+                    # 添加Boss警告特效
+                    if hasattr(main, 'boss_warning_effects'):
+                        from base_effects import BossWarningEffect
+                        main.boss_warning_effects.append(
+                            BossWarningEffect(500, 350, main.SCREEN_WIDTH, main.SCREEN_HEIGHT)
+                        )
                 
         # 检查波次是否完成
         if not self.monster_queue and not state.monsters:
