@@ -287,6 +287,7 @@ class EffectManager:
         self.shockwaves = []
         self.trails = []
         self.gold_rains = []
+        self.poison_clouds = []  # 新增毒云列表
         self.experience_manager = ExperienceManager.get_instance()
         
     @classmethod
@@ -294,6 +295,12 @@ class EffectManager:
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
+    
+    def spawn_poison_cloud(self, x, y, duration=3.0, radius=80, damage=10, slow=0.4):
+        """生成毒云特效"""
+        cloud = PoisonCloudEffect(x, y, duration, radius, damage, slow)
+        self.poison_clouds.append(cloud)
+        return cloud
     
     def spawn_lightning_chain(self, start_pos, target_positions, color=(150, 150, 255)):
         """生成闪电链特效"""
@@ -407,3 +414,77 @@ class ExperienceManager:
             'exp_to_level': self.exp_to_level,
             'progress': self.total_experience / self.exp_to_level if self.exp_to_level > 0 else 0
         }
+
+
+class PoisonCloudEffect:
+    """毒云减速特效 - 范围内敌人持续受到减速和伤害"""
+    
+    def __init__(self, x, y, duration=3.0, radius=80, damage_per_second=10, slow_factor=0.4):
+        self.x = x
+        self.y = y
+        self.duration = duration  # 持续时间
+        self.radius = radius      # 毒云半径
+        self.damage_per_second = damage_per_second
+        self.slow_factor = slow_factor
+        self.elapsed = 0
+        self.active = True
+        self.particles = []
+        # 初始化毒气粒子
+        for _ in range(20):
+            self.particles.append({
+                'x': x + random.uniform(-radius/2, radius/2),
+                'y': y + random.uniform(-radius/2, radius/2),
+                'vx': random.uniform(-15, 15),
+                'vy': random.uniform(-15, 15),
+                'size': random.uniform(8, 20),
+                'alpha': random.uniform(100, 200),
+                'life': random.uniform(0, 1)
+            })
+    
+    def update(self, dt):
+        """更新毒云状态"""
+        self.elapsed += dt
+        if self.elapsed >= self.duration:
+            self.active = False
+            return
+        
+        # 更新粒子
+        for p in self.particles:
+            p['x'] += p['vx'] * dt
+            p['y'] += p['vy'] * dt
+            p['life'] += dt * 0.5
+            p['alpha'] = int(200 * (1 - self.elapsed / self.duration) * (1 - p['life'] % 1))
+            # 边界约束
+            if abs(p['x'] - self.x) > self.radius:
+                p['vx'] *= -0.5
+            if abs(p['y'] - self.y) > self.radius:
+                p['vy'] *= -0.5
+    
+    def draw(self, screen):
+        """绘制毒云特效"""
+        if not self.active:
+            return
+        
+        # 绘制毒云底色
+        progress = self.elapsed / self.duration
+        alpha = int(80 * (1 - progress))
+        
+        # 外圈
+        pygame.draw.circle(screen, (80, 40, 20, alpha), 
+                          (int(self.x), int(self.y)), int(self.radius), 2)
+        # 内圈
+        pygame.draw.circle(screen, (100, 60, 30, alpha), 
+                          (int(self.x), int(self.y)), int(self.radius * 0.6), 2)
+        
+        # 绘制毒气粒子
+        for p in self.particles:
+            if p['alpha'] > 10:
+                color = (80 + int(p['life'] * 30), 50, 20, p['alpha'])
+                rect = pygame.Rect(int(p['x'] - p['size']/2), 
+                                   int(p['y'] - p['size']/2),
+                                   int(p['size']), int(p['size']))
+                pygame.draw.ellipse(screen, color, rect)
+    
+    def get_affected_area(self):
+        """获取影响区域"""
+        return {'x': self.x, 'y': self.y, 'radius': self.radius}
