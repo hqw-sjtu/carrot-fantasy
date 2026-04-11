@@ -288,6 +288,8 @@ class EffectManager:
         self.trails = []
         self.gold_rains = []
         self.poison_clouds = []  # 新增毒云列表
+        self.starbursts = []  # 星爆发散特效列表
+        self.trail_fades = []  # 渐变拖尾特效列表
         self.experience_manager = ExperienceManager.get_instance()
         
     @classmethod
@@ -322,6 +324,18 @@ class EffectManager:
         effect = GoldRainEffect(screen_width, screen_height, count)
         self.gold_rains.append(effect)
         
+    def spawn_starburst(self, x, y, color=(255, 215, 0), rays=12):
+        """生成星爆发散特效"""
+        effect = StarburstEffect(x, y, color, rays)
+        self.starbursts.append(effect)
+        return effect
+    
+    def spawn_trail_fade(self, points, color=(100, 200, 255), width=8):
+        """生成渐变拖尾特效"""
+        effect = TrailFadeEffect(points, color, width)
+        self.trail_fades.append(effect)
+        return effect
+        
     def update(self, dt):
         """更新所有特效"""
         # 闪电链
@@ -346,6 +360,16 @@ class EffectManager:
                 self.gold_rains.remove(effect)
         # 经验球
         self.experience_manager.update(dt)
+        # 星爆发散
+        for effect in self.starbursts[:]:
+            effect.update(dt)
+            if not effect.active:
+                self.starbursts.remove(effect)
+        # 渐变拖尾
+        for effect in self.trail_fades[:]:
+            effect.update(dt)
+            if not effect.active:
+                self.trail_fades.remove(effect)
         
     def draw(self, screen):
         """绘制所有特效"""
@@ -356,6 +380,14 @@ class EffectManager:
         for effect in self.trails:
             effect.draw(screen)
         for effect in self.gold_rains:
+            effect.draw(screen)
+        # 经验球
+        self.experience_manager.draw(screen)
+        # 星爆发散
+        for effect in self.starbursts:
+            effect.draw(screen)
+        # 渐变拖尾
+        for effect in self.trail_fades:
             effect.draw(screen)
         self.experience_manager.draw(screen)
 
@@ -913,3 +945,102 @@ class FreezeBlastEffect:
             else:
                 # 绘制雪花
                 pygame.draw.circle(screen, color, (int(c['x']), int(c['y'])), int(c['size']))
+
+
+class StarburstEffect:
+    """星爆发散特效 - 高连击时的庆祝烟火效果"""
+    
+    def __init__(self, x, y, color=(255, 215, 0), rays=12):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.rays = rays  # 光线数量
+        self.max_life = 1.0  # 1秒
+        self.life = 0
+        self.active = True
+        self.max_radius = 80  # 最大半径
+        self.particles = []
+        # 初始化粒子
+        for i in range(rays):
+            angle = (i / rays) * 2 * math.pi
+            speed = random.uniform(100, 200)
+            self.particles.append({
+                'x': x,
+                'y': y,
+                'vx': math.cos(angle) * speed,
+                'vy': math.sin(angle) * speed,
+                'size': random.randint(2, 5),
+                'alpha': 255,
+                'decay': random.uniform(200, 400)
+            })
+    
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        # 更新粒子
+        for p in self.particles:
+            p['x'] += p['vx'] * dt
+            p['y'] += p['vy'] * dt
+            p['alpha'] = max(0, 255 - (self.life / self.max_life) * 255)
+            p['vy'] += 50 * dt  # 重力
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        # 绘制中心光环
+        progress = self.life / self.max_life
+        center_alpha = int(255 * (1 - progress))
+        center_radius = int(self.max_radius * (1 - progress * 0.5))
+        # 外圈
+        pygame.draw.circle(screen, (*self.color, center_alpha // 2), 
+                          (int(self.x), int(self.y)), center_radius + 5, 2)
+        # 内圈
+        pygame.draw.circle(screen, (*self.color, center_alpha), 
+                          (int(self.x), int(self.y)), center_radius)
+        # 绘制粒子
+        for p in self.particles:
+            if p['alpha'] <= 0:
+                continue
+            color = (*self.color, p['alpha'])
+            # 发光效果
+            glow_color = (*self.color, p['alpha'] // 3)
+            pygame.draw.circle(screen, glow_color, 
+                              (int(p['x']), int(p['y'])), p['size'] + 2)
+            pygame.draw.circle(screen, color, 
+                              (int(p['x']), int(p['y'])), p['size'])
+
+
+class TrailFadeEffect:
+    """渐变拖尾特效 - 消失式路径效果"""
+    
+    def __init__(self, points, color=(100, 200, 255), width=8):
+        self.points = points  # [(x, y), ...]
+        self.color = color
+        self.width = width
+        self.max_life = 0.5  # 500ms
+        self.life = 0
+        self.active = bool(points)
+    
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life or not self.points:
+            self.active = False
+            return
+        # 移除过期的点
+        if len(self.points) > 1:
+            self.points = self.points[1:]
+    
+    def draw(self, screen):
+        if not self.active or len(self.points) < 2:
+            return
+        alpha = int(255 * (1 - self.life / self.max_life))
+        for i in range(len(self.points) - 1):
+            p1 = self.points[i]
+            p2 = self.points[i + 1]
+            # 点越老越透明
+            point_alpha = alpha * (i / len(self.points))
+            color = (*self.color, point_alpha)
+            # 绘制拖尾线段
+            pygame.draw.line(screen, color, p1, p2, self.width)

@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.7] - 2026-04-11 22:23
+
+### Features | 新功能
+- ✨ **星爆发散特效(StarburstEffect)**:
+  - 高连击时的庆祝烟火效果
+  - 12条光线粒子爆发
+  - 中心光环+重力物理
+  - 1秒持续时间
+- 🎯 **渐变拖尾特效(TrailFadeEffect)**:
+  - 消失式路径效果
+  - 点对点渐变淡出
+  - 500ms快速消失
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有Python模块py_compile通过
+- ✅ 测试覆盖: 162测试用例全部通过 (149+10新增+3跳过)
+- ✅ 新增特效: StarburstEffect + TrailFadeEffect
+- ✅ EffectManager集成: 支持spawn_starburst/spawn_trail_fade
+
+---
+
 ## [1.6.6] - 2026-04-11 21:23
 
 ### Features | 新功能

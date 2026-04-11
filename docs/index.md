@@ -144,15 +144,14 @@ python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK'
 
 ## 📋 更新日志
 
-See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.5.3**
+See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.6.7**
 
-### 最新特性: 攻击拖尾 & 金币雨
-- **TowerAttackTrailEffect**: 子弹轨迹拖尾,带发光效果
-- **GoldRainEffect**: 金币从天而降,旋转动画
-- **ExperienceOrb**: 经验球特效,怪物死亡后飞向玩家,带拖尾
-- **ExperienceManager**: 经验收集与等级成长系统
-- 连击链特效: 连续击杀怪物时触发连击数字显示
-- 连击数越高，火花特效越密集,带文字发光效果和重力物理模拟
+### 最新特性: 星爆发散 & 渐变拖尾
+- **StarburstEffect**: 高连击庆祝烟火,12条光线粒子爆发,中心光环+重力
+- **TrailFadeEffect**: 消失式路径效果,点对点渐变淡出
+- **BlackHoleEffect**: 黑洞吸引特效,30粒子+36段吸积盘,核心脉动
+- **BossHealthBarEffect**: Boss血条暴击效果,闪红+震动+暴击数字
+- 162测试用例覆盖,全部通过
 
 ## 🤝 贡献指南
 

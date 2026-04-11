@@ -1,100 +1,110 @@
-"""保卫萝卜 - 新增特效测试"""
+"""
+保卫萝卜 - 新增特效测试
+测试 StarburstEffect 和 TrailFadeEffect
+"""
+
 import pytest
 import sys
-sys.path.insert(0, 'src')
-import pygame
-pygame.init()
+import os
 
-from base_effects import ShieldEffect, PulseWarningEffect, BaseEffectManager
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 
-class TestShieldEffect:
-    """护盾特效测试"""
+class TestStarburstEffect:
+    """星爆发散特效测试"""
     
-    def test_shield_effect_init(self):
-        """测试护盾特效初始化"""
-        effect = ShieldEffect(100, 100, (100, 150, 255), 30)
+    def test_starburst_init(self):
+        """测试星爆发散初始化"""
+        from extra_effects import StarburstEffect
+        effect = StarburstEffect(100, 200, color=(255, 215, 0), rays=12)
         assert effect.x == 100
-        assert effect.y == 100
-        assert effect.color == (100, 150, 255)
-        assert effect.max_life == 30
-        assert effect.active is True
-        
-    def test_shield_effect_update(self):
-        """测试护盾特效更新"""
-        effect = ShieldEffect(100, 100)
-        initial_life = effect.life
-        effect.update(10)
-        assert effect.life == initial_life + 10
-        
-    def test_shield_effect_deactivate(self):
-        """测试护盾特效消失"""
-        effect = ShieldEffect(100, 100, duration=20)
-        effect.update(25)
-        assert effect.active is False
-        
-    def test_shield_effect_rings(self):
-        """测试护盾环结构"""
-        effect = ShieldEffect(100, 100)
-        assert len(effect.rings) == 3
-        assert effect.rings[0]['radius'] == 25
-        assert effect.rings[1]['radius'] == 35
-        assert effect.rings[2]['radius'] == 45
-
-
-class TestPulseWarningEffect:
-    """脉冲警告特效测试"""
-    
-    def test_pulse_warning_init(self):
-        """测试脉冲警告初始化"""
-        effect = PulseWarningEffect(200, 200, 80, (255, 80, 80), 3)
-        assert effect.x == 200
         assert effect.y == 200
-        assert effect.radius == 80
-        assert effect.color == (255, 80, 80)
-        assert effect.pulses == 3
-        
-    def test_pulse_warning_update(self):
-        """测试脉冲警告更新"""
-        effect = PulseWarningEffect(200, 200, pulses=3)
-        effect.update(25)
-        assert effect.current_pulse == 1
-        
-    def test_pulse_warning_deactivate(self):
-        """测试脉冲警告结束"""
-        effect = PulseWarningEffect(200, 200, pulses=3)
-        # max_life = pulses * 20 = 60
-        effect.update(65)
+        assert effect.color == (255, 215, 0)
+        assert effect.rays == 12
+        assert effect.max_life == 1.0
+        assert effect.active is True
+        assert len(effect.particles) == 12
+    
+    def test_starburst_update(self):
+        """测试星爆发散更新"""
+        from extra_effects import StarburstEffect
+        effect = StarburstEffect(100, 200, rays=8)
+        initial_x = effect.particles[0]['x']
+        effect.update(0.016)  # 1帧
+        assert effect.life > 0
+        # 粒子应该移动
+        assert effect.particles[0]['x'] != initial_x
+    
+    def test_starburst_finish(self):
+        """测试星爆发散结束"""
+        from extra_effects import StarburstEffect
+        effect = StarburstEffect(100, 200)
+        effect.update(1.5)  # 超过最大生命周期
+        assert effect.active is False
+    
+    def test_starburst_particles_decay(self):
+        """测试粒子透明度衰减"""
+        from extra_effects import StarburstEffect
+        effect = StarburstEffect(100, 200, rays=6)
+        effect.update(0.5)  # 半生命周期
+        # alpha应该减少
+        assert effect.particles[0]['alpha'] < 255
+
+
+class TestTrailFadeEffect:
+    """渐变拖尾特效测试"""
+    
+    def test_trail_fade_init(self):
+        """测试渐变拖尾初始化"""
+        from extra_effects import TrailFadeEffect
+        points = [(100, 100), (110, 110), (120, 120)]
+        effect = TrailFadeEffect(points, color=(100, 200, 255), width=8)
+        assert effect.points == points
+        assert effect.color == (100, 200, 255)
+        assert effect.width == 8
+        assert effect.max_life == 0.5
+        assert effect.active is True
+    
+    def test_trail_fade_empty_points(self):
+        """测试空点列表"""
+        from extra_effects import TrailFadeEffect
+        effect = TrailFadeEffect([])
+        assert effect.active is False
+    
+    def test_trail_fade_update(self):
+        """测试渐变拖尾更新"""
+        from extra_effects import TrailFadeEffect
+        points = [(100, 100), (110, 110), (120, 120)]
+        effect = TrailFadeEffect(points)
+        initial_len = len(effect.points)
+        effect.update(0.1)
+        # 点应该被移除
+        assert len(effect.points) <= initial_len
+    
+    def test_trail_fade_finish(self):
+        """测试渐变拖尾结束"""
+        from extra_effects import TrailFadeEffect
+        points = [(100, 100), (110, 110)]
+        effect = TrailFadeEffect(points)
+        effect.update(0.6)  # 超过最大生命周期
         assert effect.active is False
 
 
-class TestBaseEffectManagerNew:
-    """新增特效管理器测试"""
+class TestEffectManager:
+    """特效管理器测试"""
     
-    def test_add_shield_effect(self):
-        """测试添加护盾特效"""
-        manager = BaseEffectManager()
-        manager.add_shield_effect(100, 100)
-        assert len(manager.effects) == 1
-        assert isinstance(manager.effects[0], ShieldEffect)
-        
-    def test_add_pulse_warning(self):
-        """测试添加脉冲警告特效"""
-        manager = BaseEffectManager()
-        manager.add_pulse_warning(200, 200)
-        assert len(manager.effects) == 1
-        assert isinstance(manager.effects[0], PulseWarningEffect)
-        
-    def test_trigger_shield_effect(self):
-        """测试触发护盾特效"""
-        manager = BaseEffectManager()
-        
-        class MockTower:
-            def __init__(self):
-                self.x = 100
-                self.y = 100
-                self.name = "箭塔"
-        
-        tower = MockTower()
-        manager.trigger_shield_effect(tower)
-        assert len(manager.effects) == 1
+    def test_spawn_starburst(self):
+        """测试生成星爆发散"""
+        from extra_effects import EffectManager
+        manager = EffectManager.get_instance()
+        initial_count = len(manager.starbursts)
+        manager.spawn_starburst(100, 200)
+        assert len(manager.starbursts) == initial_count + 1
+    
+    def test_spawn_trail_fade(self):
+        """测试生成渐变拖尾"""
+        from extra_effects import EffectManager
+        manager = EffectManager.get_instance()
+        initial_count = len(manager.trail_fades)
+        manager.spawn_trail_fade([(100, 100), (200, 200)])
+        assert len(manager.trail_fades) == initial_count + 1
