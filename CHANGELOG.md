@@ -1,11 +1,30 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-11 09:23 (Hourly Maintenance)
+> Last updated: 2026-04-11 16:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.6.3] - 2026-04-11 16:23
+
+### Features | 新功能
+- 🏆 **成就系统(Achievement System)**: 18个成就解锁
+  - 击杀成就: 初战告捷→毁灭者(5级)
+  - 金币成就: 小有积蓄→富甲一方(3级)
+  - 塔类成就: 初建防御→建塔大师(2级)
+  - 升级成就: 初窥门径→升级专家(2级)
+  - 波次成就: 初战成名→不败传说(3级)
+  - 特殊成就: 完美防御/集火达人/闪电击杀
+  - 奖励: 金币奖励即时发放
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有Python模块py_compile通过
+- ✅ 测试覆盖: 135→141 测试用例
+- ✅ GitHub推送: 成就系统已提交
 
 ---
 
