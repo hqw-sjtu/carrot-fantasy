@@ -936,6 +936,16 @@ class GameData:
         self.wave_complete = False
         self.mouse_preview = None  # 塔放置预览位置
         self.paused = False  # 暂停状态
+        # 技能系统状态
+        self.slow_skill_active = False
+        self.slow_skill_timer = 0.0
+        self.slow_skill_cooldown = 0.0  # 15秒冷却
+        self.freeze_skill_active = False
+        self.freeze_skill_timer = 0.0
+        self.freeze_skill_cooldown = 0.0  # 20秒冷却
+        self.aoe_skill_active = False
+        self.aoe_skill_timer = 0.0
+        self.aoe_skill_cooldown = 0.0  # 25秒冷却
 
     def reset(self):
         global final_wave_announced, game_complete_time, difficulty_selected, level_select_mode, selected_level
@@ -1756,26 +1766,66 @@ def draw_game():
     # 底部技能按钮面板
     skill_bar_y = SCREEN_HEIGHT - 50
 
-    # 技能按钮
+    # 技能按钮 (带冷却显示)
     skills = [
-        ("Q", "减速技能", CYAN),
-        ("W", "冰冻技能", BLUE),
-        ("E", "群攻技能", RED),
+        ("Q", "减速技能", CYAN, 'slow'),
+        ("W", "冰冻技能", BLUE, 'freeze'),
+        ("E", "群攻技能", RED, 'aoe'),
     ]
 
-    for i, (key, name, color) in enumerate(skills):
+    for i, (key, name, color, skill_id) in enumerate(skills):
         bx = 150 + i * 100
         by = skill_bar_y
         
-        # 按钮背景
-        pygame.draw.rect(SCREEN, (40, 40, 60), (bx, by, 80, 35), border_radius=5)
+        # 检测技能状态
+        is_active = False
+        cooldown = 0
+        cooldown_max = 15 if skill_id == 'slow' else 20 if skill_id == 'freeze' else 25
+        
+        if skill_id == 'slow':
+            is_active = getattr(state, 'slow_skill_active', False)
+            cooldown = getattr(state, 'slow_skill_cooldown', 0)
+        elif skill_id == 'freeze':
+            is_active = getattr(state, 'freeze_skill_active', False)
+            cooldown = getattr(state, 'freeze_skill_cooldown', 0)
+        elif skill_id == 'aoe':
+            is_active = getattr(state, 'aoe_skill_active', False)
+            cooldown = getattr(state, 'aoe_skill_cooldown', 0)
+        
+        # 按钮背景 - 激活时高亮,冷却时变暗
+        if is_active:
+            bg_color = (80, 80, 120)  # 激活时更亮
+            border_color = WHITE
+        elif cooldown > 0:
+            bg_color = (30, 30, 40)  # 冷却时变暗
+            border_color = (80, 80, 80)
+        else:
+            bg_color = (40, 40, 60)
+            border_color = color
+        
+        pygame.draw.rect(SCREEN, bg_color, (bx, by, 80, 35), border_radius=5)
         # 边框
-        pygame.draw.rect(SCREEN, color, (bx, by, 80, 35), 2, border_radius=5)
+        pygame.draw.rect(SCREEN, border_color, (bx, by, 80, 35), 2, border_radius=5)
+        
+        # 冷却进度条
+        if cooldown > 0:
+            cd_ratio = cooldown / cooldown_max
+            cd_width = int(76 * cd_ratio)
+            pygame.draw.rect(SCREEN, (100, 100, 100), (bx + 2, by + 30, 76, 3))
+            pygame.draw.rect(SCREEN, color, (bx + 2, by + 30, cd_width, 3))
         
         # 文字
-        font_skill = get_font( 28)
-        key_surf = font_skill.render(f"{key}: {name}", True, color)
-        SCREEN.blit(key_surf, (bx + 5, by + 8))
+        font_skill = get_font( 24)
+        key_surf = font_skill.render(f"{key}: {name}", True, color if cooldown <= 0 and not is_active else (150, 150, 150))
+        SCREEN.blit(key_skill, (bx + 3, by + 5))
+        
+        # 激活/冷却提示
+        if is_active:
+            active_surf = font_skill.render("●", True, (0, 255, 0))
+            SCREEN.blit(active_surf, (bx + 60, by + 5))
+        elif cooldown > 0:
+            cd_surf = font_skill.render(f"{int(cooldown)}", True, (200, 200, 200))
+            SCREEN.blit(cd_surf, (bx + 58, by + 5))
 
     # 提示
     font_tip = get_font( 20)
@@ -2324,16 +2374,44 @@ def main():
                     config['tower_selection'] = '魔法塔'
                 elif event.key == pygame.K_4:
                     config['tower_selection'] = '冰霜塔'
-                # Q/W/E技能按键
+                # Q/W/E技能按键 (带冷却)
                 elif event.key == pygame.K_q:
-                    # 减速技能
-                    print("❄️ 减速技能激活!")
+                    # 减速技能 - 5秒内所有怪物减速50%
+                    if not hasattr(state, 'slow_skill_active') or not state.slow_skill_active:
+                        state.slow_skill_active = True
+                        state.slow_skill_timer = 5.0
+                        for monster in state.monsters:
+                            monster.apply_slow(0.5, 5.0)
+                        # 技能特效
+                        trigger_screen_shake(5, 0.1)
+                        spawn_particles(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, (100, 200, 255), 30)
+                        print("❄️ 减速技能激活! 敌人减速50%")
                 elif event.key == pygame.K_w:
-                    # 冰冻技能
-                    print("🧊 冰冻技能激活!")
+                    # 冰冻技能 - 冻结所有怪物3秒
+                    if not hasattr(state, 'freeze_skill_active') or not state.freeze_skill_active:
+                        state.freeze_skill_active = True
+                        state.freeze_skill_timer = 3.0
+                        for monster in state.monsters:
+                            monster.frozen = 180  # 3秒(60fps)
+                        # 技能特效
+                        trigger_screen_shake(8, 0.15)
+                        spawn_particles(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, (150, 230, 255), 40)
+                        print("🧊 冰冻技能激活! 敌人冻结3秒")
                 elif event.key == pygame.K_e:
-                    # 群攻技能
-                    print("💥 群攻技能激活!")
+                    # 群攻技能 - 对所有怪物造成50点伤害
+                    if not hasattr(state, 'aoe_skill_active') or not state.aoe_skill_active:
+                        state.aoe_skill_active = True
+                        state.aoe_skill_timer = 10.0
+                        damage = 50
+                        for monster in state.monsters[:]:
+                            monster.health -= damage
+                            if global_damage_number_manager:
+                                mx = 100 + monster.position * 600
+                                global_damage_number_manager.add_damage(int(mx), 280, damage, False)
+                        # 技能特效
+                        trigger_screen_shake(15, 0.2)
+                        spawn_particles(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, (255, 100, 50), 50)
+                        print(f"💥 群攻技能激活! 造成{damage}点伤害")
                 # I键打开/关闭塔图鉴
                 elif event.key == pygame.K_i:
                     global show_tower_book
@@ -2507,6 +2585,35 @@ def main():
             
             # ===== 每日任务进度更新 =====
             update_quest("wave_5")
+
+        # ==================== 技能系统更新 ====================
+        if hasattr(state, 'slow_skill_active'):
+            # 减速技能
+            if state.slow_skill_active:
+                state.slow_skill_timer -= effective_dt
+                if state.slow_skill_timer <= 0:
+                    state.slow_skill_active = False
+                    state.slow_skill_cooldown = 15.0
+            elif state.slow_skill_cooldown > 0:
+                state.slow_skill_cooldown -= effective_dt
+            
+            # 冰冻技能
+            if state.freeze_skill_active:
+                state.freeze_skill_timer -= effective_dt
+                if state.freeze_skill_timer <= 0:
+                    state.freeze_skill_active = False
+                    state.freeze_skill_cooldown = 20.0
+            elif state.freeze_skill_cooldown > 0:
+                state.freeze_skill_cooldown -= effective_dt
+            
+            # 群攻技能
+            if state.aoe_skill_active:
+                state.aoe_skill_timer -= effective_dt
+                if state.aoe_skill_timer <= 0:
+                    state.aoe_skill_active = False
+                    state.aoe_skill_cooldown = 25.0
+            elif state.aoe_skill_cooldown > 0:
+                state.aoe_skill_cooldown -= effective_dt
 
         # 检查胜利条件(所有波次完成且无怪物)
         if not state.wave_manager.has_more_waves() and state.wave_manager.is_wave_complete() and not state.monsters and state.wave > 0:
