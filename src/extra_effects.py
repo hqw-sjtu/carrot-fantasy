@@ -1270,3 +1270,57 @@ class ScreenFreezeEffect:
             line_alpha = alpha // 2
             pygame.draw.line(screen, (200, 240, 255, line_alpha), 
                            (x1, y1), (x2, y2), 1)
+
+
+class WaveAnnouncementEffect:
+    """波次公告特效 - 新波次开始时的全屏公告动画"""
+    
+    def __init__(self, screen_width, screen_height, wave_number):
+        self.width = screen_width
+        self.height = screen_height
+        self.wave_number = wave_number
+        self.max_life = 2.0  # 2秒公告动画
+        self.life = 0
+        self.active = True
+        self.text_zoom = 0.0
+        
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        # 缩放动画：0-0.3秒放大，0.3-1.5秒保持，1.5-2秒淡出
+        if self.life < 0.3:
+            self.text_zoom = self.life / 0.3
+        elif self.life > 1.5:
+            self.text_zoom = 1.0 - (self.life - 1.5) / 0.5
+        else:
+            self.text_zoom = 1.0
+            
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        # 背景遮罩
+        alpha = int(100 * (1 - abs(self.life - 0.75) / 0.75))
+        if alpha > 0:
+            freeze_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+            freeze_surface.fill((0, 0, 0, alpha))
+            screen.blit(freeze_surface, (0, 0))
+        
+        # 绘制"波次X"文字
+        font = pygame.font.SysFont('SimHei', int(60 * self.text_zoom))
+        text = f"第 {self.wave_number} 波"
+        text_surface = font.render(text, True, (255, 200, 50))
+        text_rect = text_surface.get_rect(center=(self.width // 2, self.height // 2))
+        
+        # 文字发光效果
+        glow_font = pygame.font.SysFont('SimHei', int(65 * self.text_zoom))
+        glow_surface = glow_font.render(text, True, (255, 150, 0))
+        glow_rect = glow_surface.get_rect(center=(self.width // 2, self.height // 2))
+        screen.blit(glow_surface, glow_rect)
+        screen.blit(text_surface, text_rect)
+        
+        # 外圈光芒
+        pygame.draw.circle(screen, (255, 180, 50, int(150 * self.text_zoom)),
+                          (self.width // 2, self.height // 2), int(100 * self.text_zoom), 3)
