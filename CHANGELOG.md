@@ -1,6 +1,6 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-12 00:23 (Hourly Maintenance)
+> Last updated: 2026-04-12 01:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
@@ -9,7 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.6.8] - 2026-04-12 00:23
+## [1.6.9] - 2026-04-12 01:23
+### Features | 新功能
+- ✨ **时间膨胀特效(TimeDilationEffect)**:
+  - 减速技能激活时的时间扭曲视觉效果
+  - 同心圆膨胀动画+核心脉动
+  - 2秒持续时间
+- ❄️ **屏幕冰冻特效(ScreenFreezeEffect)**:
+  - 冰塔终极技能的全屏冻结效果
+  - 浅蓝冰霜覆盖层+冰晶纹理
+  - 500ms快速淡出
+  - EffectManager已集成新特效
+
+### Testing | 测试
+- ✅ 156测试用例全部通过
+- ✅ 语法检查通过
 
 ### Features | 新功能
 - ✨ **升级光柱特效(UpgradeBeamEffect)**:

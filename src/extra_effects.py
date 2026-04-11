@@ -290,6 +290,8 @@ class EffectManager:
         self.poison_clouds = []  # 新增毒云列表
         self.starbursts = []  # 星爆发散特效列表
         self.trail_fades = []  # 渐变拖尾特效列表
+        self.time_dilations = []  # 时间膨胀特效列表
+        self.screen_freezes = []  # 屏幕冰冻特效列表
         self.experience_manager = ExperienceManager.get_instance()
         
     @classmethod
@@ -335,6 +337,18 @@ class EffectManager:
         effect = TrailFadeEffect(points, color, width)
         self.trail_fades.append(effect)
         return effect
+    
+    def spawn_time_dilation(self, x, y, radius=150, color=(100, 150, 255)):
+        """生成时间膨胀特效"""
+        effect = TimeDilationEffect(x, y, radius, color)
+        self.time_dilations.append(effect)
+        return effect
+    
+    def spawn_screen_freeze(self, screen_width, screen_height):
+        """生成屏幕冰冻特效"""
+        effect = ScreenFreezeEffect(screen_width, screen_height)
+        self.screen_freezes.append(effect)
+        return effect
         
     def update(self, dt):
         """更新所有特效"""
@@ -370,6 +384,16 @@ class EffectManager:
             effect.update(dt)
             if not effect.active:
                 self.trail_fades.remove(effect)
+        # 时间膨胀
+        for effect in self.time_dilations[:]:
+            effect.update(dt)
+            if not effect.active:
+                self.time_dilations.remove(effect)
+        # 屏幕冰冻
+        for effect in self.screen_freezes[:]:
+            effect.update(dt)
+            if not effect.active:
+                self.screen_freezes.remove(effect)
         
     def draw(self, screen):
         """绘制所有特效"""
@@ -388,6 +412,10 @@ class EffectManager:
             effect.draw(screen)
         # 渐变拖尾
         for effect in self.trail_fades:
+            effect.draw(screen)
+        for effect in self.time_dilations:
+            effect.draw(screen)
+        for effect in self.screen_freezes:
             effect.draw(screen)
         self.experience_manager.draw(screen)
 
@@ -1145,3 +1173,100 @@ class TowerSelectionPulse:
         # 内圈
         inner_color = (*self.color, alpha // 2)
         pygame.draw.circle(screen, inner_color, (int(self.x), int(self.y)), radius // 2, 2)
+
+class TimeDilationEffect:
+    """时间膨胀特效 - 减速技能激活时的时间扭曲视觉效果"""
+    
+    def __init__(self, x, y, radius=150, color=(100, 150, 255)):
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.color = color
+        self.max_life = 2.0  # 2秒持续
+        self.life = 0
+        self.active = True
+        self.rings = []  # 存储膨胀的同心圆
+        
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        
+        # 定期添加新圆环
+        if len(self.rings) < 8 and int(self.life * 10) > len(self.rings):
+            self.rings.append({
+                'radius': 0,
+                'max_radius': self.radius * (0.3 + len(self.rings) * 0.1),
+                'alpha': 200
+            })
+        
+        # 更新所有圆环
+        for ring in self.rings:
+            ring['radius'] += 80 * dt  # 膨胀速度
+            ring['alpha'] = max(0, int(200 * (1 - ring['radius'] / ring['max_radius'])))
+        
+        # 清理消失的圆环
+        self.rings = [r for r in self.rings if r['alpha'] > 0]
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        # 绘制扭曲圆环
+        for ring in self.rings:
+            color = (*self.color, ring['alpha'])
+            # 主圆环
+            pygame.draw.circle(screen, color, (int(self.x), int(self.y)), 
+                             int(ring['radius']), 2)
+            # 虚线效果（内圈）
+            inner_color = (*self.color, ring['alpha'] // 2)
+            pygame.draw.circle(screen, inner_color, (int(self.x), int(self.y)), 
+                             int(ring['radius']) - 3, 1)
+        
+        # 中心时间扭曲核心
+        pulse = math.sin(self.life * 10) * 0.3 + 0.7
+        center_alpha = int(150 * (1 - self.life / self.max_life) * pulse)
+        center_color = (*self.color, center_alpha)
+        pygame.draw.circle(screen, center_color, (int(self.x), int(self.y)), 
+                          int(20 * pulse), 3)
+
+
+class ScreenFreezeEffect:
+    """屏幕冰冻特效 - 冰塔终极技能的全屏冻结效果"""
+    
+    def __init__(self, screen_width, screen_height):
+        self.width = screen_width
+        self.height = screen_height
+        self.max_life = 0.5  # 500ms快速淡出
+        self.life = 0
+        self.active = True
+        self.freeze_color = (150, 220, 255)
+        
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        # 冰霜覆盖层
+        alpha = int(80 * (1 - self.life / self.max_life))
+        
+        # 全屏浅蓝覆盖
+        freeze_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        freeze_surface.fill((*self.freeze_color, alpha))
+        screen.blit(freeze_surface, (0, 0))
+        
+        # 冰晶纹理线条
+        import random
+        for _ in range(15):
+            x1 = random.randint(0, self.width)
+            y1 = random.randint(0, self.height)
+            x2 = x1 + random.randint(-100, 100)
+            y2 = y1 + random.randint(-100, 100)
+            line_alpha = alpha // 2
+            pygame.draw.line(screen, (200, 240, 255, line_alpha), 
+                           (x1, y1), (x2, y2), 1)
