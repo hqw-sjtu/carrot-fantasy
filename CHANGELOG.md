@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.1] - 2026-04-11 14:23
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有Python模块py_compile通过
+- ✅ 测试覆盖: 135测试用例全部通过
+- ✅ 代码架构: main.py模块化,14个独立模块
+- ✅ GitHub Pages: docs/完整文档(4300+行)
+- ✅ 特效系统: 粒子/伤害数字/金币雨/经验球/闪电链
+- ✅ 血条系统: 渐变+低血量闪烁+高光效果
+- ✅ 音效系统: 10种合成音效(射击/暴击/升级等)
+- 📝 文档完善: README.md, CHANGELOG.md
+
+---
+
 ## [1.5.8] - 2026-04-11 10:23
 
 ### Features | 新功能
