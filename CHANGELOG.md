@@ -29,6 +29,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✨ **经验球特效(ExperienceOrb)**: 怪物死亡后飞向玩家的光球,带拖尾效果
 - 📊 **经验管理器(ExperienceManager)**: 经验收集、等级成长系统
 
+---
+
+## [1.6.0] - 2026-04-11 12:23
+
+### Features | 新功能
+- ⚡ **闪电链特效(LightningChainEffect)**: 电塔链式攻击视觉效果,带随机闪烁
+- 💥 **冲击波特效(ShockwaveEffect)**: 强力攻击时的环形扩散效果
+- 🎮 **特效管理器(EffectManager)**: 统一管理所有游戏特效
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 18个Python模块全部通过py_compile
+- ✅ 测试覆盖: 129→135 测试用例,新增9个特效测试
+- ✅ 代码质量: 所有测试通过 (135 passed, 3 skipped)
+- ⚡ 性能优化: 新增特效类已集成到EffectManager统一管理
+
 ### Maintenance | 每小时维护
 - ✅ 语法检查: 所有模块通过py_compile
 - ✅ 测试覆盖: 120→126 测试用例,新增6个经验球测试

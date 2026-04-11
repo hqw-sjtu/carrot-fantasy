@@ -187,6 +187,172 @@ class ExperienceOrb:
         pygame.draw.circle(screen, highlight_color, (int(self.x - 2), int(self.y - 2)), base_size // 3)
 
 
+class LightningChainEffect:
+    """闪电链式攻击特效 - 电塔链式攻击视觉效果"""
+    
+    def __init__(self, start_pos, target_positions, color=(150, 150, 255)):
+        self.start_pos = start_pos  # 起始点（塔位置）
+        self.target_positions = target_positions  # 目标点列表（多个敌人）
+        self.color = color
+        self.max_life = 0.4  # 400ms闪电持续
+        self.life = 0
+        self.active = True
+        self.segments = []  # 闪电线段
+        self._generate_lightning()
+        
+    def _generate_lightning(self):
+        """生成闪电路径"""
+        for target in self.target_positions:
+            segments = []
+            points = [self.start_pos, target]
+            # 在两点之间插入随机偏移点形成闪电效果
+            for i in range(len(points) - 1):
+                start = points[i]
+                end = points[i + 1]
+                mid_x = (start[0] + end[0]) / 2
+                mid_y = (start[1] + end[1]) / 2
+                # 添加随机偏移
+                offset = random.uniform(-30, 30)
+                if abs(start[0] - end[0]) > abs(start[1] - end[1]):
+                    mid_y += offset
+                else:
+                    mid_x += offset
+                segments.append((start, (mid_x, mid_y)))
+                segments.append(((mid_x, mid_y), end))
+            self.segments.append(segments)
+            
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            # 重新生成闪电产生闪烁效果
+            if self.life < self.max_life * 1.5:
+                self._generate_lightning()
+                self.active = True
+                
+    def draw(self, screen):
+        if not self.active:
+            return
+        alpha = int(255 * (1 - self.life / self.max_life))
+        # 绘制闪电
+        for segments in self.segments:
+            for i, (start, end) in enumerate(segments):
+                width = 3 if i % 2 == 0 else 1
+                color = (*self.color, alpha)
+                pygame.draw.line(screen, color, start, end, width)
+                # 发光效果
+                glow_color = (*self.color, alpha // 4)
+                pygame.draw.line(screen, glow_color, start, end, width * 4)
+
+
+class ShockwaveEffect:
+    """冲击波特效 - 强力攻击时的环形扩散效果"""
+    
+    def __init__(self, x, y, color=(255, 100, 100), max_radius=150):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.max_radius = max_radius
+        self.max_life = 0.8
+        self.life = 0
+        self.active = True
+        
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            
+    def draw(self, screen):
+        if not self.active:
+            return
+        progress = self.life / self.max_life
+        # 多层冲击波
+        for i in range(3):
+            ring_progress = max(0, progress - i * 0.1)
+            if ring_progress > 1:
+                continue
+            radius = self.max_radius * ring_progress
+            alpha = int(255 * (1 - ring_progress) * 0.5)
+            color = (*self.color, alpha)
+            pygame.draw.circle(screen, color, (int(self.x), int(self.y)), int(radius), 3)
+
+
+class EffectManager:
+    """特效管理器 - 统一管理所有游戏特效"""
+    
+    _instance = None
+    
+    def __init__(self):
+        self.lightning_chains = []
+        self.shockwaves = []
+        self.trails = []
+        self.gold_rains = []
+        self.experience_manager = ExperienceManager.get_instance()
+        
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+    
+    def spawn_lightning_chain(self, start_pos, target_positions, color=(150, 150, 255)):
+        """生成闪电链特效"""
+        effect = LightningChainEffect(start_pos, target_positions, color)
+        self.lightning_chains.append(effect)
+        
+    def spawn_shockwave(self, x, y, color=(255, 100, 100), max_radius=150):
+        """生成冲击波特效"""
+        effect = ShockwaveEffect(x, y, color, max_radius)
+        self.shockwaves.append(effect)
+        
+    def spawn_attack_trail(self, start_pos, end_pos, color=(255, 200, 100), width=4):
+        """生成攻击拖尾特效"""
+        effect = TowerAttackTrailEffect(start_pos, end_pos, color, width)
+        self.trails.append(effect)
+        
+    def spawn_gold_rain(self, screen_width, screen_height, count=50):
+        """生成金币雨特效"""
+        effect = GoldRainEffect(screen_width, screen_height, count)
+        self.gold_rains.append(effect)
+        
+    def update(self, dt):
+        """更新所有特效"""
+        # 闪电链
+        for effect in self.lightning_chains[:]:
+            effect.update(dt)
+            if not effect.active:
+                self.lightning_chains.remove(effect)
+        # 冲击波
+        for effect in self.shockwaves[:]:
+            effect.update(dt)
+            if not effect.active:
+                self.shockwaves.remove(effect)
+        # 拖尾
+        for effect in self.trails[:]:
+            effect.update(dt)
+            if not effect.active:
+                self.trails.remove(effect)
+        # 金币雨
+        for effect in self.gold_rains[:]:
+            effect.update(dt)
+            if not effect.active:
+                self.gold_rains.remove(effect)
+        # 经验球
+        self.experience_manager.update(dt)
+        
+    def draw(self, screen):
+        """绘制所有特效"""
+        for effect in self.lightning_chains:
+            effect.draw(screen)
+        for effect in self.shockwaves:
+            effect.draw(screen)
+        for effect in self.trails:
+            effect.draw(screen)
+        for effect in self.gold_rains:
+            effect.draw(screen)
+        self.experience_manager.draw(screen)
+
+
 class ExperienceManager:
     """经验球管理器 - 管理所有经验球的生成和更新"""
     
