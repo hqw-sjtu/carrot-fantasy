@@ -87,6 +87,10 @@ class Tower:
         # 升级动画效果
         self.upgrade_animation = 0  # 升级动画计时器
         self.glow_intensity = 0  # 发光强度
+        
+        # 瞄准线预览系统
+        self.targeting_line_alpha = 0  # 瞄准线透明度（淡入效果）
+        self.last_target = None  # 上一个目标（用于平滑过渡）
     
     def get_upgrade_cost(self):
         """获取升级费用"""
@@ -238,6 +242,10 @@ class Tower:
                 elif sound_player:
                     sound_player()
                 self.cooldown = 1 / self.attack_speed
+                
+                # 更新瞄准线：攻击后透明度を重置
+                self.targeting_line_alpha = 0
+                self.last_target = target
     
     def update_skill(self, dt, monsters, projectiles):
         """更新主动技能状态"""

@@ -31,6 +31,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.0] - 2026-04-11 13:23
+
+### Features | 新功能
+- 🎯 **瞄准线预览系统(Targeting Line Preview)**: 未选中防御塔时显示指向当前目标的瞄准线,带淡入淡出效果和箭头指示
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: main.py, towers.py 通过py_compile
+- ✅ 测试覆盖: 135 测试用例全部通过
+- ✅ 代码质量: 修复缩进错误,优化代码结构
+- 📝 更新文档: README.md, docs/index.md 已完善
+
+---
+
 ## [1.6.0] - 2026-04-11 12:23
 
 ### Features | 新功能

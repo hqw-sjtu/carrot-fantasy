@@ -1367,6 +1367,57 @@ def draw_game():
             synergy = tower.check_synergy(state.towers)
             if synergy > 1.0:
                 synergy_text = f"组合: +{int((synergy-1)*100)}%"
+        
+        # ===== 瞄准线预览系统 =====
+        # 当塔未选中时，显示指向当前目标的瞄准线
+        if not is_selected and state.game_running:
+            current_target = tower.find_target(state.monsters)
+            if current_target:
+                # 更新瞄准线透明度（淡入）
+                if tower.targeting_line_alpha < 180:
+                    tower.targeting_line_alpha = min(180, tower.targeting_line_alpha + 15)
+                
+                # 计算目标位置
+                m_x = 100 + current_target.position * 600
+                m_y = 300
+                
+                # 计算瞄准线角度和长度
+                dx = m_x - tower.x
+                dy = m_y - tower.y
+                dist = math.sqrt(dx*dx + dy*dy)
+                if dist > 0:
+                    # 归一化方向
+                    nx, ny = dx/dist, dy/dist
+                    
+                    # 瞄准线从塔中心延伸到目标方向（到塔边缘为止）
+                    line_start_x = int(tower.x + nx * 25)
+                    line_start_y = int(tower.y + ny * 25)
+                    line_end_x = int(tower.x + nx * min(dist - 15, 60))  # 限制长度
+                    line_end_y = int(tower.y + ny * min(dist - 15, 60))
+                    
+                    # 绘制瞄准线（虚线效果）
+                    alpha = tower.targeting_line_alpha
+                    line_color = (*YELLOW, alpha)
+                    
+                    # 主瞄准线
+                    pygame.draw.line(SCREEN, line_color, 
+                                   (line_start_x + shake_x, line_start_y + shake_y),
+                                   (line_end_x + shake_x, line_end_y + shake_y), 2)
+                    
+                    # 瞄准箭头
+                    arrow_size = 8
+                    arrow_angle = math.atan2(ny, nx)
+                    arrow_pt1 = (line_end_x + shake_x, line_end_y + shake_y)
+                    arrow_pt2 = (int(line_end_x - arrow_size * math.cos(arrow_angle - 0.5)) + shake_x,
+                                int(line_end_y - arrow_size * math.sin(arrow_angle - 0.5)) + shake_y)
+                    arrow_pt3 = (int(line_end_x - arrow_size * math.cos(arrow_angle + 0.5)) + shake_x,
+                                int(line_end_y - arrow_size * math.sin(arrow_angle + 0.5)) + shake_y)
+                    pygame.draw.line(SCREEN, line_color, arrow_pt1, arrow_pt2, 2)
+                    pygame.draw.line(SCREEN, line_color, arrow_pt1, arrow_pt3, 2)
+            # 显示组合状态（同类型相邻加成）- 移到瞄准线系统之前
+            synergy = tower.check_synergy(state.towers)
+            if synergy > 1.0:
+                synergy_text = f"组合: +{int((synergy-1)*100)}%"
                 synergy_color = GOLD
             else:
                 synergy_text = "组合: 无"
