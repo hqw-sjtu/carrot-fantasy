@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.6] - 2026-04-11 21:23
+
+### Features | 新功能
+- 🌑 **黑洞吸引特效(BlackHoleEffect)**:
+  - 强大引力场视觉效果
+  - 30个吸入粒子+36段吸积盘
+  - 核心脉动+事件视界光环
+  - 2秒持续时间
+- 🩸 **Boss血条暴击效果(BossHealthBarEffect)**:
+  - Boss战专用血条组件
+  - 受伤闪红+屏幕震动
+  - 暴击伤害数字浮动
+  - 血量颜色渐变(绿→黄→红)
+  - 光晕脉动效果
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有Python模块py_compile通过
+- ✅ 测试覆盖: 149测试用例全部通过
+- ✅ 新增特效: 黑洞+Boss血条
+
+---
+
 ## [1.6.5] - 2026-04-11 19:23
 
 ### Features | 新功能

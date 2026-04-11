@@ -665,6 +665,193 @@ class ShatterEffect:
                 pygame.draw.polygon(screen, color, points)
 
 
+class BlackHoleEffect:
+    """黑洞吸引特效 - 强大的引力场视觉效果"""
+    
+    def __init__(self, x, y, radius=120, duration=2.0):
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.duration = duration
+        self.elapsed = 0
+        self.active = True
+        self.particles = []
+        self.core_size = 20
+        # 初始化吸入粒子
+        for _ in range(30):
+            angle = random.uniform(0, 2 * math.pi)
+            dist = random.uniform(radius * 0.5, radius * 1.5)
+            self.particles.append({
+                'angle': angle,
+                'dist': dist,
+                'speed': random.uniform(50, 150),
+                'size': random.uniform(2, 6),
+                'orbit_speed': random.uniform(2, 5),
+                'color': random.choice([(150, 50, 200), (100, 30, 150), (80, 20, 120)]),
+            })
+        # 吸积盘片段
+        self.accretion_disk = []
+        for _ in range(36):
+            angle = _ * math.pi * 2 / 36
+            self.accretion_disk.append({
+                'angle': angle,
+                'base_radius': radius * 0.3,
+                'speed': random.uniform(1, 3),
+            })
+    
+    def update(self, dt):
+        self.elapsed += dt
+        if self.elapsed >= self.duration:
+            self.active = False
+            return
+        # 更新核心大小（脉动）
+        pulse = math.sin(self.elapsed * 10) * 0.2 + 1
+        self.core_size = 20 * pulse
+        # 更新吸入粒子
+        for p in self.particles:
+            p['angle'] += p['orbit_speed'] * dt
+            p['dist'] -= p['speed'] * dt * (1 + self.elapsed)
+            if p['dist'] < 10:
+                p['dist'] = random.uniform(self.radius * 0.8, self.radius)
+        # 更新吸积盘
+        for d in self.accretion_disk:
+            d['angle'] += d['speed'] * dt
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        progress = self.elapsed / self.duration
+        # 绘制吸积盘
+        for d in self.accretion_disk:
+            r = d['base_radius'] * (0.5 + progress * 0.5)
+            x = self.x + math.cos(d['angle']) * r
+            y = self.y + math.sin(d['angle']) * r
+            alpha = int(150 * (1 - progress))
+            color = (150, 50, 200, alpha)
+            pygame.draw.circle(screen, color, (int(x), int(y)), 3)
+        # 绘制吸入粒子
+        for p in self.particles:
+            px = self.x + math.cos(p['angle']) * p['dist']
+            py = self.y + math.sin(p['angle']) * p['dist']
+            alpha = int(200 * (1 - progress * 0.5))
+            color = (*p['color'], alpha)
+            pygame.draw.circle(screen, color, (int(px), int(py)), int(p['size']))
+        # 绘制黑洞核心
+        core_alpha = int(255 * (1 - progress * 0.3))
+        # 外圈
+        pygame.draw.circle(screen, (80, 20, 100, core_alpha // 3),
+                          (int(self.x), int(self.y)), int(self.core_size + 20), 4)
+        # 内核
+        pygame.draw.circle(screen, (0, 0, 0, core_alpha),
+                          (int(self.x), int(self.y)), int(self.core_size))
+        # 事件视界光环
+        pygame.draw.circle(screen, (150, 50, 200, core_alpha // 2),
+                          (int(self.x), int(self.y)), int(self.core_size + 10), 2)
+
+
+class BossHealthBarEffect:
+    """Boss血条暴击效果 - Boss战时的视觉反馈"""
+    
+    def __init__(self, x, y, width=300, height=30):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.current_health = 100
+        self.max_health = 100
+        self.target_health = 100
+        self.damage_flash = 0
+        self.critical_hits = []  # 暴击伤害数字位置
+        self.shake_offset = (0, 0)
+        self.shake_intensity = 0
+        self.active = True
+        self.glow_pulse = 0
+    
+    def set_health(self, current, max_health):
+        """设置血量"""
+        self.current_health = current
+        self.max_health = max_health
+        self.target_health = current
+    
+    def take_damage(self, damage, is_critical=False, x=None, y=None):
+        """受到伤害"""
+        self.current_health -= damage
+        self.damage_flash = 0.2  # 200ms伤害闪红
+        self.shake_intensity = 10  # 屏幕震动
+        if is_critical and x is not None and y is not None:
+            self.critical_hits.append({
+                'x': x, 'y': y, 
+                'life': 1.0, 
+                'damage': damage
+            })
+    
+    def update(self, dt):
+        # 伤害闪光衰减
+        if self.damage_flash > 0:
+            self.damage_flash -= dt
+        # 屏幕震动衰减
+        if self.shake_intensity > 0:
+            self.shake_offset = (
+                random.uniform(-self.shake_intensity, self.shake_intensity),
+                random.uniform(-self.shake_intensity, self.shake_intensity)
+            )
+            self.shake_intensity *= 0.9
+            if self.shake_intensity < 0.5:
+                self.shake_intensity = 0
+                self.shake_offset = (0, 0)
+        # 光晕脉动
+        self.glow_pulse += dt * 3
+        # 更新暴击数字
+        for hit in self.critical_hits[:]:
+            hit['life'] -= dt
+            hit['y'] -= 30 * dt  # 向上漂浮
+            if hit['life'] <= 0:
+                self.critical_hits.remove(hit)
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        # 应用震动偏移
+        draw_x = self.x + self.shake_offset[0]
+        draw_y = self.y + self.shake_offset[1]
+        # 血条背景
+        bg_rect = pygame.Rect(draw_x, draw_y, self.width, self.height)
+        pygame.draw.rect(screen, (40, 10, 10), bg_rect)
+        # 血条边框
+        pygame.draw.rect(screen, (100, 30, 30), bg_rect, 2)
+        # 血条主体
+        if self.max_health > 0:
+            health_ratio = max(0, self.current_health / self.max_health)
+            health_width = int(self.width * health_ratio)
+            health_rect = pygame.Rect(draw_x, draw_y, health_width, self.height)
+            # 血条颜色渐变（根据血量）
+            if health_ratio > 0.6:
+                health_color = (50, 200, 50)  # 绿色
+            elif health_ratio > 0.3:
+                health_color = (220, 200, 30)  # 黄色
+            else:
+                health_color = (200, 50, 50)  # 红色
+            # 伤害闪红效果
+            if self.damage_flash > 0:
+                flash_intensity = self.damage_flash / 0.2
+                health_color = (
+                    min(255, health_color[0] + int(100 * flash_intensity)),
+                    max(0, health_color[1] - int(50 * flash_intensity)),
+                    max(0, health_color[2] - int(50 * flash_intensity))
+                )
+            pygame.draw.rect(screen, health_color, health_rect)
+            # 光晕效果
+            glow_alpha = int(100 + math.sin(self.glow_pulse) * 50)
+            glow_rect = pygame.Rect(draw_x - 2, draw_y - 2, self.width + 4, self.height + 4)
+            pygame.draw.rect(screen, (*health_color, glow_alpha), glow_rect, 2)
+        # 绘制暴击伤害数字
+        for hit in self.critical_hits:
+            alpha = int(255 * hit['life'])
+            # 外发光
+            text = pygame.font.Font(None, 36).render(f"暴击! {hit['damage']}", True, (255, 255, 0, alpha))
+            screen.blit(text, (hit['x'], hit['y']))
+
+
 class FreezeBlastEffect:
     """冰冻爆炸特效 - 冰塔技能命中时的冰晶爆发"""
     
