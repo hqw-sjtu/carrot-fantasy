@@ -1,11 +1,27 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-11 16:23 (Hourly Maintenance)
+> Last updated: 2026-04-11 17:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.6.4] - 2026-04-11 17:23
+
+### Features | 新功能
+- ☠️ **毒云减速特效(PoisonCloudEffect)**:
+  - 持续3秒伤害(10 DPS)
+  - 40%减速效果
+  - 20个毒气粒子动画
+  - 双重圆形叠加视觉效果
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有Python模块py_compile通过
+- ✅ 测试覆盖: 141测试用例全部通过
+- ✅ GitHub推送: 毒云特效已提交
 
 ---
 
