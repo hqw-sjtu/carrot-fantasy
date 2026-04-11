@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.5] - 2026-04-11 19:23
+
+### Features | 新功能
+- 💥 **破碎特效(ShatterEffect)**:
+  - 敌人被击杀时12个菱形碎片飞散
+  - 重力下落+旋转动画
+  - 800ms生命周期后淡出
+- ❄️ **冰冻爆炸特效(FreezeBlastEffect)**:
+  - 冰塔技能命中时冰晶爆发
+  - 六边形冰晶+雪花粒子
+  - 减速渐隐效果
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有Python模块py_compile通过
+- ✅ 测试覆盖: 149测试用例全部通过
+- ✅ 新增特效: 破碎/冰冻爆炸已集成
+
+---
+
 ## [1.6.4] - 2026-04-11 17:23
 
 ### Features | 新功能

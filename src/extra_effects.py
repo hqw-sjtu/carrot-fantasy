@@ -598,3 +598,131 @@ class RippleEffect:
             alpha = int(255 * (1 - progress))
             pygame.draw.circle(screen, (*self.color, alpha),
                               (int(self.x), int(self.y)), int(radius), 2)
+
+
+class ShatterEffect:
+    """破碎特效 - 敌人被击杀时的碎片飞散效果"""
+    
+    def __init__(self, x, y, color=(255, 100, 100), count=12):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.max_life = 0.8  # 800ms
+        self.life = 0
+        self.active = True
+        self.count = count
+        # 生成碎片
+        self.fragments = []
+        for _ in range(count):
+            angle = random.uniform(0, 2 * math.pi)
+            speed = random.uniform(80, 200)
+            self.fragments.append({
+                'x': x,
+                'y': y,
+                'vx': math.cos(angle) * speed,
+                'vy': math.sin(angle) * speed,
+                'size': random.uniform(3, 8),
+                'rotation': random.uniform(0, 2 * math.pi),
+                'rot_speed': random.uniform(-10, 10),
+                'alpha': 255,
+            })
+        # 初始爆发速度
+        for f in self.fragments:
+            f['vx'] *= random.uniform(1.5, 3.0)
+            f['vy'] *= random.uniform(1.5, 3.0)
+    
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        # 更新碎片位置和旋转
+        for f in self.fragments:
+            f['x'] += f['vx'] * dt
+            f['y'] += f['vy'] * dt
+            f['rotation'] += f['rot_speed'] * dt
+            # 重力效果
+            f['vy'] += 300 * dt  # 重力加速度
+            # 淡出
+            f['alpha'] = int(255 * (1 - self.life / self.max_life))
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        for f in self.fragments:
+            if f['alpha'] <= 0:
+                continue
+            color = (*self.color, f['alpha'])
+            # 绘制菱形碎片
+            size = f['size']
+            points = []
+            for angle_offset in [0, math.pi/2, math.pi, 3*math.pi/2]:
+                angle = f['rotation'] + angle_offset
+                px = f['x'] + math.cos(angle) * size
+                py = f['y'] + math.sin(angle) * size
+                points.append((int(px), int(py)))
+            if len(points) >= 3:
+                pygame.draw.polygon(screen, color, points)
+
+
+class FreezeBlastEffect:
+    """冰冻爆炸特效 - 冰塔技能命中时的冰晶爆发"""
+    
+    def __init__(self, x, y, color=(100, 200, 255), count=20):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.max_life = 1.0  # 1秒
+        self.life = 0
+        self.active = True
+        self.count = count
+        # 生成冰晶
+        self.crystals = []
+        for _ in range(count):
+            angle = random.uniform(0, 2 * math.pi)
+            speed = random.uniform(50, 150)
+            self.crystals.append({
+                'x': x,
+                'y': y,
+                'vx': math.cos(angle) * speed,
+                'vy': math.sin(angle) * speed,
+                'size': random.uniform(2, 6),
+                'alpha': 255,
+                'type': random.choice(['crystal', 'snowflake']),
+            })
+    
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        # 更新冰晶
+        progress = self.life / self.max_life
+        for c in self.crystals:
+            c['x'] += c['vx'] * dt * (1 - progress * 0.5)
+            c['y'] += c['vy'] * dt * (1 - progress * 0.5)
+            # 减速
+            c['vx'] *= 0.98
+            c['vy'] *= 0.98
+            c['alpha'] = int(255 * (1 - progress))
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        for c in self.crystals:
+            if c['alpha'] <= 0:
+                continue
+            color = (*self.color, c['alpha'])
+            if c['type'] == 'crystal':
+                # 绘制六边形冰晶
+                size = c['size']
+                points = []
+                for i in range(6):
+                    angle = i * math.pi / 3
+                    px = c['x'] + math.cos(angle) * size
+                    py = c['y'] + math.sin(angle) * size
+                    points.append((int(px), int(py)))
+                pygame.draw.polygon(screen, color, points)
+            else:
+                # 绘制雪花
+                pygame.draw.circle(screen, color, (int(c['x']), int(c['y'])), int(c['size']))
