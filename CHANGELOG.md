@@ -1,11 +1,27 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-11 08:23 (Hourly Maintenance)
+> Last updated: 2026-04-11 09:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.5.7] - 2026-04-11 09:23
+
+### Features | 新功能
+- 🌀 **传送门特效(PortalEffect)**: 怪物出现时的科幻传送门动画,支持不同颜色区分(Boss红色/精英金色/普通蓝色)
+
+### Maintenance | 每小时维护
+- ✅ 语法检查: 所有模块通过py_compile
+- ✅ 代码优化: 新增PortalEffect类,波次管理器集成怪物生成特效
+- ✅ 测试覆盖: 104→112 测试用例,新增8个传送门特效测试
+- ✅ GitHub Actions: CI流程完善
+
+### Stability | 稳定性
+- 🔒 无新增问题
 
 ---
 

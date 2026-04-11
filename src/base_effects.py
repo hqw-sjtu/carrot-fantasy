@@ -293,6 +293,13 @@ class BaseEffectManager:
         effect = TowerIdleParticles(x, y, color)
         self.effects.append(effect)
         
+    def add_portal(self, x, y, color=None, radius=40):
+        """添加传送门特效 - 怪物出现时的科幻传送门动画"""
+        if color is None:
+            color = (100, 200, 255)
+        effect = PortalEffect(x, y, color, radius)
+        self.effects.append(effect)
+        
     def set_tower_base_glow(self, tower_id, color):
         """设置塔基持续发光"""
         self.tower_base_glows[tower_id] = color
@@ -594,6 +601,91 @@ class PulseWarningEffect(BaseEffect):
             # 中心点
             pygame.draw.circle(screen, (*self.color, alpha // 2),
                              (int(self.x), int(self.y)), 3, 0)
+
+
+class PortalEffect(BaseEffect):
+    """传送门特效 - 怪物出现时的科幻传送门动画"""
+    
+    def __init__(self, x, y, color=(100, 200, 255), radius=40):
+        super().__init__(x, y)
+        self.color = color
+        self.radius = radius
+        self.max_life = 60  # 1秒动画
+        self.rings = []  # 多层光环
+        for i in range(3):
+            self.rings.append({
+                'distance': radius * (i + 1) / 3,
+                'angle': i * (2 * math.pi / 3),
+                'speed': 2 + i * 0.5
+            })
+        self.particles = []
+        self.spawn_particles()
+        
+    def spawn_particles(self):
+        """生成粒子"""
+        for _ in range(20):
+            angle = random.uniform(0, 2 * math.pi)
+            dist = random.uniform(10, self.radius)
+            self.particles.append({
+                'x': self.x + math.cos(angle) * dist,
+                'y': self.y + math.sin(angle) * dist,
+                'vx': math.cos(angle) * random.uniform(1, 3),
+                'vy': math.sin(angle) * random.uniform(1, 3),
+                'life': random.uniform(0.3, 0.8),
+                'max_life': 0.8,
+                'size': random.randint(2, 5)
+            })
+            
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+        
+        # 更新光环
+        for ring in self.rings:
+            ring['angle'] += ring['speed'] * dt
+            ring['distance'] += 20 * dt  # 扩散
+        
+        # 更新粒子
+        for p in self.particles:
+            p['x'] += p['vx']
+            p['y'] += p['vy']
+            p['life'] -= dt
+        self.particles = [p for p in self.particles if p['life'] > 0]
+        
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        progress = self.life / self.max_life
+        alpha = int(255 * (1 - progress))
+        
+        # 绘制粒子
+        for p in self.particles:
+            p_alpha = int(alpha * (p['life'] / p['max_life']))
+            color = (*self.color, p_alpha)
+            pygame.draw.circle(screen, color, (int(p['x']), int(p['y'])), p['size'])
+        
+        # 绘制旋转光环
+        for ring in self.rings:
+            if ring['distance'] < self.radius * 1.5:
+                points = []
+                segments = 32
+                for i in range(segments):
+                    angle = (i / segments) * 2 * math.pi + ring['angle']
+                    r = ring['distance'] * (1 - progress * 0.3)
+                    px = self.x + math.cos(angle) * r
+                    py = self.y + math.sin(angle) * r
+                    points.append((px, py))
+                if len(points) >= 2:
+                    pygame.draw.lines(screen, (*self.color, int(alpha * 0.7)), True, points, 2)
+        
+        # 绘制中心闪光
+        if progress < 0.3:
+            flash_alpha = int(alpha * (1 - progress / 0.3))
+            pygame.draw.circle(screen, (255, 255, 255, flash_alpha), 
+                             (self.x, self.y), int(self.radius * 0.3 * (1 - progress)))
 
 
 class BossWarningEffect(BaseEffect):

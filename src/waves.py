@@ -75,9 +75,19 @@ class WaveManager:
                 state.monsters.append(monster)
                 self.spawn_timer = 0
                 
+                # 怪物出现时显示传送门特效
+                import main
+                if hasattr(main, 'effect_manager'):
+                    # 根据怪物类型选择传送门颜色
+                    if getattr(monster, 'is_boss', False):
+                        main.effect_manager.add_portal(monster.x, monster.y, (255, 100, 100), 60)
+                    elif getattr(monster, 'is_elite', False):
+                        main.effect_manager.add_portal(monster.x, monster.y, (255, 200, 50), 50)
+                    else:
+                        main.effect_manager.add_portal(monster.x, monster.y, (100, 200, 255), 40)
+                
                 # Boss出现时触发屏幕震动和警告特效
                 if getattr(monster, 'is_boss', False):
-                    import main
                     main.trigger_screen_shake(15, 0.5)
                     # 添加Boss警告特效
                     if hasattr(main, 'boss_warning_effects'):
