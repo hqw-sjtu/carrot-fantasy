@@ -9,6 +9,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.9.7] - 2026-04-12 20:23
+### Features | 新功能
+- 🏆 **成就系统扩展**:
+  - 新增 slayer_1000 (收割者) - 击杀1000只怪物
+  - 新增 streak_10/streak_30 (连杀成就)
+  - 新增 crit_10/crit_100 (暴击成就)
+  - 新增 first_purchase/shop_10 (商店成就)
+  - 新增 3个统计追踪字段
+
+### Testing | 测试
+- ✅ 305测试用例全部通过 (+3新增)
+- ✅ 新增 test_new_achievements.py
+
+---
+
+## [1.9.6] - 2026-04-12 18:23
+### Features | 新功能
+- 🪙 **金币飞行系统(Coin Flight)**:
+  - 怪物死亡后金币飞向UI金币区域
+  - 抛物线弧线轨迹
+  - 旋转+缩放+淡出动画
+  - 支持批量金币飞行
+
+### Testing | 测试
+- ✅ 300测试用例全部通过 (+15新增)
+- ✅ 语法检查通过
+- ✅ 代码质量检查通过
+- ✅ 新增 coin_flight.py (195行)
+- ✅ 新增 test_coin_flight.py (15个测试用例)
+
+---
+
 ## [1.9.5] - 2026-04-12 17:23
 ### Features | 新功能
 - 💥 **连击系统(Combo System)**:

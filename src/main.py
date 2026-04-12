@@ -2187,46 +2187,93 @@ def draw_wave_preview_panel():
     if not show_wave_preview:
         return
     
-    panel_w, panel_h = 250, 200
+    panel_w, panel_h = 320, 280
     panel_x = SCREEN_WIDTH // 2 - panel_w // 2
     panel_y = SCREEN_HEIGHT // 2 - panel_h // 2
     
-    # 背景
+    # 背景 - 渐变效果
     s = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
-    s.fill((20, 20, 40, 240))
+    # 顶部渐变
+    for y in range(panel_h):
+        alpha = int(200 + 55 * (y / panel_h))
+        pygame.draw.line(s, (15, 15, 35, min(alpha, 245)), (0, y), (panel_w, y))
     SCREEN.blit(s, (panel_x, panel_y))
     
-    # 边框
+    # 边框发光效果
+    glow_rect = pygame.Rect(panel_x - 2, panel_y - 2, panel_w + 4, panel_h + 4)
+    pygame.draw.rect(SCREEN, (80, 120, 200), glow_rect, 3, border_radius=12)
     pygame.draw.rect(SCREEN, (100, 150, 255), (panel_x, panel_y, panel_w, panel_h), 2, border_radius=8)
     
     # 标题
-    font = get_font( 26)
-    title = font.render("📋 波次预览 (Tab)", True, (255, 215, 0))
-    SCREEN.blit(title, (panel_x + 20, panel_y + 10))
+    font = get_font(28)
+    title = font.render("📋 波次预览", True, (255, 215, 0))
+    SCREEN.blit(title, (panel_x + 20, panel_y + 12))
+    
+    # 关闭提示
+    font_small = get_font(16)
+    close_hint = font_small.render("[Tab] 关闭", True, (120, 120, 140))
+    SCREEN.blit(close_hint, (panel_x + panel_w - 100, panel_y + 18))
     
     # 波次信息
     current_wave = state.wave_manager.current_wave + 1 if hasattr(state, 'wave_manager') else 1
     total_waves = len(state.wave_manager.waves) if hasattr(state, 'wave_manager') else 8
     
-    font2 = get_font( 20)
-    info = font2.render(f"当前: 第 {current_wave} 波 / 共 {total_waves} 波", True, (200, 200, 200))
-    SCREEN.blit(info, (panel_x + 20, panel_y + 40))
+    font2 = get_font(20)
+    wave_progress = f"第 {current_wave} 波 / 共 {total_waves} 波"
+    info = font2.render(wave_progress, True, (220, 220, 220))
+    SCREEN.blit(info, (panel_x + 20, panel_y + 48))
     
-    # 接下来几波怪物预览
-    preview_y = panel_y + 70
-    wave_preview_text = ["下一波:", "第2波:", "第3波:"]
+    # 进度条
+    progress_w = panel_w - 40
+    progress_ratio = current_wave / max(total_waves, 1)
+    pygame.draw.rect(SCREEN, (40, 40, 60), (panel_x + 20, panel_y + 72, progress_w, 8), border_radius=4)
+    pygame.draw.rect(SCREEN, (100, 180, 100), (panel_x + 20, panel_y + 72, int(progress_w * progress_ratio), 8), border_radius=4)
     
-    for i, text in enumerate(wave_preview_text):
+    # 分割线
+    pygame.draw.line(SCREEN, (60, 70, 90), (panel_x + 20, panel_y + 92), (panel_x + panel_w - 20, panel_y + 92), 1)
+    
+    # 接下来几波怪物预览 - 增强版
+    preview_y = panel_y + 100
+    wave_labels = ["下一波", "第+2波", "第+3波"]
+    
+    # 怪物类型颜色映射
+    monster_colors = {
+        'slime': (100, 200, 100),
+        'bat': (150, 100, 200),
+        'wolf': (180, 120, 80),
+        'ghost': (150, 150, 200),
+        'boss': (200, 50, 50),
+    }
+    
+    for i, label in enumerate(wave_labels):
         wave_num = current_wave + i
         if wave_num <= total_waves and hasattr(state, 'wave_manager'):
             wave_data = state.wave_manager.waves[wave_num - 1]
-            monster_count = sum(count for _, count in wave_data.get('monsters', []))
-            wave_info = font2.render(f"{text} 怪物x{monster_count}", True, (150, 200, 255))
-            SCREEN.blit(wave_info, (panel_x + 20, preview_y + i * 25))
-    
-    # 提示
-    hint = font2.render("按Tab关闭", True, (150, 150, 150))
-    SCREEN.blit(hint, (panel_x + 20, panel_y + panel_h - 25))
+            monster_list = wave_data.get('monsters', [])
+            total_monsters = sum(count for _, count in monster_list)
+            
+            # 难度评估
+            difficulty = wave_data.get('difficulty', 1.0 + i * 0.2)
+            diff_color = (100, 255, 100) if difficulty < 1.5 else (255, 200, 100) if difficulty < 2.5 else (255, 100, 100)
+            diff_stars = min(3, int(difficulty / 1.0))
+            
+            # 行背景
+            row_bg = pygame.Rect(panel_x + 15, preview_y + i * 50 - 5, panel_w - 30, 45)
+            pygame.draw.rect(SCREEN, (30, 35, 50), row_bg, border_radius=6)
+            
+            # 波次标签
+            label_text = font2.render(f"{label}", True, (180, 180, 200))
+            SCREEN.blit(label_text, (panel_x + 25, preview_y + i * 50))
+            
+            # 怪物图标和数量
+            monster_text = f"👾 x{total_monsters}"
+            monster_render = font_small.render(monster_text, True, (150, 220, 255))
+            SCREEN.blit(monster_render, (panel_x + 25, preview_y + i * 50 + 22))
+            
+            # 难度星星
+            stars_text = "★" * diff_stars + "☆" * (3 - diff_stars)
+            stars_render = font_small.render(stars_text, True, diff_color)
+            SCREEN.blit(stars_render, (panel_x + panel_w - 90, preview_y + i * 50 + 22))
 
 # 塔图鉴
 def draw_tower_book():
