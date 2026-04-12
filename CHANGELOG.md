@@ -1,11 +1,29 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-12 16:23 (Hourly Maintenance)
+> Last updated: 2026-04-12 17:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.9.5] - 2026-04-12 17:23
+### Features | 新功能
+- 💥 **连击系统(Combo System)**:
+  - 连续击杀显示连击数(2连击以上触发)
+  - 连击文字带缩放动画效果
+  - 暴击连击显示橙色+金色光晕
+  - 2秒超时自动断开连击
+  - 连击金币奖励机制(3连击+5,5连击+10,10连击+25)
+
+### Testing | 测试
+- ✅ 285测试用例全部通过 (+9新增)
+- ✅ 语法检查通过
+- ✅ 代码质量检查通过
+- ✅ 新增 combo_system.py (195行)
+- ✅ 新增 test_combo_system.py (9个测试用例)
 
 ---
 

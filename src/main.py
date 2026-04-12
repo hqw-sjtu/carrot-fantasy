@@ -812,6 +812,7 @@ from waves import WaveManager
 from tower_placement import TowerPlacement
 from particle_system import get_particle_system
 from damage_numbers import DamageNumberManager
+from combo_system import get_combo_system
 from base_effects import get_base_effect_manager
 from synergy_system import get_synergy_manager
 
@@ -821,6 +822,9 @@ set_sound_manager_for_projectiles(sound_manager)
 
 # 屏幕震动
 screen_shake = 0
+
+# 连击系统
+combo_system = None
 screen_shake_offset = [0, 0]
 
 # Boss警告特效列表
@@ -1095,7 +1099,7 @@ global_damage_number_manager = None
 
 def init_new_game():
     """初始化新游戏 - 在难度选择完成后调用"""
-    global global_base_effect_manager, global_particle_system, global_damage_number_manager
+    global global_base_effect_manager, global_particle_system, global_damage_number_manager, combo_system
     
     # 初始化粒子系统
     global_particle_system = get_particle_system()
@@ -1103,6 +1107,8 @@ def init_new_game():
     global_base_effect_manager = get_base_effect_manager()
     # 初始化伤害数字系统
     global_damage_number_manager = DamageNumberManager()
+    # 初始化连击系统
+    combo_system = get_combo_system()
     
     # 修复：自动开始第一波
     global wave_wait_timer
@@ -2162,6 +2168,9 @@ def draw_game():
     global_base_effect_manager.draw(SCREEN)
     # 绘制伤害数字
     global_damage_number_manager.draw(SCREEN)
+    # 绘制连击文字
+    if combo_system:
+        combo_system.render(SCREEN)
     
     # 绘制Boss警告特效
     for effect in boss_warning_effects:
@@ -2828,6 +2837,9 @@ def main():
         # 更新伤害数字
         if global_damage_number_manager:
             global_damage_number_manager.update(effective_dt)
+        # 更新连击系统
+        if combo_system:
+            combo_system.update(effective_dt)
         
         # 更新Boss警告特效
         for effect in boss_warning_effects[:]:
@@ -2903,6 +2915,9 @@ def main():
                     # 显示伤害数字
                     if global_damage_number_manager:
                         global_damage_number_manager.add_damage(int(mx_monster), 280, actual_damage, is_crit)
+                    # 记录连击
+                    if combo_system:
+                        combo_system.add_kill(int(mx_monster), 280, is_crit)
                     # 记录击杀来源塔
                     source_tower = getattr(projectile, 'source_tower', None)
                     if monster.health <= 0:  # 怪物死亡
