@@ -51,6 +51,83 @@ def get_font(size, bold=False):
     return get_font( size)
 
 
+# ==================== 技能冷却显示系统 ====================
+# 技能冷却配置: 按键, 名称, 冷却时间(秒), 图标颜色
+SKILL_COOLDOWNS = [
+    {'key': 'Q', 'name': '减速', 'cooldown': 15.0, 'color': (100, 200, 255)},
+    {'key': 'W', 'name': '冰冻', 'cooldown': 20.0, 'color': (150, 230, 255)},
+    {'key': 'E', 'name': '群攻', 'cooldown': 25.0, 'color': (255, 150, 50)},
+]
+
+def draw_skill_cooldown_panel():
+    """绘制技能冷却显示面板"""
+    # 面板位置: 底部中央
+    panel_x = SCREEN_WIDTH // 2 - 150
+    panel_y = SCREEN_HEIGHT - 120
+    skill_slot_width = 80
+    skill_slot_height = 70
+    gap = 15
+    
+    # 背景面板
+    panel_bg = pygame.Surface((skill_slot_width * 3 + gap * 2 + 20, skill_slot_height + 30), pygame.SRCALPHA)
+    panel_bg.fill((20, 20, 40, 200))
+    SCREEN.blit(panel_bg, (panel_x - 10, panel_y - 15))
+    pygame.draw.rect(SCREEN, (60, 60, 90), (panel_x - 10, panel_y - 15, skill_slot_width * 3 + gap * 2 + 20, skill_slot_height + 30), 2, border_radius=8)
+    
+    for i, skill in enumerate(SKILL_COOLDOWNS):
+        slot_x = panel_x + i * (skill_slot_width + gap)
+        slot_rect = pygame.Rect(slot_x, panel_y, skill_slot_width, skill_slot_height)
+        
+        # 获取当前冷却时间
+        cooldown_left = 0
+        if i == 0:  # Q减速
+            cooldown_left = getattr(state, 'slow_skill_timer', 0)
+        elif i == 1:  # W冰冻
+            cooldown_left = getattr(state, 'freeze_skill_timer', 0)
+        elif i == 2:  # E群攻
+            cooldown_left = getattr(state, 'aoe_skill_timer', 0)
+        
+        cooldown_ratio = cooldown_left / skill['cooldown']
+        is_ready = cooldown_left <= 0
+        
+        # 槽位背景
+        bg_color = (40, 40, 60) if is_ready else (30, 30, 50)
+        pygame.draw.rect(SCREEN, bg_color, slot_rect, border_radius=8)
+        
+        # 冷却进度条
+        if cooldown_ratio > 0:
+            fill_height = int(slot_rect.height * cooldown_ratio)
+            fill_rect = pygame.Rect(slot_x, panel_y + slot_rect.height - fill_height, skill_slot_width, fill_height)
+            pygame.draw.rect(SCREEN, (*skill['color'], 150), fill_rect, border_radius=8)
+            
+            # 冷却遮罩 (模拟冷却中)
+            mask_surf = pygame.Surface((skill_slot_width, skill_slot_height), pygame.SRCALPHA)
+            mask_surf.fill((0, 0, 0, 120))
+            SCREEN.blit(mask_surf, (slot_x, panel_y))
+            
+            # 剩余时间文字
+            font_cd = get_font(18)
+            cd_text = font_cd.render(f"{cooldown_left:.1f}s", True, (255, 255, 255))
+            SCREEN.blit(cd_text, (slot_x + skill_slot_width//2 - cd_text.get_width()//2, panel_y + skill_slot_height//2))
+        else:
+            # 就绪状态发光效果
+            glow_rect = pygame.Rect(slot_x - 2, panel_y - 2, skill_slot_width + 4, skill_slot_height + 4)
+            pygame.draw.rect(SCREEN, (*skill['color'], 100), glow_rect, 3, border_radius=10)
+        
+        # 边框
+        border_color = skill['color'] if is_ready else (80, 80, 100)
+        pygame.draw.rect(SCREEN, border_color, slot_rect, 2, border_radius=8)
+        
+        # 技能按键
+        font_key = get_font(16, bold=True)
+        key_text = font_key.render(skill['key'], True, skill['color'])
+        SCREEN.blit(key_text, (slot_x + 8, panel_y + 8))
+        
+        # 技能名称
+        font_name = get_font(14)
+        name_text = font_name.render(skill['name'], True, (200, 200, 220))
+        SCREEN.blit(name_text, (slot_x + skill_slot_width//2 - name_text.get_width()//2, panel_y + skill_slot_height - 22))
+
 # ==================== 精致UI边框和动画系统 ====================
 
 def draw_ui_border():
@@ -1854,6 +1931,7 @@ def draw_game():
 
     # ==================== 精致UI边框和动画效果 ====================
     draw_ui_border()
+    draw_skill_cooldown_panel()
     draw_button_hover()
 
     # 绘制升级特效
