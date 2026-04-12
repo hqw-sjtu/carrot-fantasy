@@ -799,6 +799,7 @@ sound_manager = None
 
 from config_loader import load_config, get_config
 from checkin_system import checkin_data, try_checkin, draw_checkin_panel
+from monster_bestiary import BestiarySystem
 
 # 游戏速度
 game_speed = 1.0  # 1.0=正常, 2.0=快进, 0.5=慢放
@@ -825,6 +826,7 @@ screen_shake = 0
 
 # 连击系统
 combo_system = None
+bestiary_system = None  # 怪物图鉴系统
 screen_shake_offset = [0, 0]
 
 # Boss警告特效列表
@@ -1099,7 +1101,7 @@ global_damage_number_manager = None
 
 def init_new_game():
     """初始化新游戏 - 在难度选择完成后调用"""
-    global global_base_effect_manager, global_particle_system, global_damage_number_manager, combo_system
+    global global_base_effect_manager, global_particle_system, global_damage_number_manager, combo_system, bestiary_system
     
     # 初始化粒子系统
     global_particle_system = get_particle_system()
@@ -1109,6 +1111,8 @@ def init_new_game():
     global_damage_number_manager = DamageNumberManager()
     # 初始化连击系统
     combo_system = get_combo_system()
+    # 初始化怪物图鉴系统
+    bestiary_system = BestiarySystem()
     
     # 修复：自动开始第一波
     global wave_wait_timer
@@ -2328,13 +2332,30 @@ def draw_tower_book():
 
 # 怪物图鉴
 def draw_monster_book():
-    """绘制怪物图鉴界面"""
+    """绘制怪物图鉴界面 - 使用bestiary_system"""
+    global bestiary_system
+    
+    if bestiary_system is None:
+        # 降级到旧的简单显示
+        _draw_monster_book_simple()
+        return
+    
+    # 使用新系统
+    bestiary_system.is_open = True
+    font = get_font(24)
+    title_font = get_font(36)
+    small_font = get_font(16)
+    bestiary_system.draw(SCREEN, font, title_font, small_font)
+
+
+def _draw_monster_book_simple():
+    """简单的怪物图鉴界面(降级使用)"""
     # 半透明遮罩
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 200))
     SCREEN.blit(overlay, (0, 0))
     
-    font_title = get_font( 50)
+    font_title = get_font(50)
     title = font_title.render("🐛 怪物图鉴", True, GOLD)
     SCREEN.blit(title, (SCREEN_WIDTH//2 - 70, 30))
     
@@ -2348,7 +2369,7 @@ def draw_monster_book():
         ("超级Boss", "终极", "200", "0.2", "大红圆+光环"),
     ]
     
-    font_info = get_font( 26)
+    font_info = get_font(26)
     for i, (name, type_, hp, speed, shape) in enumerate(monsters_info):
         y = 90 + i * 40
         
@@ -2372,7 +2393,7 @@ def draw_monster_book():
         surf = font_info.render(text, True, WHITE)
         SCREEN.blit(surf, (150, y))
     
-    font_tip = get_font( 24)
+    font_tip = get_font(24)
     tip = font_tip.render("按 J 键关闭图鉴", True, YELLOW)
     SCREEN.blit(tip, (SCREEN_WIDTH//2 - 60, SCREEN_HEIGHT - 50))
 
@@ -2655,6 +2676,9 @@ def main():
                 elif event.key == pygame.K_j:
                     global show_monster_book
                     show_monster_book = not show_monster_book
+                    # 如果使用新图鉴系统，传递输入
+                    if bestiary_system is not None and show_monster_book:
+                        bestiary_system.is_open = True
                 # B键打开/关闭背包
                 elif event.key == pygame.K_b:
                     global show_inventory
@@ -3055,6 +3079,12 @@ def main():
                             state.monsters.remove(monster)
                             # 成就: 击杀相关
                             total_kills += 1
+                            
+                            # 记录怪物击杀到图鉴
+                            if bestiary_system is not None:
+                                monster_type = getattr(monster, 'monster_type', 'slime')
+                                damage = getattr(monster, 'hp', 30)
+                                bestiary_system.record_kill(monster_type, int(damage))
                             
                             # ===== 每日任务进度更新 =====
                             update_quest("kill_30")

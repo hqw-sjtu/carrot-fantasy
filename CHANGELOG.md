@@ -1,11 +1,28 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-13 00:23 (Hourly Maintenance)
+> Last updated: 2026-04-13 01:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.1.0] - 2026-04-13 01:23
+### Features | 新功能
+- 📖 **怪物图鉴系统 (Bestiary)**:
+  - 按 J 键打开/关闭怪物图鉴
+  - 记录8种怪物(史莱姆/蝙蝠/野狼/幽灵/Boss等)
+  - 显示HP/速度/奖励/弱点/首次出现波次
+  - 累计击杀统计和详细数据
+  - 精美UI面板(左侧列表+右侧详情)
+- 🔧 **代码修复**:
+  - 修复 achievement_badges.py 中 math 模块导入位置
+
+### Testing | 测试
+- ✅ 333测试用例全部通过
+- ✅ 新语法检查通过
 
 ---
 

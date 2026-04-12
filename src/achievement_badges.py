@@ -4,6 +4,7 @@
 在游戏主界面顶部显示已解锁的成就徽章，点击可查看详情。
 """
 
+import math
 import pygame
 from typing import List, Tuple, Optional
 
@@ -146,6 +147,3 @@ class AchievementBadgesDisplay:
         """刷新徽章列表(当成就解锁时调用)"""
         self.badges.clear()
         self._init_badges()
-
-
-import math  # 添加缺失的math导入
