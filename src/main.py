@@ -140,12 +140,13 @@ def draw_button_hover():
                     border_color = WHITE
                 
                 # 绘制半透明范围圆
-                range_surf = pygame.Surface((range_radius*2, range_radius*2), pygame.SRCALPHA)
-                pygame.draw.circle(range_surf, range_color, (range_radius, range_radius), range_radius)
-                SCREEN.blit(range_surf, (mouse_x - range_radius, mouse_y - range_radius))
-                
-                # 实线边框
-                pygame.draw.circle(SCREEN, border_color, (mouse_x, mouse_y), range_radius, 2)
+                if show_attack_range:
+                    range_surf = pygame.Surface((range_radius*2, range_radius*2), pygame.SRCALPHA)
+                    pygame.draw.circle(range_surf, range_color, (range_radius, range_radius), range_radius)
+                    SCREEN.blit(range_surf, (mouse_x - range_radius, mouse_y - range_radius))
+                    
+                    # 实线边框
+                    pygame.draw.circle(SCREEN, border_color, (mouse_x, mouse_y), range_radius, 2)
 
 def animate_text(text, x, y, color, flicker=False):
     """带闪烁效果的文字"""
@@ -913,6 +914,9 @@ show_health_detail = False
 # 显示统计面板
 show_stats = False
 
+# 显示攻击范围
+show_attack_range = True
+
 # 显示塔图鉴
 show_tower_book = False
 
@@ -1349,19 +1353,20 @@ def draw_game():
                 border_color = WHITE
 
             # 半透明填充圆
-            range_surf = pygame.Surface((range_radius*2, range_radius*2), pygame.SRCALPHA)
-            pygame.draw.circle(range_surf, range_color, (range_radius, range_radius), range_radius)
-            SCREEN.blit(range_surf, (int(tower.x) - range_radius + shake_x, int(tower.y) - range_radius + shake_y))
+            if show_attack_range:
+                range_surf = pygame.Surface((range_radius*2, range_radius*2), pygame.SRCALPHA)
+                pygame.draw.circle(range_surf, range_color, (range_radius, range_radius), range_radius)
+                SCREEN.blit(range_surf, (int(tower.x) - range_radius + shake_x, int(tower.y) - range_radius + shake_y))
 
-            # 实线圆边框
-            pygame.draw.circle(SCREEN, border_color, (int(tower.x) + shake_x, int(tower.y) + shake_y), range_radius, 2)
+                # 实线圆边框
+                pygame.draw.circle(SCREEN, border_color, (int(tower.x) + shake_x, int(tower.y) + shake_y), range_radius, 2)
 
-            # 内圈装饰点
-            for angle in range(0, 360, 30):
-                rad = angle * 3.14159 / 180
-                px = int(tower.x + range_radius * 0.5 * math.cos(rad))
-                py = int(tower.y + range_radius * 0.5 * math.sin(rad))
-                pygame.draw.circle(SCREEN, (*border_color, 100), (px + shake_x, py + shake_y), 2)
+                # 内圈装饰点
+                for angle in range(0, 360, 30):
+                    rad = angle * 3.14159 / 180
+                    px = int(tower.x + range_radius * 0.5 * math.cos(rad))
+                    py = int(tower.y + range_radius * 0.5 * math.sin(rad))
+                    pygame.draw.circle(SCREEN, (*border_color, 100), (px + shake_x, py + shake_y), 2)
 
             # 选中塔显示范围内敌人数量
             in_range_count = 0
@@ -1843,7 +1848,7 @@ def draw_game():
     # 底部操作提示
     font_hint = get_font( 22)
     # 修复：更清晰的提示，说明需要先按1-5选择塔，再点击地图放置
-    hint_text = f"📌 先按1-5选择塔，再点击地图放置 | 波次: {state.wave} | 金币: {state.money} | 生命: {state.lives}"
+    hint_text = f"📌 1-5选择塔 | R范围 | S商店 | H血量 | T统计 | 波次: {state.wave} | 金币: {state.money} | 生命: {state.lives}"
     hint_surf = font_hint.render(hint_text, True, (180, 180, 180))
     SCREEN.blit(hint_surf, (10, SCREEN_HEIGHT - 30))
 
@@ -2375,6 +2380,11 @@ def main():
                             # 金币不足警告
                             no_money_warning = "💰 金币不足!"
                             no_money_timer = 1.5
+                # R键切换攻击范围显示
+                elif event.key == pygame.K_r:
+                    global show_attack_range
+                    show_attack_range = not show_attack_range
+                    print(f"🎯 攻击范围显示: {'开启' if show_attack_range else '关闭'}")
                 # T键切换统计面板
                 elif event.key == pygame.K_t:
                     global show_stats

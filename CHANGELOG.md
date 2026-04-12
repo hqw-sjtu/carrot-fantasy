@@ -1,11 +1,26 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-12 09:23 (Hourly Maintenance)
+> Last updated: 2026-04-12 13:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.9.1] - 2026-04-12 13:23
+### Features | 新功能
+- 🎯 **攻击范围显示切换**:
+  - 按R键切换攻击范围显示
+  - 放置塔时显示范围预览
+  - 已放置塔的攻击范围可独立控制
+  - 默认开启
+
+### Testing | 测试
+- ✅ 260测试用例全部通过 (pytest)
+- ✅ 语法检查通过
+- ✅ 代码质量检查通过
 
 ---
 
