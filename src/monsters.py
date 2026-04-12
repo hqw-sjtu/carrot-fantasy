@@ -1,5 +1,6 @@
 """
 保卫萝卜 - 怪物系统
+import math
 """
 
 class Monster:

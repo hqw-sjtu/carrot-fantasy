@@ -119,3 +119,110 @@ class WaveManager:
     def has_more_waves(self):
         """检查是否有更多波次"""
         return self.current_wave < len(self.waves) - 1
+
+
+class ChallengeMode:
+    """挑战模式 - 无限波次，难度递增"""
+    
+    # 挑战难度配置
+    DIFFICULTY_LEVELS = [
+        {"name": "简单", "hp_mult": 1.0, "speed_mult": 1.0, "reward_mult": 1.0},
+        {"name": "普通", "hp_mult": 1.5, "speed_mult": 1.1, "reward_mult": 1.2},
+        {"name": "困难", "hp_mult": 2.0, "speed_mult": 1.2, "reward_mult": 1.5},
+        {"name": "噩梦", "hp_mult": 3.0, "speed_mult": 1.3, "reward_mult": 2.0},
+        {"name": "地狱", "hp_mult": 5.0, "speed_mult": 1.5, "reward_mult": 3.0},
+    ]
+    
+    # 无限波次怪物池（从简单到困难）
+    CHALLENGE_MONSTER_POOL = [
+        ["小怪物", "中怪物"],
+        ["小怪物", "中怪物", "大怪物", "快速怪"],
+        ["中怪物", "大怪物", "快速怪", "装甲怪", "Boss"],
+        ["大怪物", "Boss", "装甲怪", "快速怪"],
+        ["Boss", "超级Boss", "装甲怪", "快速怪"],
+    ]
+    
+    def __init__(self, difficulty=1):
+        self.difficulty = min(difficulty, len(self.DIFFICULTY_LEVELS) - 1)
+        self.current_wave = 0
+        self.is_active = False
+        self.spawn_timer = 0
+        self.spawn_interval = 1.0
+        self.monster_queue = []
+        self.total_kills = 0
+        self.total_coins = 0
+        self.time_elapsed = 0
+        
+    def get_difficulty_config(self):
+        """获取当前难度配置"""
+        return self.DIFFICULTY_LEVELS[self.difficulty]
+    
+    def start(self):
+        """启动挑战模式"""
+        self.is_active = True
+        self.current_wave = 1
+        self._generate_wave()
+        
+    def _generate_wave(self):
+        """生成当前波次怪物"""
+        difficulty_config = self.get_difficulty_config()
+        monster_pool = self.CHALLENGE_MONSTER_POOL[self.difficulty]
+        
+        # 怪物数量 = 波次数 * (1 + 难度加成)
+        base_count = 3 + self.current_wave // 2
+        count = int(base_count * difficulty_config["hp_mult"] / 1.5)
+        count = max(3, min(count, 20))  # 限制3-20只
+        
+        import random
+        for _ in range(count):
+            monster_type = random.choice(monster_pool)
+            # 后面波次增加Boss概率
+            if self.current_wave >= 5 and random.random() < 0.1 + self.current_wave * 0.02:
+                monster_type = "Boss" if random.random() < 0.8 else "超级Boss"
+            self.monster_queue.append(monster_type)
+        
+        # 间隔时间随波次递减
+        self.spawn_interval = max(0.3, 1.0 - self.current_wave * 0.02)
+        
+    def update(self, dt, state):
+        """更新挑战模式"""
+        if not self.is_active:
+            return
+            
+        self.time_elapsed += dt
+        self.spawn_timer += dt
+        
+        # 生成怪物
+        if self.spawn_timer >= self.spawn_interval and self.monster_queue:
+            from monsters import MonsterFactory
+            monster_type = self.monster_queue.pop(0)
+            monster = MonsterFactory.create(monster_type)
+            
+            if monster:
+                difficulty_config = self.get_difficulty_config()
+                # 应用难度倍率
+                monster.health = int(monster.health * difficulty_config["hp_mult"])
+                monster.max_health = int(monster.max_health * difficulty_config["hp_mult"])
+                monster.speed = monster.speed * difficulty_config["speed_mult"]
+                # 波次递增额外加成
+                wave_bonus = 1 + (self.current_wave - 1) * 0.1
+                monster.health = int(monster.health * wave_bonus)
+                monster.max_health = int(monster.max_health * wave_bonus)
+                
+                state.monsters.append(monster)
+                self.spawn_timer = 0
+        
+        # 检查波次完成
+        if not self.monster_queue and not state.monsters:
+            self.current_wave += 1
+            self._generate_wave()
+            
+    def get_info(self):
+        """获取挑战模式信息"""
+        return {
+            "wave": self.current_wave,
+            "difficulty": self.DIFFICULTY_LEVELS[self.difficulty]["name"],
+            "kills": self.total_kills,
+            "coins": self.total_coins,
+            "time": int(self.time_elapsed),
+        }

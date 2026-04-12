@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.0] - 2026-04-13 04:23
+### Features | 新功能
+- 🎮 **挑战模式 (Challenge Mode)**:
+  - 无限波次，难度递增
+  - 5种难度级别(简单/普通/困难/噩梦/地狱)
+  - 动态怪物池 + Boss出现概率递增
+  - 实时统计(击杀/金币/时间)
+### Bug Fixes | 修复
+- 修复 monsters.py 中 math 模块缺失
+### Testing | 测试
+- ✅ 348测试用例全部通过
+- ✅ 快速检查通过
+
+
 ## [2.1.0] - 2026-04-13 01:23
 ### Features | 新功能
 - 📖 **怪物图鉴系统 (Bestiary)**:
