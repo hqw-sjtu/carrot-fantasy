@@ -1,11 +1,34 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-13 01:23 (Hourly Maintenance)
+> Last updated: 2026-04-13 05:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.3.0] - 2026-04-13 05:23
+### Features | 新功能
+- 📝 **GitHub Pages 完善**:
+  - 优化 docs/index.md 文档结构
+  - 新增高级特效系统说明(护盾/波纹)
+  - 完善操作说明表格
+- 💡 **代码质量提升**:
+  - 语法检查全部通过
+  - shop_system.py 类型注解完善
+  - extra_effects.py 特效系统增强
+- 📊 **项目维护**:
+  - CHANGELOG.md 版本记录更新
+  - README.md 功能列表同步
+
+### Bug Fixes | 修复
+- 修复测试执行环境兼容性问题
+
+### Testing | 测试
+- ✅ Python语法检查通过
+- ✅ 所有源码文件编译成功
 
 ---
 

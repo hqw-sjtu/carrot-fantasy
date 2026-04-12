@@ -146,9 +146,19 @@ python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK'
 
 ## 📋 更新日志
 
-See [CHANGELOG.md](CHANGELOG.md) — Current: **v2.0.0**
+See [CHANGELOG.md](CHANGELOG.md) — Current: **v2.3.0**
 
-### 最新特性: 快速存档/读档系统 (v2.0.0)
+### 最新特性: GitHub Pages 完善 (v2.3.0)
+- 优化 docs/index.md 文档结构
+- 新增高级特效系统说明(护盾/波纹)
+- 完善操作说明表格
+- 代码质量提升与语法检查通过
+
+### 上一特性: 防御塔共鸣系统 (v2.2.0)
+- 防御塔靠近时触发视觉特效+伤害加成
+- 348测试用例全部通过
+
+### 上一特性: 快速存档/读档系统 (v2.0.0)
 - **F9 快速保存**: 保存当前游戏进度(金币/生命/波次/防御塔)
 - **F10 快速读取**: 读取存档继续游戏
 - 存档后播放粒子特效反馈
