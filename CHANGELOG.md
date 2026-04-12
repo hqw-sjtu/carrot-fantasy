@@ -1,11 +1,28 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-12 21:23 (Hourly Maintenance)
+> Last updated: 2026-04-12 22:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.9.9] - 2026-04-12 22:23
+### Features | 新功能
+- 🎓 **塔技能树可视化系统**:
+  - 按 N 键打开技能树面板
+  - 4种塔(箭/炮/魔法/冰霜)的技能树独立显示
+  - 可视化技能节点+前置依赖连线
+  - 悬停显示技能详情(名称/描述/状态)
+  - Tab 键切换技能树
+  - 节点颜色区分状态(已学/可学/锁定)
+
+### Testing | 测试
+- ✅ 325测试用例全部通过 (+15新增)
+- ✅ 新增 test_skill_tree.py (15个测试)
+- ✅ 语法检查通过
 
 ---
 

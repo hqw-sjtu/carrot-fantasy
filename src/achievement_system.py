@@ -46,6 +46,8 @@ class AchievementManager:
          "condition": lambda stats: stats.get("monsters_killed", 0) >= 100},
         {"id": "slayer_500", "name": "毁灭者", "desc": "累计击杀500只怪物", "icon": "🔥", "reward": 1000,
          "condition": lambda stats: stats.get("monsters_killed", 0) >= 500},
+        {"id": "slayer_1000", "name": "收割者", "desc": "累计击杀1000只怪物", "icon": "🌾", "reward": 2000,
+         "condition": lambda stats: stats.get("monsters_killed", 0) >= 1000},
         
         # 金币类成就
         {"id": "rich_1000", "name": "小有积蓄", "desc": "累计获得1000金币", "icon": "💰", "reward": 50,
@@ -82,6 +84,21 @@ class AchievementManager:
          "condition": lambda stats: stats.get("max_combo", 0) >= 5},
         {"id": "speed_kill", "name": "闪电击杀", "desc": "3秒内击杀Boss", "icon": "⚡", "reward": 500,
          "condition": lambda stats: stats.get("boss_fast_kill", False)},
+        # 连续击杀成就
+        {"id": "streak_10", "name": "连杀初现", "desc": "单次连杀10只怪物", "icon": "🔥", "reward": 200,
+         "condition": lambda stats: stats.get("max_kill_streak", 0) >= 10},
+        {"id": "streak_30", "name": "杀戮成性", "desc": "单次连杀30只怪物", "icon": "💀", "reward": 500,
+         "condition": lambda stats: stats.get("max_kill_streak", 0) >= 30},
+        # 暴击成就
+        {"id": "crit_10", "name": "暴击初现", "desc": "累计暴击10次", "icon": "💥", "reward": 100,
+         "condition": lambda stats: stats.get("total_crits", 0) >= 10},
+        {"id": "crit_100", "name": "暴击大师", "desc": "累计暴击100次", "icon": "💣", "reward": 500,
+         "condition": lambda stats: stats.get("total_crits", 0) >= 100},
+        # 商店成就
+        {"id": "first_purchase", "name": "购物达人", "desc": "在商店购买第一件道具", "icon": "🛒", "reward": 50,
+         "condition": lambda stats: stats.get("items_purchased", 0) >= 1},
+        {"id": "shop_10", "name": "VIP客户", "desc": "累计购买10件道具", "icon": "💳", "reward": 300,
+         "condition": lambda stats: stats.get("items_purchased", 0) >= 10},
     ]
     
     def __init__(self, save_path="achievements.json"):
@@ -96,6 +113,9 @@ class AchievementManager:
             "perfect_waves": 0,
             "max_combo": 0,
             "boss_fast_kill": False,
+            "max_kill_streak": 0,
+            "total_crits": 0,
+            "items_purchased": 0,
         }
         self.newly_unlocked = []  # 新解锁的成就
         self._init_achievements()

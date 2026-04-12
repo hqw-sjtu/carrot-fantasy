@@ -144,9 +144,17 @@ python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK'
 
 ## 📋 更新日志
 
-See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.7.2**
+See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.9.9**
 
-### 最新特性: 鼠标悬停提示系统 (v1.7.2)
+### 最新特性: 技能树可视化 (v1.9.9)
+- **SkillTreeView**: 按 N 键打开技能树面板
+  - 4种塔(箭/炮/魔法/冰霜)的技能树独立显示
+  - 可视化技能节点+前置依赖连线
+  - 悬停显示技能详情
+  - Tab 键切换技能树
+- 325测试用例覆盖,全部通过
+
+### 上一特性: 鼠标悬停提示系统 (v1.7.2)
 - **TooltipSystem**: 鼠标悬停显示详细信息
   - 防御塔: 伤害/射程/攻速/专精/品质
   - 怪物: 生命值/赏金/异常状态

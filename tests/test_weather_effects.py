@@ -4,12 +4,14 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
+SCREEN = None
 try:
     import pygame
     pygame.init()
-    SCREEN = pygame.display.set_mode((800, 600))
-except:
-    SCREEN = None
+    pygame.display.set_mode((800, 600))
+    SCREEN = pygame.Surface((800, 600))
+except Exception:
+    pass  # 无显示环境时使用虚拟Surface
 
 from extra_effects import DayNightCycleEffect, WeatherEffect, EffectManager
 
