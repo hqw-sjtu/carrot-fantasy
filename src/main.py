@@ -7,6 +7,7 @@ import math
 import datetime
 sys.path.append(os.path.dirname(__file__))
 from daily_challenge import daily_challenge, CHALLENGES, get_today_challenge, check_challenge_completion, draw_daily_challenge_panel
+from celebration_effects import CelebrationEffect, StageCompleteEffect
 from extra_effects import UpgradeBeamEffect, TowerSelectionPulse, TrailFadeEffect, BlackHoleEffect
 
 # ==================== 中文字体支持 ====================
@@ -1058,6 +1059,9 @@ class GameData:
         self.aoe_skill_active = False
         self.aoe_skill_timer = 0.0
         self.aoe_skill_cooldown = 0.0  # 25秒冷却
+        # 庆祝特效系统
+        self.celebration_effect = None
+        self.stage_complete_effect = None
 
     def reset(self):
         global final_wave_announced, game_complete_time, difficulty_selected, level_select_mode, selected_level
@@ -1072,6 +1076,9 @@ class GameData:
         self.game_over = False
         self.wave_complete = False
         self.wave_manager = WaveManager()
+        # 清除庆祝特效
+        self.celebration_effect = None
+        self.stage_complete_effect = None
         # 游戏重置
         final_wave_announced = False
         game_complete_time = None
@@ -1868,6 +1875,13 @@ def draw_game():
 
     # 绘制胜利画面
     if game_complete_time is not None:
+        # 绘制庆祝特效
+        if state.celebration_effect:
+            state.celebration_effect.update(dt)
+            state.celebration_effect.draw(SCREEN)
+        if state.stage_complete_effect:
+            state.stage_complete_effect.update(dt)
+            state.stage_complete_effect.draw(SCREEN)
         stats['waves_completed'] = state.wave
         draw_end_report(SCREEN, True, stats, game_complete_time)
     
@@ -2765,6 +2779,12 @@ def main():
         if not state.wave_manager.has_more_waves() and state.wave_manager.is_wave_complete() and not state.monsters and state.wave > 0:
             if game_complete_time is None:
                 game_complete_time = display_time
+                # 触发关卡完成庆祝特效
+                stars = 3 if state.lives >= 7 else (2 if state.lives >= 4 else 1)
+                score = int(display_time * 10 + state.lives * 100)
+                state.stage_complete_effect = StageCompleteEffect(SCREEN_WIDTH, SCREEN_HEIGHT, score, stars)
+                state.celebration_effect = CelebrationEffect(SCREEN_WIDTH, SCREEN_HEIGHT)
+                state.celebration_effect.start()
                 # 播放胜利音效
                 sound_manager.play('victory')
                 # 成就: 速通(3分钟内)

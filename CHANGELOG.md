@@ -1,11 +1,29 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-12 14:23 (Hourly Maintenance)
+> Last updated: 2026-04-12 16:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.9.4] - 2026-04-12 16:23
+### Features | 新功能
+- 🎆 **关卡完成庆祝特效系统**:
+  - 彩色纸屑 (ConfettiParticle): 100个彩色纸屑粒子飘落
+  - 烟花 (FireworkParticle): 5发烟花绽放，带拖尾效果
+  - 庆祝特效管理器 (CelebrationEffect): 4秒持续庆祝
+  - 关卡完成公告 (StageCompleteEffect): 星级评价+分数显示+金色光芒动画
+  - 通关时自动触发：根据剩余生命计算星级(1-3星)
+
+### Testing | 测试
+- ✅ 276测试用例全部通过 (+16新增)
+- ✅ 语法检查通过
+- ✅ 代码质量检查通过
+- ✅ 新增 celebration_effects.py (230行)
+- ✅ 新增 test_celebration_effects.py (16个测试用例)
 
 ---
 
