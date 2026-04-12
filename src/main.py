@@ -2570,6 +2570,25 @@ def main():
                 # F5键截图
                 elif event.key == pygame.K_F5:
                     take_screenshot()
+                # F9键快速保存
+                elif event.key == pygame.K_F9:
+                    from save_system import save_game
+                    save_game(state, getattr(state, 'game_time', 0))
+                    print("💾 游戏已保存 (F9)")
+                    spawn_particles(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, (100, 255, 150), 20)
+                # F10键快速读取
+                elif event.key == pygame.K_F10:
+                    from save_system import load_game
+                    data = load_game()
+                    if data:
+                        state.money = data.get('money', 500)
+                        state.lives = data.get('lives', 10)
+                        state.wave = data.get('wave', 1)
+                        state.level = data.get('level', 1)
+                        print("📂 游戏已读取 (F10)")
+                        spawn_particles(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, (150, 200, 255), 20)
+                    else:
+                        print("❌ 无存档可读取")
                 # ESC键暂停/继续
                 elif event.key == pygame.K_ESCAPE:
                     state.paused = not state.paused

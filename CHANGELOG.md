@@ -1,6 +1,6 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-12 22:23 (Hourly Maintenance)
+> Last updated: 2026-04-13 00:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
@@ -9,7 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.9.9] - 2026-04-12 22:23
+## [2.0.0] - 2026-04-13 00:23
+### Features | 新功能
+- 💾 **快速存档/读档系统**:
+  - 按 F9 快速保存游戏
+  - 按 F10 快速读取游戏
+  - 保存金币/生命/波次/防御塔等信息
+  - 存档后播放粒子特效反馈
+
+### Testing | 测试
+- ✅ 333测试用例全部通过
+- ✅ 新增存档系统测试 (8个测试用例)
+- ✅ 语法检查通过
+
+---
+
+## [1.9.9] - 2026-04-12 23:23
 ### Features | 新功能
 - 🎓 **塔技能树可视化系统**:
   - 按 N 键打开技能树面板
@@ -18,13 +33,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 悬停显示技能详情(名称/描述/状态)
   - Tab 键切换技能树
   - 节点颜色区分状态(已学/可学/锁定)
+- ⚡ **连锁闪电特效** - ChainLightningEffect
+- 💥 **破碎粒子特效** - ShatterParticle
+- 💰 **金币飞行系统** - FlyingCoin
+- 🎆 **烟花/彩带庆祝特效**
+- ❄️ **冰霜/时间延缓/屏幕冻结特效**
+- 🌦️ **天气系统** - 雨/雪/风
+- ⭐ **波次公告特效**
 
 ### Testing | 测试
-- ✅ 325测试用例全部通过 (+15新增)
-- ✅ 新增 test_skill_tree.py (15个测试)
+- ✅ 325测试用例全部通过
 - ✅ 语法检查通过
+- ✅ CI/CD 完整配置 (GitHub Actions)
+
+### Performance | 性能
+- 特效系统模块化设计
+- 粒子系统优化
+- 状态机架构
 
 ---
+
+## [1.9.8] - 2026-04-12 21:23
+### Features | 新功能
 
 ## [1.9.8] - 2026-04-12 21:23
 ### Features | 新功能

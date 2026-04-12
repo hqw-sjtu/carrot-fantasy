@@ -93,6 +93,8 @@ carrot-fantasy/
 | U | 升级选中塔 |
 | D | 出售塔 (50%返还) |
 | Space | 开始波次 |
+| F9 | 快速保存 |
+| F10 | 快速读取 |
 | ESC | 暂停 |
 
 ### 快捷键
@@ -144,9 +146,13 @@ python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK'
 
 ## 📋 更新日志
 
-See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.9.9**
+See [CHANGELOG.md](CHANGELOG.md) — Current: **v2.0.0**
 
-### 最新特性: 技能树可视化 (v1.9.9)
+### 最新特性: 快速存档/读档系统 (v2.0.0)
+- **F9 快速保存**: 保存当前游戏进度(金币/生命/波次/防御塔)
+- **F10 快速读取**: 读取存档继续游戏
+- 存档后播放粒子特效反馈
+- 333测试用例覆盖
 - **SkillTreeView**: 按 N 键打开技能树面板
   - 4种塔(箭/炮/魔法/冰霜)的技能树独立显示
   - 可视化技能节点+前置依赖连线
