@@ -1740,11 +1740,15 @@ def draw_game():
         if int(no_money_timer * 10) % 2 == 0:
             SCREEN.blit(warn_text, (SCREEN_WIDTH//2 - 80, SCREEN_HEIGHT//2))
 
-    # 绘制速度状态
-    if game_speed != 1.0:
-        font_speed = get_font( 32)
-        speed_text = font_speed.render(speed_labels[game_speed], True, YELLOW)
-        SCREEN.blit(speed_text, (SCREEN_WIDTH - 100, 10))
+    # 绘制速度状态 (始终显示)
+    font_speed = get_font(24)
+    # 背景框
+    speed_bg_rect = pygame.Rect(SCREEN_WIDTH - 130, 8, 120, 36)
+    speed_color = {0.5: (100, 150, 200), 1.0: (100, 200, 100), 2.0: (200, 150, 50)}
+    pygame.draw.rect(SCREEN, speed_color[game_speed], speed_bg_rect, border_radius=8)
+    pygame.draw.rect(SCREEN, (255, 255, 255), speed_bg_rect, 2, border_radius=8)
+    speed_text = font_speed.render(speed_labels[game_speed], True, WHITE)
+    SCREEN.blit(speed_text, (SCREEN_WIDTH - 125, 14))
 
     # 塔放置预览增强(包含范围和放置状态)
     if hasattr(state, "mouse_preview") and state.mouse_preview:
@@ -2492,8 +2496,15 @@ def main():
                         level_select_mode = True
                         difficulty_selected = False
 
+                # 1/2/3键切换速度
+                if event.key == pygame.K_1:
+                    game_speed = 0.5
+                elif event.key == pygame.K_2:
+                    game_speed = 1.0
+                elif event.key == pygame.K_3:
+                    game_speed = 2.0
                 # Tab切换速度
-                if event.key == pygame.K_TAB:
+                elif event.key == pygame.K_TAB:
                     if game_speed == 1.0:
                         game_speed = 2.0
                     elif game_speed == 2.0:
