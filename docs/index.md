@@ -144,9 +144,16 @@ python -c "import sys; sys.path.insert(0, 'src'); from main import *; print('OK'
 
 ## 📋 更新日志
 
-See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.6.8**
+See [CHANGELOG.md](CHANGELOG.md) — Current: **v1.7.2**
 
-### 最新特性: 升级光柱 & 塔选中脉冲 (v1.6.8)
+### 最新特性: 鼠标悬停提示系统 (v1.7.2)
+- **TooltipSystem**: 鼠标悬停显示详细信息
+  - 防御塔: 伤害/射程/攻速/专精/品质
+  - 怪物: 生命值/赏金/异常状态
+  - 智能位置/美观半透明背景
+- 196测试用例全部通过
+
+### 上一特性: 升级光柱 & 塔选中脉冲 (v1.7.1)
 - **UpgradeBeamEffect**: 升级时金色(Lv2)/紫色(Lv3)/橙红色(Lv4+)光柱直冲云霄,20粒子环绕
 - **TowerSelectionPulse**: 选中塔时呼吸光环,双圈同心圆设计,1.5秒循环
 - **StarburstEffect**: 高连击庆祝烟火,12条光线粒子爆发,中心光环+重力

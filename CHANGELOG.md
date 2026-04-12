@@ -1,11 +1,62 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-12 01:23 (Hourly Maintenance)
+> Last updated: 2026-04-12 08:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.7.3] - 2026-04-12 08:23
+### Features | 新功能
+- 🤝 **防御塔协同系统(SynergySystem)**:
+  - 同类型协同: 相同塔靠近时攻速+8%/塔, 伤害+5%/塔
+  - 元素协同: 火+冰=冰火交融, 火+魔法=奥术火焰等
+  - 射程协同: 近程塔+远程塔=10%伤害加成
+  - 500ms缓存更新,高性能
+  - 智能加成叠加计算
+
+### Testing | 测试
+- ✅ 214测试用例全部通过 (196+18新增)
+- ✅ 语法检查通过
+- ✅ 新增协同系统单元测试18项
+- ✅ 集成到主游戏循环
+
+---
+
+## [1.7.1] - 2026-04-12 06:23
+### Features | 新功能
+- 💀 **Boss血条系统(BossHPBar)**:
+  - Boss怪物专属血条显示
+  - 血量渐变色(绿→黄→红)
+  - 怪物名称+血量数值显示
+  - 低血量脉动效果
+- ⚠️ **Boss来袭警告(BossWarningEffect)**:
+  - Boss出现时全屏红色闪烁
+  - "BOSS来袭"警告文字+发光
+  - 2秒完整警告动画
+
+### Testing | 测试
+- ✅ 190测试用例全部通过 (185+5新增)
+- ✅ 语法检查通过
+- ✅ 新增Boss血条单元测试
+
+---
+
+## [1.7.0] - 2026-04-12 05:23
+### Features | 新功能
+- 📢 **波次公告特效(WaveAnnouncementEffect)**:
+  - 新波次开始时的全屏公告动画
+  - 缩放动画(放大→保持→淡出)
+  - 文字发光效果+外圈光芒
+  - 2秒完整生命周期
+
+### Testing | 测试
+- ✅ 169测试用例全部通过 (165+4新增)
+- ✅ 语法检查通过
+- ✅ 新增波次公告单元测试
 
 ---
 

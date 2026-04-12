@@ -711,6 +711,7 @@ from tower_placement import TowerPlacement
 from particle_system import get_particle_system
 from damage_numbers import DamageNumberManager
 from base_effects import get_base_effect_manager
+from synergy_system import get_synergy_manager
 
 # 设置全局音效管理器给towers模块
 set_sound_manager(sound_manager)
@@ -2726,7 +2727,26 @@ def main():
         # 塔攻击逻辑 - 添加组合系统
         for tower in state.towers:
             old_projectile_count = len(state.projectiles)
+            # 计算并应用协同加成
+            synergy_manager = get_synergy_manager()
+            synergy_manager.calculate_synergies(state.towers, pygame.time.get_ticks())
+            
+            # 保存原始属性
+            original_damage = tower.damage
+            original_speed = tower.attack_speed
+            
+            # 应用协同加成
+            damage_mult = synergy_manager.get_synergy_bonus(tower, "damage")
+            speed_mult = synergy_manager.get_synergy_bonus(tower, "attack_speed")
+            tower.damage = int(tower.damage * damage_mult)
+            tower.attack_speed = tower.attack_speed * speed_mult
+            
             tower.attack(state.monsters, state.projectiles, state.towers)
+            
+            # 恢复原始属性
+            tower.damage = original_damage
+            tower.attack_speed = original_speed
+            
             # 检测是否发射了新子弹，触发塔基特效
             if len(state.projectiles) > old_projectile_count:
                 if global_base_effect_manager:
