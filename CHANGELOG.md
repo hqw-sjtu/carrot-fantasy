@@ -1,11 +1,28 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-12 08:23 (Hourly Maintenance)
+> Last updated: 2026-04-12 09:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.8.0] - 2026-04-12 09:23
+### Features | 新功能
+- 🐾 **宠物跟随系统(PetSystem)**:
+  - 可爱宠物陪伴玩家(小猫/小狗/小兔)
+  - 小猫: +5% 金币获取
+  - 小狗: +3% 经验获取  
+  - 小兔: +2% 攻速加成
+  - 最多同时携带3只宠物
+  - 平滑跟随动画+弹跳效果
+
+### Testing | 测试
+- ✅ 231测试用例全部通过 (214+17新增)
+- ✅ 语法检查通过
+- ✅ 新增宠物系统单元测试17项
 
 ---
 
