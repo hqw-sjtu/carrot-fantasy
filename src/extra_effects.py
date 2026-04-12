@@ -292,6 +292,8 @@ class EffectManager:
         self.trail_fades = []  # 渐变拖尾特效列表
         self.time_dilations = []  # 时间膨胀特效列表
         self.screen_freezes = []  # 屏幕冰冻特效列表
+        self.day_night_cycle = None  # 昼夜循环特效
+        self.weather_effects = []  # 天气特效列表
         self.experience_manager = ExperienceManager.get_instance()
         
     @classmethod
@@ -349,6 +351,18 @@ class EffectManager:
         effect = ScreenFreezeEffect(screen_width, screen_height)
         self.screen_freezes.append(effect)
         return effect
+    
+    def spawn_day_night_cycle(self, screen_width, screen_height, cycle_duration=60.0):
+        """生成昼夜循环特效"""
+        effect = DayNightCycleEffect(screen_width, screen_height, cycle_duration)
+        self.day_night_cycle = effect
+        return effect
+    
+    def spawn_weather(self, screen_width, screen_height, weather_type="rain"):
+        """生成天气特效"""
+        effect = WeatherEffect(screen_width, screen_height, weather_type)
+        self.weather_effects.append(effect)
+        return effect
         
     def update(self, dt):
         """更新所有特效"""
@@ -394,6 +408,14 @@ class EffectManager:
             effect.update(dt)
             if not effect.active:
                 self.screen_freezes.remove(effect)
+        # 昼夜循环
+        if self.day_night_cycle:
+            self.day_night_cycle.update(dt)
+        # 天气特效
+        for effect in self.weather_effects[:]:
+            effect.update(dt)
+            if not effect.active:
+                self.weather_effects.remove(effect)
         
     def draw(self, screen):
         """绘制所有特效"""
@@ -416,6 +438,12 @@ class EffectManager:
         for effect in self.time_dilations:
             effect.draw(screen)
         for effect in self.screen_freezes:
+            effect.draw(screen)
+        # 昼夜循环（在最底层绘制）
+        if self.day_night_cycle:
+            self.day_night_cycle.draw(screen)
+        # 天气特效（在昼夜之上绘制）
+        for effect in self.weather_effects:
             effect.draw(screen)
         self.experience_manager.draw(screen)
 
@@ -1270,6 +1298,152 @@ class ScreenFreezeEffect:
             line_alpha = alpha // 2
             pygame.draw.line(screen, (200, 240, 255, line_alpha), 
                            (x1, y1), (x2, y2), 1)
+
+
+class DayNightCycleEffect:
+    """昼夜循环特效 - 背景天空随时间变化"""
+    
+    def __init__(self, screen_width, screen_height, cycle_duration=60.0):
+        self.width = screen_width
+        self.height = screen_height
+        self.cycle_duration = cycle_duration  # 完整昼夜周期(秒)
+        self.time = 0
+        self.active = True
+        self.current_phase = "day"  # day, dusk, night, dawn
+        # 天空颜色配置
+        self.colors = {
+            'day': ((135, 206, 235), (70, 130, 180)),      # 白天: 浅蓝到天空蓝
+            'dusk': ((255, 140, 0), (75, 0, 130)),          # 黄昏: 橙色到深紫
+            'night': ((10, 10, 40), (25, 25, 80)),          # 夜晚: 深蓝到墨蓝
+            'dawn': ((255, 182, 193), (135, 206, 250))     # 黎明: 粉色到浅蓝
+        }
+        
+    def update(self, dt):
+        self.time += dt
+        # 计算当前在周期中的位置(0-1)
+        phase = (self.time % self.cycle_duration) / self.cycle_duration
+        
+        # 确定当前阶段
+        if phase < 0.25:
+            self.current_phase = "dawn"
+        elif phase < 0.5:
+            self.current_phase = "day"
+        elif phase < 0.75:
+            self.current_phase = "dusk"
+        else:
+            self.current_phase = "night"
+        
+    def get_sky_colors(self):
+        """获取当前天空渐变色"""
+        phase = (self.time % self.cycle_duration) / self.cycle_duration
+        colors = self.colors[self.current_phase]
+        # 添加渐变过渡
+        blend = (phase % 0.25) / 0.25
+        if self.current_phase == "day":
+            blend = 1.0
+        return colors[0], colors[1], blend
+    
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        top_color, bottom_color, _ = self.get_sky_colors()
+        sky_height = self.height // 2
+        
+        # 绘制渐变天空
+        for y in range(sky_height):
+            ratio = y / sky_height
+            r = int(top_color[0] + (bottom_color[0] - top_color[0]) * ratio)
+            g = int(top_color[1] + (bottom_color[1] - top_color[1]) * ratio)
+            b = int(top_color[2] + (bottom_color[2] - top_color[2]) * ratio)
+            pygame.draw.line(screen, (r, g, b), (0, y), (self.width, y))
+        
+        # 夜间显示星星
+        if self.current_phase == "night":
+            import random
+            random.seed(123)
+            for _ in range(50):
+                x = random.randint(0, self.width)
+                y = random.randint(0, sky_height - 50)
+                size = random.randint(1, 2)
+                alpha = random.randint(100, 200)
+                # 闪烁效果
+                flicker = int(alpha * (0.5 + 0.5 * math.sin(self.time * 5 + x)))
+                pygame.draw.circle(screen, (255, 255, 255), (x, y), size)
+            random.seed()
+
+
+class WeatherEffect:
+    """天气特效 - 雨滴/雪花飘落效果"""
+    
+    def __init__(self, screen_width, screen_height, weather_type="rain"):
+        self.width = screen_width
+        self.height = screen_height
+        self.weather_type = weather_type  # rain, snow
+        self.max_life = 10.0  # 天气持续时间
+        self.life = 0
+        self.active = True
+        self.particles = []
+        
+        # 初始化粒子
+        count = 200 if weather_type == "rain" else 150
+        for _ in range(count):
+            self.particles.append(self._create_particle())
+            
+    def _create_particle(self, reset=False):
+        if self.weather_type == "rain":
+            return {
+                'x': random.randint(0, self.width),
+                'y': random.randint(-self.height, 0) if not reset else random.randint(-50, 0),
+                'speed': random.uniform(300, 500),
+                'length': random.uniform(10, 20),
+                'alpha': random.randint(100, 180)
+            }
+        else:  # snow
+            return {
+                'x': random.randint(0, self.width),
+                'y': random.randint(-self.height, 0) if not reset else random.randint(-50, 0),
+                'speed': random.uniform(30, 80),
+                'size': random.randint(2, 5),
+                'alpha': random.randint(150, 220),
+                'drift': random.uniform(-20, 20)
+            }
+    
+    def update(self, dt):
+        self.life += dt
+        if self.life >= self.max_life:
+            self.active = False
+            return
+            
+        for p in self.particles:
+            p['y'] += p['speed'] * dt
+            if self.weather_type == "snow":
+                p['x'] += p['drift'] * dt
+            
+            # 超出底部重置
+            if p['y'] > self.height:
+                p.update(self._create_particle(reset=True))
+                
+    def draw(self, screen):
+        if not self.active:
+            return
+        
+        fade_alpha = 1.0
+        if self.life > self.max_life - 1:  # 最后1秒淡出
+            fade_alpha = self.max_life - self.life
+            
+        for p in self.particles:
+            alpha = int(p['alpha'] * fade_alpha)
+            
+            if self.weather_type == "rain":
+                # 雨滴是斜线
+                color = (180, 200, 220, alpha)
+                start = (int(p['x']), int(p['y']))
+                end = (int(p['x'] - 5), int(p['y'] + p['length']))
+                pygame.draw.line(screen, color, start, end, 1)
+            else:  # snow
+                color = (255, 255, 255, alpha)
+                pygame.draw.circle(screen, color, (int(p['x']), int(p['y'])), p['size'])
 
 
 class WaveAnnouncementEffect:
