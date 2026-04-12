@@ -613,39 +613,62 @@ def draw_achievement_unlock():
 
 # ==================== 成就徽章UI ====================
 def draw_achievement_badges():
-    """绘制已解锁成就徽章（右上角）"""
-    badge_x = SCREEN_WIDTH - 30
-    badge_y = 120
-    
+    """绘制已解锁成就徽章（顶部居中）"""
     unlocked = [k for k, v in achievements.items() if v.get("unlocked")]
     
-    for i, achievement_key in enumerate(unlocked[:5]):  # 最多显示5个
-        badge_y = 120 + i * 35
+    if not unlocked:
+        return
+    
+    # 顶部居中显示
+    badge_count = min(len(unlocked), 8)  # 最多8个
+    total_width = badge_count * 45
+    start_x = (SCREEN_WIDTH - total_width) // 2
+    badge_y = 35
+    
+    # 成就图标映射
+    icon_map = {
+        "first_blood": "⚔️", "ten_kills": "🗡️", "fifty_kills": "🏹",
+        "hundred_kills": "💀", "upgrade_tower": "⬆️", "sell_tower": "💰",
+        "no_damage_wave": "🛡️", "fast_win": "⚡", "rich": "💎",
+    }
+    
+    for i, achievement_key in enumerate(unlocked[:badge_count]):
+        badge_x = start_x + i * 45 + 22
+        
+        # 脉冲发光效果
+        pulse = (math.sin(time.time() * 3 + i) + 1) / 2
+        glow_size = 3 + pulse * 2
+        
+        # 悬停检测
+        mouse_pos = pygame.mouse.get_pos()
+        dx = mouse_pos[0] - badge_x
+        dy = mouse_pos[1] - badge_y
+        hovered = (dx * dx + dy * dy) < 400
+        
+        # 发光边框
+        glow_color = (255, 215, 0, 180) if hovered else (255, 215, 0, 100)
+        if hovered:
+            pygame.draw.circle(SCREEN, glow_color, (badge_x, badge_y), 20 + glow_size)
         
         # 徽章背景（金色圆形）
-        pygame.draw.circle(SCREEN, GOLD, (badge_x, badge_y), 15)
-        pygame.draw.circle(SCREEN, (200, 150, 0), (badge_x, badge_y), 12)
+        pygame.draw.circle(SCREEN, GOLD, (badge_x, badge_y), 18)
+        pygame.draw.circle(SCREEN, (200, 150, 0), (badge_x, badge_y), 15)
         
-        # 徽章图标（使用成就key的首字母作为图标）
-        icon_map = {
-            "first_blood": "🎯",
-            "ten_kills": "💀",
-            "fifty_kills": "💀",
-            "upgrade_tower": "⬆️",
-            "sell_tower": "💰",
-            "no_damage_wave": "🛡️",
-            "fast_win": "⚡",
-        }
+        # 徽章图标
         icon = icon_map.get(achievement_key, "⭐")
-        font_icon = get_font( 20)
+        font_icon = get_font(18)
         icon_surf = font_icon.render(icon, True, WHITE)
-        SCREEN.blit(icon_surf, (badge_x - 8, badge_y - 10))
+        SCREEN.blit(icon_surf, (badge_x - 9, badge_y - 10))
         
-        # 成就名称（左侧显示）
-        name = achievements[achievement_key].get("name", achievement_key)
-        font_name = get_font( 18)
-        name_surf = font_name.render(name[:4], True, WHITE)
-        SCREEN.blit(name_surf, (badge_x - 50, badge_y - 5))
+        # 悬停显示名称
+        if hovered:
+            name = achievements[achievement_key].get("name", achievement_key)
+            font_name = get_font(16)
+            name_surf = font_name.render(name, True, WHITE)
+            bg_rect = pygame.Surface((name_surf.get_width() + 12, name_surf.get_height() + 6), pygame.SRCALPHA)
+            bg_rect.fill((0, 0, 0, 220))
+            SCREEN.blit(bg_rect, (badge_x - name_surf.get_width() // 2 - 6, badge_y - 30))
+            SCREEN.blit(name_surf, (badge_x - name_surf.get_width() // 2, badge_y - 27))
 
 # 波次无伤检测
 wave_no_damage = True

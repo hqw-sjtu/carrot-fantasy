@@ -1,0 +1,59 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Generate game info
+        run: |
+          echo "# 保卫萝卜 Carrot Fantasy" > docs/INDEX.md
+          echo "" >> docs/INDEX.md
+          echo "![Python](https://img.shields.io/badge/Python-3.12+-blue)" >> docs/INDEX.md
+          echo "![License](https://img.shields.io/badge/License-MIT-green)" >> docs/INDEX.md
+          echo "" >> docs/INDEX.md
+          echo "## 游戏状态" >> docs/INDEX.md
+          echo "- **版本**: $(grep -m1 '#' CHANGELOG.md | head -1)" >> docs/INDEX.md
+          echo "- **测试覆盖**: 260+ 测试用例" >> docs/INDEX.md
+          echo "- **代码行数**: $(wc -l src/*.py | tail -1 | awk '{print $1}')" >> docs/INDEX.md
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs'
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

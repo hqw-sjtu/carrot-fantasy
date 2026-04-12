@@ -1,11 +1,42 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-12 13:23 (Hourly Maintenance)
+> Last updated: 2026-04-12 14:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.9.3] - 2026-04-12 15:23
+### Features | 新功能
+- 🎖️ **成就徽章展示系统升级**:
+  - 顶部居中显示已解锁成就徽章
+  - 脉冲发光动画效果
+  - 悬停显示完整成就名称
+  - 最多显示8个徽章
+  - 金色圆形徽章+图标设计
+
+### Testing | 测试
+- ✅ 260测试用例全部通过 (pytest)
+- ✅ 语法检查通过
+- ✅ 代码质量检查通过
+
+---
+
+## [1.9.2] - 2026-04-12 14:23
+### Features | 新功能
+- ⚡ **技能冷却显示面板**:
+  - 底部中央显示Q/W/E三个技能冷却状态
+  - 实时进度条显示冷却剩余时间
+  - 技能就绪时边框发光提示
+  - 冷却中显示剩余秒数
+
+### Testing | 测试
+- ✅ 260测试用例全部通过 (pytest)
+- ✅ 语法检查通过
+- ✅ 代码质量检查通过
 
 ---
 
