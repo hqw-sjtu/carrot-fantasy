@@ -1,11 +1,19 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-13 05:23 (Hourly Maintenance)
+> Last updated: 2026-04-13 06:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.4.0] - 2026-04-13 06:23
+### Features | 新功能
+- 🎨 **防御塔皮肤系统**: 6种精美皮肤(经典/黄金/水晶/霓虹/暗影/彩虹)
+- 💡 **代码质量**: 12170行代码，语法检查通过
+- ✅ 皮肤系统测试通过
 
 ---
 
