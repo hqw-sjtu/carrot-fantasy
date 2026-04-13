@@ -45,6 +45,10 @@ class Projectile:
         self.last_x = x  # 上一次位置
         self.last_y = y
         
+    def move(self, dt):
+        """移动子弹（update的别名）"""
+        return self.update(dt)
+    
     def update(self, dt):
         """更新子弹位置"""
         if not self.active or not self.target or not self.target.alive:

@@ -1976,7 +1976,7 @@ def draw_game():
     # 底部操作提示
     font_hint = get_font( 22)
     # 修复：更清晰的提示，说明需要先按1-5选择塔，再点击地图放置
-    hint_text = f"📌 1-5选择塔 | R范围 | S商店 | H血量 | T统计 | 波次: {state.wave} | 金币: {state.money} | 生命: {state.lives}"
+    hint_text = f"📌 F1-F5选塔 | 1-3变速 | R范围 | S商店 | H血量 | T统计 | 波次: {state.wave} | 金币: {state.money} | 生命: {state.lives}"
     hint_surf = font_hint.render(hint_text, True, (180, 180, 180))
     SCREEN.blit(hint_surf, (10, SCREEN_HEIGHT - 30))
 
@@ -2496,9 +2496,20 @@ def main():
                         level_select_mode = True
                         difficulty_selected = False
 
-                # 1/2/3键切换速度 (游戏开始后)
+                # F1-F5键选择防御塔 (游戏开始后)
                 if not difficulty_selected:
-                    pass  # 难度选择阶段不处理速度切换
+                    pass  # 难度选择阶段不处理
+                elif event.key == pygame.K_F1:
+                    config['tower_selection'] = '箭塔'
+                elif event.key == pygame.K_F2:
+                    config['tower_selection'] = '炮塔'
+                elif event.key == pygame.K_F3:
+                    config['tower_selection'] = '魔法塔'
+                elif event.key == pygame.K_F4:
+                    config['tower_selection'] = '减速塔'
+                elif event.key == pygame.K_F5:
+                    config['tower_selection'] = '冰霜塔'
+                # 1/2/3键切换速度
                 elif event.key == pygame.K_1:
                     game_speed = 0.5
                 elif event.key == pygame.K_2:
