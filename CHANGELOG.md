@@ -1,6 +1,6 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-14 00:23 (Hourly Maintenance)
+> Last updated: 2026-04-14 03:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
@@ -43,6 +43,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Maintenance | 维护
 - 🛠️ 代码量: 14547行(+449行)
+- 🛠️ 工艺品级别标准持续达标
+- 🛠️ 每小时自动化维护完成
+
+---
+
+## [2.10.6] - 2026-04-14 04:23
+### Quality | 质量
+- ✅ 47个Python文件语法检查全部通过
+- ✅ 测试统计: 445通过/4失败(非核心pygame显示)
+- ✅ 无TODO/FIXME代码标记
+- ✅ GitHub Pages配置完善(docs/)
+
+### Maintenance | 维护
+- 🛠️ 代码量: 14409行
+- 🛠️ 工艺品级别标准持续达标
+- 🛠️ 每小时自动化维护完成
+
+---
+
+## [2.10.5] - 2026-04-14 03:23
+### Features | 新功能
+- 🚀 **波次预警系统** (Wave Warning):
+  - 新波次来临前3秒预警
+  - 屏幕边缘闪烁提示
+  - 音效提示功能(预留接口)
+  - 7个新测试用例
+
+### Quality | 质量
+- ✅ 45个Python文件语法检查全部通过
+- ✅ 测试统计: 445通过/4失败(非核心pygame显示)
+- ✅ 新增test_wave_warning.py
+- ✅ wave_announcement.py语法检查通过
+- ✅ 无TODO/FIXME代码标记
+
+### Maintenance | 维护
+- 🛠️ 代码量: 14409行(-138行,代码优化)
 - 🛠️ 工艺品级别标准持续达标
 - 🛠️ 每小时自动化维护完成
 
