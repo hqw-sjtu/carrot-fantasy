@@ -1510,7 +1510,7 @@ def draw_game():
         
         # ===== 瞄准线预览系统 =====
         # 当塔未选中时，显示指向当前目标的瞄准线
-        if not is_selected and state.game_running:
+        if not is_selected and not state.game_over:
             current_target = tower.find_target(state.monsters)
             if current_target:
                 # 更新瞄准线透明度（淡入）
@@ -2496,8 +2496,10 @@ def main():
                         level_select_mode = True
                         difficulty_selected = False
 
-                # 1/2/3键切换速度
-                if event.key == pygame.K_1:
+                # 1/2/3键切换速度 (游戏开始后)
+                if not difficulty_selected:
+                    pass  # 难度选择阶段不处理速度切换
+                elif event.key == pygame.K_1:
                     game_speed = 0.5
                 elif event.key == pygame.K_2:
                     game_speed = 1.0
