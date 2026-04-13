@@ -30,18 +30,10 @@ jobs:
         run: |
           pip install -r requirements.txt
       
-      - name: Generate game info
+      - name: Build docs
         run: |
-          echo "# 保卫萝卜 Carrot Fantasy" > docs/INDEX.md
-          echo "" >> docs/INDEX.md
-          echo "![Python](https://img.shields.io/badge/Python-3.12+-blue)" >> docs/INDEX.md
-          echo "![License](https://img.shields.io/badge/License-MIT-green)" >> docs/INDEX.md
-          echo "" >> docs/INDEX.md
-          echo "## 游戏状态" >> docs/INDEX.md
-          echo "- **版本**: $(grep -m1 '#' CHANGELOG.md | head -1)" >> docs/INDEX.md
-          echo "- **测试覆盖**: 260+ 测试用例" >> docs/INDEX.md
-          echo "- **代码行数**: $(wc -l src/*.py | tail -1 | awk '{print $1}')" >> docs/INDEX.md
-      
+          # 确保docs目录存在并包含index.md
+          ls docs/      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
