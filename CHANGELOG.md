@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.9.3] - 2026-04-13 18:23
+### Features | 新功能
+- 🪤 **陷阱系统** (TrapSystem):
+  - 尖刺陷阱: 持续物理伤害
+  - 毒陷阱: 毒伤害+减速效果
+  - 冰霜陷阱: 冰冻减速效果
+  - 陷阱升级系统(最高3级)
+  - 范围检测与状态效果管理
+  - 18个新测试用例
+
+### Quality | 质量
+- ✅ 422测试用例全部通过
+- ✅ 新增test_trap_system.py测试文件
+- ✅ trap_system.py语法检查通过
+
+### Docs | 文档
+- 🔄 同步CHANGELOG版本记录
+
+---
+
 ## [2.9.2] - 2026-04-13 17:23
 ### Quality | 质量
 - ✅ 404测试用例全部通过
