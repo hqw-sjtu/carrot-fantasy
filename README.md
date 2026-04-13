@@ -82,7 +82,7 @@ carrot-fantasy/
 │   └── ...
 ├── tests/         # 测试代码
 ├── config.json    # 游戏配置
-└── docs/          # GitHub Pages
+└── docs/          # 项目文档
 ```
 
 ## 🧪 测试覆盖
@@ -106,7 +106,7 @@ pytest tests/ --cov=src --cov-report=term-missing
 - 394测试用例全部通过 ✓
 
 ### 2026-04-13 05:23
-- 完善**GitHub Pages**文档结构
+- 移除未使用的GitHub Pages部署(减少无效CI)
 - 代码质量提升与语法检查通过
 - 项目维护与版本记录更新
 
