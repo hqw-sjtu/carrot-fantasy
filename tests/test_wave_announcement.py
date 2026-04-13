@@ -23,7 +23,6 @@ def test_wave_announcement_init():
     assert announcement.alpha == 255
     
     print("✅ test_wave_announcement_init PASSED")
-    return True
 
 
 def test_wave_announcement_update():
@@ -43,7 +42,6 @@ def test_wave_announcement_update():
     assert announcement.active == False
     
     print("✅ test_wave_announcement_update PASSED")
-    return True
 
 
 def test_announcement_manager():
@@ -72,7 +70,6 @@ def test_announcement_manager():
     assert manager.has_active() == True
     
     print("✅ test_announcement_manager PASSED")
-    return True
 
 
 def test_scale_animation():
@@ -94,7 +91,6 @@ def test_scale_animation():
     assert announcement.scale <= announcement.target_scale
     
     print("✅ test_scale_animation PASSED")
-    return True
 
 
 def test_fade_effect():
@@ -117,7 +113,6 @@ def test_fade_effect():
     assert announcement.alpha < 255
     
     print("✅ test_fade_effect PASSED")
-    return True
 
 
 if __name__ == "__main__":
