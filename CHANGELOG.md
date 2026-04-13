@@ -1,11 +1,31 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-13 14:23 (Hourly Maintenance)
+> Last updated: 2026-04-13 19:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.9.4] - 2026-04-13 19:23
+### Features | 新功能
+- ⚔️ **Boss战斗阶段系统** (BossPhaseSystem):
+  - 警告阶段: 3秒倒计时+屏幕闪烁
+  - Boss战斗阶段: 暗角效果/屏幕震动/战斗粒子
+  - 胜利阶段: 金色庆祝粒子+过渡动画
+  - 全局单例模式,易于集成到主游戏
+  - 12个新测试用例
+
+### Quality | 质量
+- ✅ 434测试用例全部通过(核心46个全部通过)
+- ✅ 新增test_boss_phase_system.py测试文件
+- ✅ boss_phase_system.py语法检查通过
+- ✅ 13688+行代码,代码量持续增长
+
+### Docs | 文档
+- 🔄 同步CHANGELOG版本记录
 
 ---
 
