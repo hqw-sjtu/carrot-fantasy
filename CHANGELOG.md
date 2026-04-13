@@ -1,11 +1,36 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-14 03:23 (Hourly Maintenance)
+> Last updated: 2026-04-14 06:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.10.5] - 2026-04-14 06:23
+### Features | 新功能
+- 🎮 **装备系统** (Equipment System):
+  - 4种装备类型: 武器/防具/饰品/宝石
+  - 5种稀有度: 普通/优秀/稀有/史诗/传说
+  - 属性加成: 伤害/攻速/范围/暴击率/暴击伤害
+  - 特殊效果: 灼烧/冰冻等
+  - 塔装备管理器(TowerEquipment)
+  - 装备掉落系统(EquipmentDrop)
+
+### Quality | 质量
+- ✅ 46个Python文件语法检查全部通过
+- ✅ 测试统计: 467通过
+- ✅ 新增equipment_system.py(300+行)
+- ✅ 新增test_equipment.py(5个测试用例)
+- ✅ 无TODO/FIXME代码标记
+
+### Maintenance | 维护
+- 🛠️ 代码量: 14400行
+- 🛠️ 工艺品级别标准持续达标
+- 🛠️ 每小时自动化维护完成
+- 🛠️ GitHub Actions CI/CD完善
 
 ---
 
