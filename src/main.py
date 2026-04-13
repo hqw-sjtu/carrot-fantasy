@@ -829,6 +829,7 @@ from damage_numbers import DamageNumberManager
 from combo_system import get_combo_system
 from base_effects import get_base_effect_manager
 from synergy_system import get_synergy_manager
+from coverage_visualizer import coverage_visualizer
 
 # 设置全局音效管理器给towers模块
 set_sound_manager(sound_manager)
@@ -2614,6 +2615,10 @@ def main():
                     global show_attack_range
                     show_attack_range = not show_attack_range
                     print(f"🎯 攻击范围显示: {'开启' if show_attack_range else '关闭'}")
+                # C键切换覆盖热力图
+                elif event.key == pygame.K_c:
+                    enabled = coverage_visualizer.toggle()
+                    print(f"📡 覆盖热力图: {'开启' if enabled else '关闭'}")
                 # T键切换统计面板
                 elif event.key == pygame.K_t:
                     global show_stats
