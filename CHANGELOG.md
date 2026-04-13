@@ -1,11 +1,36 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-13 12:23 (Hourly Maintenance)
+> Last updated: 2026-04-13 14:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.9.1] - 2026-04-13 15:23
+### Features | 新功能
+- 🎯 **路径覆盖预警系统** (PathCoverageWarning):
+  - 放置防御塔时显示攻击范围是否覆盖怪物路径
+  - 三级评分：⭐最佳/✓良好/⚠覆盖不足
+  - 可视化显示被覆盖的路径段
+  - 路径段圆形相交检测算法
+### Quality | 质量
+- ✅ 404测试用例全部通过
+
+---
+
+## [2.9.0] - 2026-04-13 14:23
+### Features | 新功能
+- 🛡️ **轨道护盾环绕特效**:
+  - OrbitalShieldEffect 防御塔轨道护盾
+  - 轨道粒子环绕动画
+  - 脉冲发光效果
+  - OrbitalShieldManager 全局管理器
+### Quality | 质量
+- ✅ 404测试用例全部通过
+- ✅ 新增轨道护盾测试(10个测试用例)
 
 ---
 
