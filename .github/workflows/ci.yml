@@ -41,6 +41,7 @@ jobs:
     - name: Run tests with coverage
       run: |
         python -m pytest tests/ -v --tb=short --cov=src --cov-report=term-missing
+        python -c "from src.auto_save_system import auto_save; print('auto_save OK')"
     
     - name: Upload test results
       if: always()
