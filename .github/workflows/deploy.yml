@@ -30,14 +30,16 @@ jobs:
         run: |
           pip install -r requirements.txt
       
-      - name: Build docs
+      - name: Generate static site
         run: |
-          # 确保docs目录存在并包含index.md
-          ls docs/      
+          mkdir -p _site
+          cp docs/INDEX.md _site/index.html
+          cp docs/_config.yml _site/
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs'
+          path: '_site'
   
   deploy:
     needs: build

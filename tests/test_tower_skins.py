@@ -7,11 +7,15 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
+import os
+os.environ['SDL_VIDEODRIVER'] = 'dummy'
+os.environ['SDL_AUDIODRIVER'] = 'dummy'
+
 try:
     import pygame
     pygame.init()
-except:
-    pass
+except Exception:
+    pygame = None
 
 
 class TestTowerSkin:
