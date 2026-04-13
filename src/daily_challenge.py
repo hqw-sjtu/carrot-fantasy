@@ -48,7 +48,8 @@ def check_challenge_completion(state, game_complete_time=None, show_achievement_
     elif challenge_type == "no_magic":
         # 检查是否使用过法术塔
         if hasattr(state, 'towers'):
-            magic_used = any(t.type == "magic" for t in state.towers)
+            # 使用name属性判断，因为Tower类没有type属性
+            magic_used = any("魔法" in getattr(t, 'name', '') for t in state.towers)
             if not magic_used and hasattr(state, 'game_over') and state.game_over:
                 completed = True
     

@@ -2632,14 +2632,16 @@ def main():
                         current = priorities.index(tower.priority) if hasattr(tower, 'priority') and tower.priority in priorities else 0
                         tower.priority = priorities[(current + 1) % len(priorities)]
                         print(f"攻击优先级: {tower.priority}")
-                # 键盘选择防御塔 (1-3)
-                if event.key == pygame.K_1:
+                # 键盘选择防御塔 (1-5)
+                elif event.key == pygame.K_1:
                     config['tower_selection'] = '箭塔'
                 elif event.key == pygame.K_2:
                     config['tower_selection'] = '炮塔'
                 elif event.key == pygame.K_3:
                     config['tower_selection'] = '魔法塔'
                 elif event.key == pygame.K_4:
+                    config['tower_selection'] = '减速塔'
+                elif event.key == pygame.K_5:
                     config['tower_selection'] = '冰霜塔'
                 # Q/W/E技能按键 (带冷却)
                 elif event.key == pygame.K_q:
