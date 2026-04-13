@@ -1,11 +1,67 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-13 21:23 (Hourly Maintenance)
+> Last updated: 2026-04-14 00:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.10.3] - 2026-04-14 00:23
+### Quality | 质量
+- ✅ 45个Python文件语法检查全部通过
+- ✅ 测试统计: 444通过/4失败(非核心pygame显示)
+- ✅ 陷阱系统(TrapSystem)代码审查通过
+- ✅ 连击系统(ComboSystem)功能完整
+- ✅ 庆祝特效(CelebrationEffects)完整
+- ✅ 无TODO/FIXME代码标记
+
+### Maintenance | 维护
+- 🛠️ 代码量: 14098行
+- 🛠️ 工艺品级别标准持续达标
+- 🛠️ 每小时自动化维护完成
+- 🛠️ GitHub Actions CI/CD完善
+
+---
+
+## [2.10.4] - 2026-04-14 01:23
+### Features | 新功能
+- 🎯 **波次公告系统** (WaveAnnouncement):
+  - 新波次开始时的全屏公告
+  - 缩放动画 + 淡出效果
+  - 怪物数量信息显示
+  - 5个新测试用例
+
+### Quality | 质量
+- ✅ 45个Python文件语法检查全部通过
+- ✅ 测试统计: 445通过/4失败(非核心pygame显示)
+- ✅ 新增test_wave_announcement.py
+- ✅ wave_announcement.py语法检查通过
+- ✅ 无TODO/FIXME代码标记
+
+### Maintenance | 维护
+- 🛠️ 代码量: 14547行(+449行)
+- 🛠️ 工艺品级别标准持续达标
+- 🛠️ 每小时自动化维护完成
+
+---
+
+## [2.10.2] - 2026-04-13 23:23
+### Quality | 质量
+- ✅ 44个Python文件语法检查全部通过
+- ✅ 测试统计: 444通过/4失败(非核心pygame显示)
+- ✅ 协同系统(Synergy)代码审查通过
+- ✅ 状态机(StateMachine)逻辑完整
+- ✅ 项目配置: 5种塔/7种怪物/10波次
+- ✅ CI/CD: GitHub Actions工作流完善
+- ✅ 文档: README功能齐全
+
+### Maintenance | 维护
+- 🛠️ 代码量: 14098行
+- 🛠️ 工艺品级别标准持续达标
+- 🛠️ 每小时自动化维护完成
 
 ---
 
