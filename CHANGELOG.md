@@ -1,11 +1,23 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-13 06:23 (Hourly Maintenance)
+> Last updated: 2026-04-13 08:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.6.0] - 2026-04-13 08:23
+### Features | 新功能
+- 💥 **暴击与连击增强系统**:
+  - 暴击伤害放大+光晕描边效果
+  - 暴击时星星爆发特效
+  - 连击文字颜色分级(蓝/橙/紫)
+  - 升级爆发光圈+粒子飞散
+- 💡 **代码质量**: 12525+行代码，语法检查通过
+- ✅ 新增暴击系统测试用例(10个测试)
 
 ---
 
