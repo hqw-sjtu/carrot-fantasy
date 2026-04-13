@@ -1956,9 +1956,9 @@ def draw_game():
             pygame.draw.rect(SCREEN, color, (bx + 2, by + 30, cd_width, 3))
         
         # 文字
-        font_skill = get_font( 24)
+        font_skill = get_font(24)
         key_surf = font_skill.render(f"{key}: {name}", True, color if cooldown <= 0 and not is_active else (150, 150, 150))
-        SCREEN.blit(key_skill, (bx + 3, by + 5))
+        SCREEN.blit(key_surf, (bx + 3, by + 5))
         
         # 激活/冷却提示
         if is_active:
