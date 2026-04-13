@@ -1,11 +1,36 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-13 08:23 (Hourly Maintenance)
+> Last updated: 2026-04-13 12:23 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.8.1] - 2026-04-13 13:23
+### Features | 新功能
+- 🏗️ **防御塔蓝图系统**:
+  - TowerBlueprint 数据类(塔类型/等级/品质/技能/皮肤)
+  - BlueprintLibrary 库管理(保存/加载/删除/列表)
+  - BlueprintManager 单例全局访问
+  - JSON格式持久化到 blueprints/ 目录
+- 🧪 新增11个蓝图系统测试用例
+### Quality | 质量
+- ✅ 394测试用例全部通过
+
+---
+
+## [2.8.0] - 2026-04-13 12:23
+### Fixes | 修复
+- ✅ 核心模块语法检查全部通过
+- ✅ CI/CD工作流配置完善(GitHub Actions)
+### Features | 新功能
+- 🧪 **测试套件完善**: 48个测试文件，383+测试用例
+- 📚 **完整文档**: README/CHANGELOG/CONTRIBUTING/OPTIMIZATION/TASK_PLAN
+- 🎨 **视觉效果**: 粒子系统/暴击/连击/共鸣/热力图/传送门
+- 🐾 **宠物系统**: 3种宠物(猫/狗/兔)跟随+弹跳动画
 
 ---
 
