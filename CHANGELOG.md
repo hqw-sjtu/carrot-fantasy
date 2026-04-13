@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.7.1] - 2026-04-13 10:23
+### Fixes | 修复
+- 🔧 **测试用例修复**:
+  - 修复 test_tower_skins.py 缺少 TowerSkin import 错误
+  - 修复装备皮肤测试未先购买导致失败问题
+- ✅ 383测试用例全部通过
+
+---
+
 ## [2.7.0] - 2026-04-13 09:23
 ### Features | 新功能
 - 💾 **智能自动存档系统**:

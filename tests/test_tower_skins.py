@@ -49,7 +49,7 @@ class TestTowerSkinSystem:
     """皮肤管理系统测试"""
     
     def test_system_creation(self):
-        from tower_skins import TowerSkinSystem
+        from tower_skins import TowerSkinSystem, TowerSkin
         system = TowerSkinSystem()
         owned = system.get_owned_skins()
         assert TowerSkin.CLASSIC in owned
@@ -92,6 +92,8 @@ class TestTowerSkinSystem:
         skin = system.get_skin("unknown_tower")
         assert skin.skin_type == TowerSkin.CLASSIC  # 默认经典
         
+        # 先购买再装备
+        system.buy_skin(TowerSkin.GOLD, 600)
         system.equip_skin("tower1", TowerSkin.GOLD)
         skin = system.get_skin("tower1")
         assert skin.skin_type == TowerSkin.GOLD
