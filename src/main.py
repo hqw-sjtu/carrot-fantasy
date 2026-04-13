@@ -143,6 +143,10 @@ def draw_ui_border():
     lives_surf.fill((30, 30, 50, 200))
     SCREEN.blit(lives_surf, (10, 50))
     pygame.draw.rect(SCREEN, (80, 60, 40), lives_rect, 2, border_radius=5)
+    # 生命值文字
+    lives_font = get_font(24)
+    lives_text = lives_font.render(f"❤️ {state.lives}", True, (255, 100, 100))
+    SCREEN.blit(lives_text, (20, 58))
     
     # 右侧金币 - 带渐变背景
     gold_rect = pygame.Rect(SCREEN_WIDTH - 130, 50, 120, 40)
@@ -150,6 +154,10 @@ def draw_ui_border():
     gold_surf.fill((30, 30, 50, 200))
     SCREEN.blit(gold_surf, (SCREEN_WIDTH - 130, 50))
     pygame.draw.rect(SCREEN, (80, 60, 40), gold_rect, 2, border_radius=5)
+    # 金币文字
+    gold_font = get_font(24)
+    gold_text = gold_font.render(f"💰 {state.money}", True, (255, 215, 0))
+    SCREEN.blit(gold_text, (SCREEN_WIDTH - 120, 58))
     
     # 波次信息框 - 带背景
     wave_box_x, wave_box_y = SCREEN_WIDTH//2 - 80, 10
@@ -157,6 +165,11 @@ def draw_ui_border():
     wave_surf.fill((30, 30, 50, 180))
     SCREEN.blit(wave_surf, (wave_box_x, wave_box_y))
     pygame.draw.rect(SCREEN, (50, 50, 70), (wave_box_x, wave_box_y, 160, 35), 2, border_radius=8)
+    # 波次文字
+    wave_font = get_font(22)
+    wave_text = wave_font.render(f"🌊 第{state.wave + 1}波", True, WHITE)
+    wave_text_rect = wave_text.get_rect(center=(wave_box_x + 80, wave_box_y + 17))
+    SCREEN.blit(wave_text, wave_text_rect)
     
     # 修复：塔按钮区域移到右侧，避免与底部提示栏重叠
     # 右侧塔按钮面板

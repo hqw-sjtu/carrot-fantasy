@@ -35,6 +35,7 @@ class GlowRing(BaseEffect):
         super().__init__(x, y)
         self.color = color
         self.base_radius = radius
+        self.current_radius = radius
         self.max_life = 90
         
     def update(self, dt):
