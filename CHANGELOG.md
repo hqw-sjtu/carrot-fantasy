@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.9.2] - 2026-04-13 17:23
+### Quality | 质量
+- ✅ 404测试用例全部通过
+- ✅ 所有核心模块语法检查通过(towers/monsters/projectiles/waves)
+- ✅ 稳定性测试全部通过
+
+### Docs | 文档
+- 📖 更新README.md功能列表
+- 🔄 同步CHANGELOG版本记录
+
+---
+
 ## [2.9.1] - 2026-04-13 15:23
 ### Features | 新功能
 - 🎯 **路径覆盖预警系统** (PathCoverageWarning):
