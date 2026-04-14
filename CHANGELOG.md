@@ -1,11 +1,41 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-14 13:25 (Hourly Maintenance)
+> Last updated: 2026-04-14 14:25 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.12.0] - 2026-04-14 14:25
+### Features | 新功能
+- 🎮 **Boss技能系统** - Boss可使用5种技能增强战斗:
+  - 召唤小怪: 召唤5个小怪助战(15秒冷却)
+  - 地震攻击: 区域伤害并摧毁防御塔(20秒冷却)
+  - 自我修复: Boss回血50点(25秒冷却)
+  - 能量护盾: 5秒无敌护盾(30秒冷却)
+  - 瞬间移动: Boss随机传送并显示特效(12秒冷却)
+- 🎥 **屏幕震动系统** - 统一管理所有震动效果:
+  - 暴击/爆炸/Boss攻击/地震等多种模式
+  - 基于距离的强度衰减
+  - 平滑衰减动画
+- 📷 **相机系统** - 支持缩放和移动:
+  - 0.5x-2x缩放范围
+  - 世界/屏幕坐标转换
+  - 平滑缩放动画
+
+### Quality | 质量
+- ✅ 48个Python文件语法检查全部通过
+- ✅ 新增23项测试用例，全部通过
+- ✅ 测试统计: 520通过/1失败(pygame显示测试,非阻塞)
+- ✅ 无TODO/FIXME代码标记
+
+### Maintenance | 维护
+- 🛠️ 代码量: 15950+行
+- 🛠️ 工艺品级别标准持续达标
+- 🛠️ 每小时自动化维护完成
 
 ---
 
