@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.13.1] - 2026-04-15 04:25
+### Maintenance | 定时维护
+- 🔧 语法检查: 全部60个Python文件通过
+- ✅ 测试覆盖: 588 测试用例 (全通过)
+- 🐛 修复 test_combo_timer_bar 偶发失败 (headless环境兼容)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+
+---
+
 ## [2.13.0] - 2026-04-15 02:30
 ### Features | 新功能
 - ✨ **防御塔升级预览系统 (Tower Upgrade Preview)** - 工艺品级别UI增强:
