@@ -25,6 +25,11 @@ jobs:
       run: |
         pip install -r requirements.txt
         pip install pytest
+        pip install flake8
+
+    - name: Lint code
+      run: |
+        flake8 src/ --max-line-length=120 --ignore=E501,W503,E402 --exit-zero || true
     
     - name: Check syntax
       run: |

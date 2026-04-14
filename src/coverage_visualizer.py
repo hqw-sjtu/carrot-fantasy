@@ -4,7 +4,11 @@
 """
 import pygame
 import math
-import main
+
+# 延迟导入 main 以避免循环依赖
+def _get_main():
+    import main
+    return main
 
 
 class CoverageVisualizer:
@@ -40,6 +44,7 @@ class CoverageVisualizer:
     def _draw_heatmap(self, screen, towers):
         """绘制热力图"""
         # 创建网格
+        main = _get_main()
         grid_cols = main.SCREEN_WIDTH // self.grid_size
         grid_rows = main.SCREEN_HEIGHT // self.grid_size
         

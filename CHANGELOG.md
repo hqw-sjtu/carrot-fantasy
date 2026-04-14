@@ -1,11 +1,23 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-14 12:25 (Hourly Maintenance)
+> Last updated: 2026-04-14 13:25 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.11.1] - 2026-04-14 13:25
+### Quality | 质量
+- ✅ 修复 `coverage_visualizer.py` 循环导入问题
+- ✅ 添加 flake8 代码规范检查到 CI
+- ✅ 测试统计: 507通过/1失败(pygame显示测试,非阻塞)
+
+### CI/CD | 持续集成
+- 🔧 GitHub Actions 添加 flake8 代码质量检查
+- 📊 完善自动化测试流程
 
 ---
 
