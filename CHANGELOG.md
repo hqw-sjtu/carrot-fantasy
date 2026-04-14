@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.12.1] - 2026-04-14 15:25
+### Features | 新功能
+- ❄️ **冰霜新星特效** - 新增冰冻波扩散特效:
+  - 冰环扩散动画 + 冰晶粒子
+  - 范围内敌人冰冻+减速效果
+  - 预设: small/medium/large/ultimate
+- 🏊 **对象池系统** - 高性能对象复用:
+  - 通用ObjectPool类
+  - 预定义伤害数字/粒子/金币池
+  - 性能监控报告
+
+### Fixes | 修复
+- 修复 boss_skills.py 中 Monster 初始化参数不匹配问题
+
+### Quality | 质量
+- ✅ 528/531 测试通过
+
+---
+
 ## [2.12.0] - 2026-04-14 14:25
 ### Features | 新功能
 - 🎮 **Boss技能系统** - Boss可使用5种技能增强战斗:

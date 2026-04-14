@@ -64,9 +64,8 @@ class SummonMinionsSkill(BossSkill):
         bx, by = self.boss.x, self.boss.y
         for _ in range(self.spawn_count):
             game.monsters.append(Monster(
-                x=bx + random.randint(-50, 50),
-                y=by + random.randint(-50, 50),
-                hp=20,
+                name="minion",
+                health=20,
                 speed=1.5,
                 reward=5
             ))

@@ -2,6 +2,7 @@
 保卫萝卜 - Boss血条系统
 Boss出现时显示专用血条
 """
+import math
 import pygame
 
 
@@ -54,8 +55,8 @@ class BossHPBar:
             bar_color = (255, 200, 0)  # 黄色
         else:
             # 低血量脉动效果
-            pulse = abs(pygame.math.Vector2(255, 0).x)
-            bar_color = (255, 50 + int(pulse * 2), 50)
+            pulse = int(50 + 30 * math.sin(self.pulse_timer * 10))
+            bar_color = (255, pulse, 50)
         
         bar = pygame.Rect(x, y, current_width, self.height)
         pygame.draw.rect(screen, bar_color, bar)
