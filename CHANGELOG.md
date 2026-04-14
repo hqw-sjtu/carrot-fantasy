@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.12.2] - 2026-04-14 17:25
+### Features | 新功能
+- 🎬 **Boss血条入场动画** - 工艺品级别细节增强:
+  - ease-out-back缓动滑入效果
+  - 1.5秒平滑过渡动画
+  - 60像素滑动偏移
+
+---
+
 ## [2.12.1] - 2026-04-14 15:25
 ### Features | 新功能
 - ❄️ **冰霜新星特效** - 新增冰冻波扩散特效:

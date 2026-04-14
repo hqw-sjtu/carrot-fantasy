@@ -16,21 +16,36 @@ class BossHPBar:
         self.y_offset = -40  # 在怪物上方
         self.show_timer = 3.0  # 首次出现显示3秒
         self.pulse_timer = 0
+        # 入场动画
+        self.entrance_progress = 0.0  # 0-1入场动画进度
+        self.entrance_duration = 1.5  # 入场动画1.5秒
+        self.entrance_started = False
+        self.slide_offset = 0
         
     def update(self, dt):
         """更新血条"""
         if self.monster.alive:
             self.show_timer = 2.0  # 持续显示
             self.pulse_timer += dt
+            # 入场动画
+            if not self.entrance_started:
+                self.entrance_started = True
+            if self.entrance_progress < 1.0:
+                self.entrance_progress = min(1.0, self.entrance_progress + dt / self.entrance_duration)
+                # 缓动函数: ease-out-back
+                c1 = 1.70158
+                c3 = c1 + 1
+                progress = self.entrance_progress
+                self.slide_offset = (1 + c3 * (progress - 1) ** 3 + c1 * (progress - 1) ** 2) * 60
             
     def draw(self, screen):
         """绘制血条"""
         if not self.monster.alive:
             return
             
-        # 血条位置
+        # 血条位置（加入场动画偏移）
         x = self.monster.x - self.max_width // 2
-        y = self.monster.y + self.y_offset
+        y = self.monster.y + self.y_offset - self.slide_offset
         
         # 血量比例
         health_ratio = max(0, self.monster.health / self.monster.max_health)
