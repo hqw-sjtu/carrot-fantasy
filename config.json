@@ -501,6 +501,16 @@
       "attack_speed": 0.8,
       "color": "CYAN",
       "slow_factor": 0.5
+    },
+    "毒气塔": {
+      "cost": 130,
+      "upgrade_cost": 110,
+      "damage": 8,
+      "range": 2.2,
+      "attack_speed": 0.6,
+      "color": "GREEN",
+      "poison_damage": 3,
+      "poison_duration": 3.0
     }
   },
   "monsters": {

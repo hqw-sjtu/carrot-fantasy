@@ -177,7 +177,7 @@ def draw_ui_border():
     tower_panel_y = 80
     tower_button_width = 90
     tower_button_height = 40
-    tower_types = ['箭塔', '炮塔', '魔法塔', '减速塔', '冰霜塔']
+    tower_types = ['箭塔', '炮塔', '魔法塔', '减速塔', '冰霜塔', '毒气塔']
     selected = config.get('tower_selection', None)
     for i, tower_type in enumerate(tower_types):
         btn_rect = pygame.Rect(tower_panel_x, tower_panel_y + i * (tower_button_height + 5), tower_button_width, tower_button_height)
@@ -198,7 +198,7 @@ def draw_button_hover():
     """按钮悬停/点击效果 + 攻击范围预览"""
     mouse_x, mouse_y = pygame.mouse.get_pos()
     
-    tower_types = ['箭塔', '炮塔', '魔法塔', '减速塔', '冰霜塔']
+    tower_types = ['箭塔', '炮塔', '魔法塔', '减速塔', '冰霜塔', '毒气塔']
     for i, tower_type in enumerate(tower_types):
         btn_rect = pygame.Rect(30 + i * 85, SCREEN_HEIGHT - 60, 75, 50)
         if btn_rect.collidepoint(mouse_x, mouse_y):
@@ -969,7 +969,7 @@ def sell_tower_to_inventory(tower):
     refund = tower.level * 30  # 等级*30金币
     tower_type = tower.name
     # 映射塔名称到背包key
-    type_map = {"箭塔": "arrow", "炮塔": "cannon", "魔法塔": "magic", "减速塔": "ice"}
+    type_map = {"箭塔": "arrow", "炮塔": "cannon", "魔法塔": "magic", "减速塔": "ice", "毒气塔": "poison"}
     inv_key = type_map.get(tower_type, tower_type)
     if inv_key in inventory:
         inventory[inv_key] += 1
@@ -981,7 +981,7 @@ def sell_tower_to_inventory(tower):
 
 def use_inventory_tower(tower_type):
     """从背包取出塔（消耗1个）"""
-    type_map = {"箭塔": "arrow", "炮塔": "cannon", "魔法塔": "magic", "减速塔": "ice"}
+    type_map = {"箭塔": "arrow", "炮塔": "cannon", "魔法塔": "magic", "减速塔": "ice", "毒气塔": "poison"}
     inv_key = type_map.get(tower_type, tower_type)
     if inv_key in inventory and inventory[inv_key] > 0:
         inventory[inv_key] -= 1
@@ -1629,6 +1629,12 @@ def draw_game():
             # 减速塔:菱形
             points = [(tx, ty - 15), (tx + 15, ty), (tx, ty + 15), (tx - 15, ty)]
             pygame.draw.polygon(SCREEN, tower_color, points)
+        elif "毒气" in tower.name:
+            # 毒气塔:绿色圆形+毒气特效
+            pygame.draw.circle(SCREEN, (34, 139, 34), (tx, ty), 16)  # 深绿色底
+            pygame.draw.circle(SCREEN, tower_color, (tx, ty), 12)  # 亮绿色
+            # 毒气环绕特效
+            pygame.draw.circle(SCREEN, (50, 205, 50), (tx, ty), 18, 2)  # 外圈
         else:
             # 默认:圆形
             pygame.draw.circle(SCREEN, tower_color, (tx, ty), 15)
@@ -1646,6 +1652,27 @@ def draw_game():
                 border_width = 1
             pygame.draw.circle(SCREEN, border_color, (tx, ty), 17, border_width)
     
+            # 等级星级显示 - 工艺品级别细节
+            if hasattr(tower, 'level') and tower.level > 0:
+                star_y = ty + 22
+                star_font = get_font(12)
+                if tower.level == 1:
+                    star_text = "★"
+                    star_color = (200, 200, 200)
+                elif tower.level == 2:
+                    star_text = "★★"
+                    star_color = (0, 191, 255)
+                else:
+                    star_text = "★★★"
+                    star_color = (255, 215, 0)
+                star_surf = star_font.render(star_text, True, star_color)
+                star_rect = star_surf.get_rect(center=(tx, star_y))
+                bg_rect = pygame.Rect(star_rect.x - 2, star_rect.y - 1, star_rect.width + 4, star_rect.height + 2)
+                bg_surf = pygame.Surface((bg_rect.width, bg_rect.height), pygame.SRCALPHA)
+                bg_surf.fill((0, 0, 0, 120))
+                SCREEN.blit(bg_surf, bg_rect)
+                SCREEN.blit(star_surf, star_rect)
+
     # 绘制塔基持续发光效果
     global_base_effect_manager.draw_tower_base_glows(SCREEN, state.towers)
 
@@ -2316,6 +2343,7 @@ def draw_tower_book():
         ("炮塔", "范围伤害", "红色正方形", "伤害高"),
         ("魔法塔", "高伤害", "紫色菱形", "进阶塔"),
         ("减速塔", "减速敌人", "青色菱形", "辅助塔"),
+        ("毒气塔", "持续毒伤", "绿色圆形", "DOT伤害"),
     ]
     
     font_info = get_font( 28)
@@ -2523,6 +2551,8 @@ def main():
                     config['tower_selection'] = '减速塔'
                 elif event.key == pygame.K_F5:
                     config['tower_selection'] = '冰霜塔'
+                elif event.key == pygame.K_F6:
+                    config['tower_selection'] = '毒气塔'
                 # 1/2/3键切换速度
                 elif event.key == pygame.K_1:
                     game_speed = 0.5
@@ -2674,6 +2704,8 @@ def main():
                     config['tower_selection'] = '减速塔'
                 elif event.key == pygame.K_5:
                     config['tower_selection'] = '冰霜塔'
+                elif event.key == pygame.K_6:
+                    config['tower_selection'] = '毒气塔'
                 # Q/W/E技能按键 (带冷却)
                 elif event.key == pygame.K_q:
                     # 减速技能 - 5秒内所有怪物减速50%
@@ -2800,7 +2832,11 @@ def main():
                                         tower_info.get('range', 2.0),
                                         cost,
                                         tower_info.get('attack_speed', 1.0),
-                                        x, y
+                                        x, y,
+                                        slow_factor=tower_info.get('slow_factor', 1.0),
+                                        freeze_duration=0,
+                                        poison_damage=tower_info.get('poison_damage', 0),
+                                        poison_duration=tower_info.get('poison_duration', 0)
                                     )
                                     state.towers.append(tower)
                                     state.money -= cost

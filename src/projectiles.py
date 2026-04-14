@@ -23,7 +23,7 @@ CRITICAL_DAMAGE_MULT = 1.5  # 暴击伤害倍率
 class Projectile:
     """子弹类"""
     
-    def __init__(self, x, y, target, damage, speed=5, slow_factor=1.0, source_tower=None, tower_type=None, freeze_duration=0):
+    def __init__(self, x, y, target, damage, speed=5, slow_factor=1.0, source_tower=None, tower_type=None, freeze_duration=0, poison_damage=0, poison_duration=0):
         self.x = x
         self.y = y
         self.target = target
@@ -31,6 +31,8 @@ class Projectile:
         self.speed = speed
         self.slow_factor = slow_factor  # 减速因子 (1.0=无减速)
         self.freeze_duration = freeze_duration  # 冰冻时长（帧数）
+        self.poison_damage = poison_damage  # 中毒伤害/秒
+        self.poison_duration = poison_duration  # 中毒持续时间
         self.active = True
         self.hit_effect = 0  # 命中特效持续时间
         self.hit_x = 0
@@ -93,6 +95,9 @@ class Projectile:
             # 应用冰冻效果
             if self.freeze_duration > 0:
                 self.target.frozen = max(self.target.frozen, self.freeze_duration)
+            # 应用中毒效果 (毒气塔专属)
+            if self.poison_damage > 0 and self.poison_duration > 0:
+                self.target.apply_poison(self.poison_damage, self.poison_duration)
             # 播放击中音效
             if _sound_manager:
                 _sound_manager.play('hit')

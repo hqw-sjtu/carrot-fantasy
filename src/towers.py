@@ -39,7 +39,7 @@ class Tower:
         "冰霜塔": {"name": "冰封大地", "cooldown": 25, "duration": 6, "effect": "freeze_wave"},
     }
     
-    def __init__(self, name, damage, range, cost, attack_speed, x=0, y=0, slow_factor=1.0, freeze_duration=0):
+    def __init__(self, name, damage, range, cost, attack_speed, x=0, y=0, slow_factor=1.0, freeze_duration=0, poison_damage=0, poison_duration=0):
         self.name = name
         self.damage = damage
         self.range = range
@@ -47,6 +47,8 @@ class Tower:
         self.attack_speed = attack_speed
         self.slow_factor = slow_factor  # 减速因子
         self.freeze_duration = freeze_duration  # 冰冻时长（帧数）
+        self.poison_damage = poison_damage  # 中毒伤害/秒
+        self.poison_duration = poison_duration  # 中毒持续时间
         self.level = 1
         self.target = None
         self.x = x
@@ -231,7 +233,7 @@ class Tower:
                 
                 # 创建子弹（带冰冻效果）
                 from projectiles import Projectile
-                p = Projectile(self.x, self.y, target, actual_damage, slow_factor=self.slow_factor, source_tower=self, tower_type=self.name, freeze_duration=self.freeze_duration)
+                p = Projectile(self.x, self.y, target, actual_damage, slow_factor=self.slow_factor, source_tower=self, tower_type=self.name, freeze_duration=self.freeze_duration, poison_damage=self.poison_damage, poison_duration=self.poison_duration)
                 # 记录组合加成用于UI显示
                 p.synergy = synergy
                 p.is_combo = Tower._combo_targets.get(target_id, 1) > 1  # 标记集火

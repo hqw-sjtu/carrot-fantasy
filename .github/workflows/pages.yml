@@ -1,0 +1,111 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Create index.html
+        run: |
+          cat > index.html << 'HTMLEOF'
+          <!DOCTYPE html>
+          <html lang="zh-CN">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>保卫萝卜 - Carrot Fantasy</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body { 
+                      font-family: "Microsoft YaHei", sans-serif; 
+                      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                      min-height: 100vh;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      color: #fff;
+                  }
+                  .container { text-align: center; padding: 40px; }
+                  h1 { font-size: 3em; margin-bottom: 20px; color: #f39c12; }
+                  .subtitle { font-size: 1.2em; color: #aaa; margin-bottom: 40px; }
+                  .btn { 
+                      display: inline-block; 
+                      padding: 15px 40px; 
+                      background: #e74c3c; 
+                      color: white; 
+                      text-decoration: none; 
+                      border-radius: 30px;
+                      font-size: 1.2em;
+                      transition: transform 0.3s, box-shadow 0.3s;
+                  }
+                  .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(231,76,60,0.4); }
+                  .features { margin-top: 50px; display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+                  .feature { 
+                      background: rgba(255,255,255,0.1); 
+                      padding: 20px; 
+                      border-radius: 15px; 
+                      width: 200px;
+                  }
+                  .feature h3 { color: #3498db; margin-bottom: 10px; }
+                  .stats { margin-top: 40px; color: #888; }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>🥕 保卫萝卜</h1>
+                  <p class="subtitle">一款精致的塔防游戏 - 工艺品级别</p>
+                  <a href="https://github.com/hqw-sjtu/carrot-fantasy" class="btn">查看源码</a>
+                  <div class="features">
+                      <div class="feature">
+                          <h3>🎮 塔防玩法</h3>
+                          <p>多种防御塔，丰富的策略组合</p>
+                      </div>
+                      <div class="feature">
+                          <h3>✨ 特效系统</h3>
+                          <p>粒子特效、光晕、动画</p>
+                      </div>
+                      <div class="feature">
+                          <h3>🏆 成就系统</h3>
+                          <p>丰富成就，解锁奖励</p>
+                      </div>
+                  </div>
+                  <div class="stats">
+                      <p>代码行数: 16,000+ | 测试覆盖: 528+ | Python实现</p>
+                  </div>
+              </div>
+          </body>
+          </html>
+          HTMLEOF
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
