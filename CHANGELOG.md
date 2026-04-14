@@ -1,11 +1,28 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-14 14:25 (Hourly Maintenance)
+> Last updated: 2026-04-15 02:30 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.13.0] - 2026-04-15 02:30
+### Features | 新功能
+- ✨ **防御塔升级预览系统 (Tower Upgrade Preview)** - 工艺品级别UI增强:
+  - 支持6种防御塔升级路径可视化
+  - 实时显示伤害/范围/攻速加成
+  - 累计升级成本计算
+  - 中文字体回退链支持
+- 📖 **升级预览测试套件** - 11个测试用例全通过
+
+### Quality | 质量
+- 🧪 语法检查通过 (60个Python文件, 18000+行)
+- ✅ 测试覆盖: 577 测试用例 (+11 new)
+- 🔧 配置文件验证通过
+- 🏗️ 新模块代码审查通过
 
 ---
 
