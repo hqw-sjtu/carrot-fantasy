@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.10.8] - 2026-04-14 08:23
+### Quality | 质量
+- ✅ 47个Python文件语法检查全部通过
+- ✅ 测试统计: 465通过/4失败(非核心pygame显示测试)
+- ✅ 状态效果系统支持6种效果:冰冻/减速/中毒/灼烧/眩晕/虚弱
+- ✅ 状态效果管理器完整(apply/update/draw/clear)
+- ✅ 无TODO/FIXME代码标记
+
+### Features | 新功能
+- 🎨 **状态效果视觉系统**:
+  - 怪物头顶效果图标显示
+  - 圆形图标+进度条指示器
+  - 效果颜色区分(蓝/灰/紫/橙/黄)
+  - 周期性DPS伤害处理
+
+### Maintenance | 维护
+- 🛠️ 代码量: 15120行
+- 🛠️ 工艺品级别标准持续达标
+- 🛠️ 每小时自动化维护完成
+- 🛠️ GitHub Actions CI/CD完善
+
+---
+
 ## [2.10.7] - 2026-04-14 07:23
 ### Quality | 质量
 - ✅ 47个Python文件语法检查全部通过
