@@ -1,11 +1,48 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-15 02:30 (Hourly Maintenance)
+> Last updated: 2026-04-15 05:25 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.13.3] - 2026-04-15 06:25
+### Maintenance | 定时维护
+- 🔧 语法检查: 全部60个Python文件通过
+- ✅ 测试覆盖: 608 测试用例 (+13 new, 全通过)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+
+### Features | 新功能
+- ✨ **眩晕塔系统 (Stun Tower)** - 工艺品级别:
+  - 周期性眩晕范围内敌人 (1-5个目标)
+  - 眩晕条可视化显示 (旋转星星指示器)
+  - 眩晕抵抗机制 (Boss有50%抗性)
+  - 链式闪电视觉效果
+  - Lv3解锁AOE眩晕 (50范围)
+- 📖 **眩晕塔测试套件** - 13个测试用例全通过
+- 🕸️ **链式闪电特效** - 与眩晕塔联动
+
+---
+
+## [2.13.2] - 2026-04-15 05:25
+### Maintenance | 定时维护
+- 🔧 语法检查: 全部60个Python文件通过
+- ✅ 测试覆盖: 595 测试用例 (+11 new, 全通过)
+- 🐛 修复 test_combo_timer_bar 绘制测试 (headless兼容)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+
+### Features | 新功能
+- ✨ **闪电链特效系统 (Lightning Chain Effect)** - 工艺品级别:
+  - 链式闪电在多个目标间跳跃
+  - 动态分叉闪电效果
+  - 电弧闪烁动画
+  - 伤害数字联动
+- 📖 **闪电链测试套件** - 11个测试用例全通过
 
 ---
 

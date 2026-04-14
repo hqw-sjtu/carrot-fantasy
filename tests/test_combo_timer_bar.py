@@ -98,12 +98,15 @@ class TestComboTimerBar:
     def test_draw(self):
         """测试绘制"""
         from combo_timer_bar import ComboTimerBar
-        bar = ComboTimerBar(100, 100)
+        
+        # 使用离屏surface测试绘制
+        surface = pygame.Surface((300, 100))
+        bar = ComboTimerBar(50, 50)
         bar.trigger(3, 2.0)
         bar.update(1.0)  # 剩余1秒
         
         # 不应抛出异常
-        bar.draw(SCREEN)
+        bar.draw(surface)
         
     def test_set_position(self):
         """测试设置位置"""
