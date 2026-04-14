@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.12.5] - 2026-04-14 21:25
+### Quality | 质量
+- 🧪 语法检查通过 (44个Python文件)
+- ✅ 测试覆盖: 532+ 测试用例
+- 🔧 配置文件验证通过
+
+---
+
 ## [2.12.4] - 2026-04-14 20:25
 ### Features | 新功能
 - 🧪 **毒气塔 (Poison Tower)** - 第6种防御塔:
