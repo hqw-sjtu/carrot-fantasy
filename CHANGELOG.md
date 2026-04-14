@@ -1,11 +1,32 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-14 06:23 (Hourly Maintenance)
+> Last updated: 2026-04-14 12:25 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.11.0] - 2026-04-14 12:25
+### Quality | 质量
+- ✅ 48个Python文件语法检查全部通过
+- ✅ 测试统计: 507通过/1失败(pygame显示测试)
+- ✅ 无TODO/FIXME代码标记
+
+### Features | 新功能
+- 🎯 **技能冷却显示系统**:
+  - 圆形进度指示器(扇形绘制)
+  - 脉冲就绪效果(呼吸动画)
+  - 倒计时数字显示
+  - 技能栏组件(SkillBar)支持多技能
+  - 冷却时显示剩余时间，就绪显示"就绪"
+
+### Maintenance | 维护
+- 🛠️ 代码量: 15512行
+- 🛠️ 工艺品级别标准持续达标
+- 🛠️ 每小时自动化维护完成
 
 ---
 
