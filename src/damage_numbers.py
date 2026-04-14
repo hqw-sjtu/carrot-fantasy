@@ -4,6 +4,7 @@ Carrot Fantasy - Damage Numbers System
 """
 import pygame
 import random
+import math
 
 
 class DamageNumber:
@@ -20,36 +21,62 @@ class DamageNumber:
         self.max_lifetime = 1.0
         self.vy = -50  # 向上飘动速度
         self.scale = 1.5 if is_crit else 1.0
+        # 增强: 旋转和弹跳
+        self.rotation = 0
+        self.rotation_speed = random.uniform(-60, 60)
+        self.bounce_phase = random.random() * math.pi * 2
+        self.bounce_speed = 8
+        self.bounce_amplitude = 3
+        self.color_progress = 0
         # 连击时额外缩放
         if combo_count > 1:
             self.scale += min(combo_count * 0.1, 0.5)
         
     def update(self, dt):
-        """更新位置和透明度"""
+        """更新位置、旋转和透明度"""
         self.y += self.vy * dt
         self.lifetime -= dt
         # 减速
         self.vy *= 0.95
+        # 增强: 更新旋转
+        self.rotation += self.rotation_speed * dt
+        # 增强: 更新弹跳相位
+        self.bounce_phase += self.bounce_speed * dt
+        # 增强: 更新颜色渐变
+        self.color_progress += dt * 0.5
         return self.lifetime > 0
     
     def draw(self, screen):
-        """绘制伤害数字"""
+        """绘制伤害数字（带旋转弹跳效果）"""
         if self.lifetime <= 0:
             return
-            
+        
         alpha = int(255 * (self.lifetime / self.max_lifetime))
         
-        # 选择颜色
+        # 计算弹跳偏移
+        bounce_offset = math.sin(self.bounce_phase) * self.bounce_amplitude
+        draw_y = self.y + bounce_offset
+        
+        # 计算缩放弹跳
+        scale_bounce = 1.0 + math.sin(self.bounce_phase * 2) * 0.15
+        final_scale = self.scale * scale_bounce
+        
+        # 颜色渐变
         if self.is_heal:
-            color = (50, 255, 50)  # 绿色（治疗）
+            color = (50, 255, 50)
         elif self.is_crit:
-            color = (255, 100, 0)  # 橙色（暴击）
+            # 暴击颜色渐变: 橙色 -> 黄色
+            prog = min(self.color_progress, 1.0)
+            r = int(255 * (1 - prog) + 255 * prog)
+            g = int(100 * (1 - prog) + 255 * prog)
+            b = int(0 * (1 - prog) + 100 * prog)
+            color = (r, g, b)
         else:
-            color = (255, 255, 255)  # 白色（普通伤害）
+            color = (255, 255, 255)
         
         # 字体大小
         base_size = 24 if self.is_crit else 18
-        font = pygame.font.Font(None, int(base_size * self.scale * 2))
+        font = pygame.font.Font(None, int(base_size * final_scale * 2))
         
         # 暴击时添加闪光特效
         if self.is_crit:
@@ -57,7 +84,7 @@ class DamageNumber:
             flash_radius = 20 + (self.lifetime / self.max_lifetime) * 15
             flash_surface = pygame.Surface((int(flash_radius * 4), int(flash_radius * 4)), pygame.SRCALPHA)
             pygame.draw.circle(flash_surface, (255, 200, 0, 100), (int(flash_radius * 2), int(flash_radius * 2)), int(flash_radius))
-            screen.blit(flash_surface, (self.x - flash_radius * 2, self.y - flash_radius * 2))
+            screen.blit(flash_surface, (self.x - flash_radius * 2, draw_y - flash_radius * 2))
         
         # 创建带阴影的文字
         text = str(int(self.damage))
@@ -65,19 +92,19 @@ class DamageNumber:
         # 阴影
         shadow_surf = font.render(text, True, (0, 0, 0))
         shadow_surf.set_alpha(alpha)
-        screen.blit(shadow_surf, (self.x + 2, self.y + 2))
+        screen.blit(shadow_surf, (self.x + 2, draw_y + 2))
         
         # 主文字
         main_surf = font.render(text, True, color)
         main_surf.set_alpha(alpha)
-        screen.blit(main_surf, (self.x, self.y))
+        screen.blit(main_surf, (self.x, draw_y))
         
         # 暴击特效（星星）
         if self.is_crit and self.lifetime > self.max_lifetime * 0.5:
             star_size = int(8 * (self.lifetime / self.max_lifetime))
             # 绘制闪烁星星
             for offset in [(-15, 0), (15, 5), (0, -10)]:
-                px, py = self.x + offset[0], self.y + offset[1]
+                px, py = self.x + offset[0], draw_y + offset[1]
                 pygame.draw.circle(screen, (255, 255, 0), (px, py), star_size)
         
         # 连击数显示
@@ -86,7 +113,7 @@ class DamageNumber:
             combo_font = pygame.font.Font(None, int(16 * self.scale * 2))
             combo_surf = combo_font.render(combo_text, True, (255, 200, 100))
             combo_surf.set_alpha(alpha)
-            screen.blit(combo_surf, (self.x + 25, self.y - 10))
+            screen.blit(combo_surf, (self.x + 25, draw_y - 10))
 
 
 class DamageNumberManager:
