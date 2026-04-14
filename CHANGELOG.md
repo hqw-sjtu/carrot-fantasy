@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.12.3] - 2026-04-14 19:25
+### Features | 新功能
+- ⭐ **防御塔等级星级显示** - 工艺品级别视觉细节:
+  - 1级: 银色★
+  - 2级: 蓝色★★
+  - 3级: 金色★★★
+  - 半透明背景增强可读性
+- 🌐 **GitHub Pages部署配置** - 新增pages.yml工作流:
+  - 自动生成游戏展示首页
+  - 支持master分支自动部署
+
+### Quality | 质量
+- ✅ 语法检查通过 (56个Python文件)
+- ✅ 核心测试 14/14 通过
+
+---
+
 ## [2.12.2] - 2026-04-14 17:25
 ### Features | 新功能
 - 🎬 **Boss血条入场动画** - 工艺品级别细节增强:
