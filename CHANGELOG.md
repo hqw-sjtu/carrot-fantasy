@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.12.6] - 2026-04-14 22:25
+### Quality | 质量
+- 🧪 语法检查通过 (所有源文件)
+- ✅ 测试覆盖: 533 测试用例全通过
+- 🔧 配置文件验证通过
+- 🏗️ 共鸣系统代码审查通过
+- ⚡ 性能优化: 对象池管理正常
+
+---
+
 ## [2.12.4] - 2026-04-14 20:25
 ### Features | 新功能
 - 🧪 **毒气塔 (Poison Tower)** - 第6种防御塔:
