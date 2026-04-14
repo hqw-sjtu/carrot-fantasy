@@ -7,7 +7,7 @@ import math
 
 
 class SkillCooldownDisplay:
-    """技能冷却显示组件"""
+    """技能冷却显示组件 - 工艺品级别视觉"""
     
     def __init__(self, x, y, size=60):
         self.x = x
@@ -16,6 +16,16 @@ class SkillCooldownDisplay:
         self.font = pygame.font.SysFont("microsoftyahei", 14, bold=True)
         self.skill = None
         self.ready_pulse = 0  # 就绪时脉冲动画
+        self.glow_rings = []  # 外部光晕环列表
+        
+    def add_glow_ring(self, color=(100, 200, 255), radius_offset=0):
+        """添加发光光晕环 - 工艺品级特效"""
+        self.glow_rings.append({
+            'color': color,
+            'radius_offset': radius_offset,
+            'alpha': 150,
+            'expand': True
+        })
         
     def set_skill(self, skill):
         """绑定技能"""
@@ -27,6 +37,14 @@ class SkillCooldownDisplay:
             self.ready_pulse = (self.ready_pulse + dt * 3) % (2 * math.pi)
         else:
             self.ready_pulse = 0
+            
+        # 更新光晕环动画
+        for ring in self.glow_rings[:]:
+            if ring['expand']:
+                ring['alpha'] -= dt * 50
+                ring['radius_offset'] += dt * 2
+                if ring['alpha'] <= 0:
+                    self.glow_rings.remove(ring)
     
     def draw(self, screen):
         """绘制冷却指示器"""
@@ -78,6 +96,14 @@ class SkillCooldownDisplay:
             pulse_surface = pygame.Surface((pulse_radius * 2, pulse_radius * 2), pygame.SRCALPHA)
             pygame.draw.circle(pulse_surface, (100, 200, 255, pulse_alpha), 
                              (pulse_radius, pulse_radius), pulse_radius - 2)
+            
+        # 绘制光晕环特效
+        for ring in self.glow_rings:
+            ring_radius = radius + ring['radius_offset']
+            ring_surface = pygame.Surface((ring_radius * 2 + 10, ring_radius * 2 + 10), pygame.SRCALPHA)
+            pygame.draw.circle(ring_surface, (*ring['color'], ring['alpha']),
+                             (ring_radius + 5, ring_radius + 5), ring_radius, 2)
+            screen.blit(ring_surface, (cx - ring_radius - 5, cy - ring_radius - 5))
             screen.blit(pulse_surface, (cx - pulse_radius, cy - pulse_radius))
             
             # 中心就绪指示
