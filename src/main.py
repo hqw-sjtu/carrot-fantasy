@@ -49,7 +49,7 @@ def get_font(size, bold=False):
             continue
     
     # 回退到默认字体
-    return get_font( size)
+    return pygame.font.Font(None, size)
 
 
 # ==================== 技能冷却显示系统 ====================
