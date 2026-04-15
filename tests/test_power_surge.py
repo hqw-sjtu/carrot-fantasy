@@ -33,7 +33,6 @@ class TestPowerSurge:
         assert surge.duration == 5.0
         assert surge.damage_boost == 1.5
         assert not surge.activated
-        return True
     
     def test_surge_activation(self, pygame_init):
         """测试激活能量爆发"""
@@ -47,7 +46,6 @@ class TestPowerSurge:
         assert surge.radius == 200
         assert surge.activated
         assert len(surge.particles) == surge.max_particles
-        return True
     
     def test_surge_update(self, pygame_init):
         """测试更新状态"""
@@ -62,7 +60,7 @@ class TestPowerSurge:
         # 更新到结束
         surge.update(10.0)
         assert not surge.active
-        return True
+            # Test passed
     
     def test_damage_multiplier(self, pygame_init):
         """测试伤害倍率计算"""
@@ -80,14 +78,14 @@ class TestPowerSurge:
         mult = surge.get_damage_multiplier()
         assert 0.75 <= mult <= 1.5  # 淡出过程中会降低
         
-        return True
+            # Test passed
     
     def test_singleton(self, pygame_init):
         """测试单例模式"""
         s1 = get_power_surge()
         s2 = get_power_surge()
         assert s1 is s2
-        return True
+            # Test passed
     
     def test_particle_movement(self, pygame_init):
         """测试粒子运动"""
@@ -101,7 +99,7 @@ class TestPowerSurge:
         for i, p in enumerate(surge.particles):
             assert p.distance >= initial_distances[i]
         
-        return True
+            # Test passed
 
 
 if __name__ == "__main__":

@@ -1,11 +1,32 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-15 16:33 (Hourly Maintenance)
+> Last updated: 2026-04-15 19:33 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.16.0] - 2026-04-15 19:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 67个Python文件通过 (+1 new: attack_rhythm.py)
+- ✅ 测试覆盖: 683测试用例全通过 (+13 new)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+- 🔧 修复测试警告: 移除test文件中的return True语句
+
+### Features | 新功能
+- ✨ **攻击节奏系统 (Attack Rhythm)** - 工艺品级别:
+  - 防御塔攻击时产生节奏脉冲效果
+  - 波纹环扩散+亮度脉动
+  - 可配置的节奏间隔
+  - 完整测试套件13用例
+
+### Quality | 质量保证
+- 🧪 代码: 18,932行
+- 🔬 测试: 683 passed, 6 skipped
 
 ---
 

@@ -41,7 +41,7 @@ def test_auto_save():
     assert data['wave'] == 5
     print(f"✓ 存档加载成功: wave={data['wave']}, money={data['money']}")
     
-    return True
+    
 
 def test_auto_save_manager():
     """测试自动存档管理器"""
@@ -64,13 +64,13 @@ def test_auto_save_manager():
     assert notif['type'] == 'success'
     print(f"✓ 存档提示: {notif['message']}")
     
-    return True
+    
 
 def test_cleanup():
     """测试清理旧存档"""
     removed = cleanup_old_saves(keep=3)
     print(f"✓ 清理旧存档: {removed} 个")
-    return True
+    
 
 if __name__ == "__main__":
     print("=" * 40)
