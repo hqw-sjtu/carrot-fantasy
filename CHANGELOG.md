@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.17.0] - 2026-04-15 23:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 69个Python文件通过 (+2 new)
+- ✅ 测试覆盖: 691测试用例通过 (+8 new)
+
+### Features | 新功能
+- ✨ **击退效果系统 (Knockback Effect)** - 工艺品级别:
+  - 怪物受击时产生击退+缓动动画
+  - 方向归一化+缓动函数
+  - 管理器统一控制
+- ✨ **游戏反馈系统 (Game Feedback)**:
+  - 整合屏幕震动、伤害反馈
+
+### Quality | 质量保证
+- 🧪 代码: 19,228行
+- 🔬 测试: 691 passed, 6 skipped
+
+---
+
 ## [2.16.0] - 2026-04-15 19:33
 ### Maintenance | 定时维护
 - 🔧 语法检查: 67个Python文件通过 (+1 new: attack_rhythm.py)
