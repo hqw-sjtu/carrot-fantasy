@@ -8,6 +8,69 @@ import random
 import math
 
 
+class ComboMultiplierEffect:
+    """连击倍数放大特效 - 展示高连击时的视觉强化"""
+    
+    def __init__(self, x, y, combo_count):
+        self.x = x
+        self.y = y
+        self.combo_count = combo_count
+        self.angle = random.uniform(-15, 15)
+        self.scale = 1.0
+        self.life = 0.8
+        self.max_life = 0.8
+        self.pulse_phase = 0
+        
+        if combo_count >= 30:
+            self.color = (255, 0, 100)
+            self.glow = (255, 100, 150)
+        elif combo_count >= 20:
+            self.color = (255, 165, 0)
+            self.glow = (255, 220, 0)
+        elif combo_count >= 10:
+            self.color = (255, 215, 0)
+            self.glow = (255, 255, 100)
+        else:
+            self.color = (100, 200, 255)
+            self.glow = (150, 220, 255)
+    
+    def update(self, dt):
+        self.life -= dt
+        self.pulse_phase += dt * 15
+        progress = 1 - self.life / self.max_life
+        if progress < 0.3:
+            self.scale = 1 + progress * 1.5
+        else:
+            self.scale = 1.45 - (progress - 0.3) * 0.8
+        self.y -= 30 * dt
+        return self.life > 0
+    
+    def render(self, surface, font):
+        alpha = int(255 * (self.life / self.max_life))
+        text = f"x{self.combo_count // 5 * 5}+"
+        pulse = 1 + math.sin(self.pulse_phase) * 0.1
+        glow_font = font.render(text, True, self.glow)
+        glow_scaled = pygame.transform.scale(
+            glow_font, 
+            (int(glow_font.get_width() * self.scale * pulse * 1.3),
+             int(glow_font.get_height() * self.scale * pulse * 1.3))
+        )
+        glow_rect = glow_scaled.get_rect(center=(int(self.x), int(self.y)))
+        for ox, oy in [(-2, -2), (2, -2), (-2, 2), (2, 2)]:
+            outline = font.render(text, True, (0, 0, 0))
+            outline = pygame.transform.scale(outline, 
+                (int(outline.get_width() * self.scale * pulse),
+                 int(outline.get_height() * self.scale * pulse)))
+            surface.blit(outline, (glow_rect.x + ox, glow_rect.y + oy))
+        main_text = font.render(text, True, self.color)
+        main_scaled = pygame.transform.scale(
+            main_text,
+            (int(main_text.get_width() * self.scale * pulse),
+             int(main_text.get_height() * self.scale * pulse))
+        )
+        surface.blit(main_scaled, glow_rect)
+
+
 class ComboText:
     """连击文字效果"""
     
