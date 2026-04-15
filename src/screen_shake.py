@@ -1,6 +1,6 @@
 """
-保卫萝卜 - 屏幕震动系统
-Carrot Fantasy - Screen Shake System
+屏幕震动效果 - Screen Shake Effect
+为游戏添加打击感
 """
 import pygame
 import random
@@ -11,136 +11,85 @@ class ScreenShake:
     """屏幕震动管理器"""
     
     def __init__(self):
-        self.intensity = 0  # 震动强度
-        self.duration = 0   # 持续时间
-        self.elapsed = 0    # 已过时间
-        self.frequency = 30 # 震动频率
-        self.decay = 0.9    # 衰减系数
-        self.offset_x = 0   # X偏移
-        self.offset_y = 0   # Y偏移
+        self.intensity = 0
+        self.duration = 0
+        self.start_time = 0
+        self.decay = 0.9
+        self.current_offset = (0, 0)
         self.enabled = True
         
-    def trigger(self, intensity, duration):
+    def trigger(self, intensity: float, duration: float = 0.15):
         """触发屏幕震动
         
         Args:
-            intensity: 震动强度 (像素)
-            duration: 持续时间 (秒)
+            intensity: 震动强度 (0-1)
+            duration: 持续时间(秒)
         """
         if not self.enabled:
             return
         self.intensity = intensity
         self.duration = duration
-        self.elapsed = 0
+        self.start_time = pygame.time.get_ticks()
         
-    def update(self, dt):
-        """更新震动状态"""
-        if self.duration <= 0:
-            self.offset_x = 0
-            self.offset_y = 0
-            return False
+    def update(self) -> tuple:
+        """更新震动效果
+        
+        Returns:
+            (x, y) 偏移量
+        """
+        if self.intensity <= 0:
+            return (0, 0)
             
-        self.elapsed += dt
+        elapsed = (pygame.time.get_ticks() - self.start_time) / 1000
         
-        # 计算当前强度（线性衰减）
-        progress = self.elapsed / self.duration
-        current_intensity = self.intensity * (1 - progress) * self.decay
-        
-        # 生成随机偏移
-        self.offset_x = random.uniform(-current_intensity, current_intensity)
-        self.offset_y = random.uniform(-current_intensity, current_intensity)
-        
-        # 震动结束
-        if self.elapsed >= self.duration:
-            self.duration = 0
-            self.offset_x = 0
-            self.offset_y = 0
-            return False
+        if elapsed >= self.duration:
+            self.intensity = 0
+            self.current_offset = (0, 0)
+            return (0, 0)
             
-        return True
-    
-    def get_offset(self):
-        """获取当前偏移量"""
-        return (int(self.offset_x), int(self.offset_y))
-    
-    def apply(self, surface):
-        """应用震动到表面（绘制前调用）"""
-        if self.duration > 0:
-            offset = self.get_offset()
-            surface.scroll(offset[0], offset[1])
-    
+        # 衰减曲线
+        progress = elapsed / self.duration
+        decay = 1 - progress ** 2
+        current_intensity = self.intensity * decay * 10
+        
+        # 随机偏移
+        angle = random.uniform(0, math.pi * 2)
+        magnitude = random.uniform(0.5, 1.0) * current_intensity
+        
+        x = int(math.cos(angle) * magnitude * 20)
+        y = int(math.sin(angle) * magnitude * 20)
+        
+        self.current_offset = (x, y)
+        return (x, y)
+        
     def reset(self):
         """重置震动"""
         self.intensity = 0
-        self.duration = 0
-        self.elapsed = 0
-        self.offset_x = 0
-        self.offset_y = 0
+        self.current_offset = (0, 0)
 
 
-class ScreenShakeManager:
-    """屏幕震动管理器（兼容旧API）"""
-    
-    _instance = None
-    
-    @classmethod
-    def get_instance(cls):
-        if cls._instance is None:
-            cls._instance = ScreenShake()
-        return cls._instance
-    
-    @classmethod
-    def trigger(cls, intensity, duration):
-        cls.get_instance().trigger(intensity, duration)
-    
-    @classmethod
-    def update(cls, dt):
-        return cls.get_instance().update(dt)
-    
-    @classmethod
-    def get_offset(cls):
-        return cls.get_instance().get_offset()
-    
-    @classmethod
-    def reset(cls):
-        cls.get_instance().reset()
+# 全局实例
+_screen_shake = None
+
+def get_screen_shake() -> ScreenShake:
+    """获取全局屏幕震动实例"""
+    global _screen_shake
+    if _screen_shake is None:
+        _screen_shake = ScreenShake()
+    return _screen_shake
+
+
+def trigger_screen_shake(intensity: float, duration: float = 0.15):
+    """快捷函数: 触发屏幕震动"""
+    get_screen_shake().trigger(intensity, duration)
 
 
 # 预设震动效果
 class ShakePresets:
-    """预设震动效果"""
-    
-    @staticmethod
-    def light():
-        """轻微震动 - 小伤害"""
-        ScreenShakeManager.trigger(3, 0.1)
-    
-    @staticmethod
-    def medium():
-        """中等震动 - 中等伤害/暴击"""
-        ScreenShakeManager.trigger(8, 0.2)
-    
-    @staticmethod
-    def heavy():
-        """强烈震动 - 大范围伤害"""
-        ScreenShakeManager.trigger(15, 0.3)
-    
-    @staticmethod
-    def extreme():
-        """极致震动 - BOSS攻击/大爆炸"""
-        ScreenShakeManager.trigger(25, 0.5)
-    
-    @staticmethod
-    def wave_complete():
-        """波次完成 - 轻微庆祝"""
-        ScreenShakeManager.trigger(5, 0.15)
-    
-    @staticmethod
-    def tower_sell():
-        """出售防御塔"""
-        ScreenShakeManager.trigger(2, 0.08)
-    
-    @staticmethod
-    def tower_upgrade():
-        """升级防御塔"""
-        ScreenShakeManager.trigger(4, 0.12)
+    """预设震动参数"""
+    LIGHT = (0.2, 0.1)      # 轻微震动
+    MEDIUM = (0.5, 0.2)     # 中等震动
+    HEAVY = (0.8, 0.3)      # 强烈震动
+    CRITICAL = (1.0, 0.4)   # 暴击震动
+    BOSS_HIT = (0.7, 0.25)  # Boss受击
+    WAVE_START = (0.3, 0.15) # 波次开始
