@@ -813,6 +813,8 @@ sound_manager = None
 from config_loader import load_config, get_config
 from checkin_system import checkin_data, try_checkin, draw_checkin_panel
 from monster_bestiary import BestiarySystem
+from tower_bestiary import TowerBestiary
+from tower_bestiary_ui import TowerBestiaryUI
 
 # 游戏速度
 game_speed = 1.0  # 1.0=正常, 2.0=快进, 0.5=慢放
@@ -841,6 +843,8 @@ screen_shake = 0
 # 连击系统
 combo_system = None
 bestiary_system = None  # 怪物图鉴系统
+tower_bestiary = None  # 防御塔图鉴系统
+tower_bestiary_ui = None  # 防御塔图鉴UI
 screen_shake_offset = [0, 0]
 
 # Boss警告特效列表
@@ -1127,6 +1131,9 @@ def init_new_game():
     combo_system = get_combo_system()
     # 初始化怪物图鉴系统
     bestiary_system = BestiarySystem()
+    # 初始化防御塔图鉴系统
+    tower_bestiary = TowerBestiary()
+    tower_bestiary_ui = None  # 延迟初始化
     
     # 修复：自动开始第一波
     global wave_wait_timer
@@ -2197,7 +2204,7 @@ def draw_game():
 
     # 绘制塔图鉴
     if show_tower_book:
-        draw_tower_book()
+        draw_tower_bestiary()
     
     # 绘制怪物图鉴
     if show_monster_book:
@@ -2324,7 +2331,34 @@ def draw_wave_preview_panel():
             stars_render = font_small.render(stars_text, True, diff_color)
             SCREEN.blit(stars_render, (panel_x + panel_w - 90, preview_y + i * 50 + 22))
 
-# 塔图鉴
+# 防御塔图鉴(新系统)
+def draw_tower_bestiary():
+    """绘制防御塔图鉴界面 - 使用tower_bestiary_ui"""
+    global tower_bestiary, tower_bestiary_ui
+    
+    if tower_bestiary is None:
+        draw_tower_book()  # 降级到旧系统
+        return
+    
+    # 延迟初始化UI
+    if tower_bestiary_ui is None:
+        tower_bestiary_ui = TowerBestiaryUI(SCREEN)
+    
+    # 处理事件
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            return
+        result = tower_bestiary_ui.handle_event(event)
+        if result is False:
+            # 用户按ESC关闭
+            global show_tower_book
+            show_tower_book = False
+            return
+    
+    tower_bestiary_ui.draw()
+
+
+# 塔图鉴(旧系统)
 def draw_tower_book():
     """绘制塔图鉴界面"""
     # 半透明遮罩
@@ -2847,6 +2881,9 @@ def main():
                                     stats["gold_spent"] += cost
                                     # 放置成功特效
                                     place_effects.append([x, y, preview_color, 0.8])
+                                    # 解锁防御塔图鉴
+                                    if tower_bestiary is not None:
+                                        tower_bestiary.unlock_tower(tower_type)
                                     print("🔔 放置成功")
 
         # 更新游戏逻辑

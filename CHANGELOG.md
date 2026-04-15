@@ -1,11 +1,51 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-15 12:33 (Hourly Maintenance)
+> Last updated: 2026-04-15 16:33 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.15.0] - 2026-04-15 16:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 66个Python文件通过 (+1 new: crystal_resonance.py)
+- ✅ 测试覆盖: 672测试用例全通过 (+16 new)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+
+### Features | 新功能
+- ✨ **水晶共鸣系统 (Crystal Resonance)** - 工艺品级别:
+  - 同类型相邻塔触发共鸣加成
+  - 伤害+15%/级, 攻速+10%/级, 射程+8%/级
+  - 粒子特效+光环+连线效果
+  - 完整测试套件16用例
+
+### Quality | 质量保证
+- 🧪 代码: 18,895行
+- 🔬 测试: 672 passed, 6 skipped
+
+---
+
+## [2.14.0] - 2026-04-15 15:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 65个Python文件通过 (+1 new: power_surge.py)
+- ✅ 测试覆盖: 656测试用例全通过 (+6 new)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+
+### Features | 新功能
+- ✨ **能量爆发系统 (Power Surge)** - 工艺品级别:
+  - 全屏能量爆发光环效果
+  - 50粒子环绕旋转
+  - 持续5秒/伤害1.5x
+  - 完整测试套件6用例
+
+### Quality | 质量保证
+- 🧪 代码: 18,516行
+- 🔬 测试: 656 passed, 6 skipped
 
 ---
 
