@@ -17,17 +17,16 @@ class TestTowerBestiary:
         """每个测试前创建临时图鉴"""
         self.temp_dir = tempfile.mkdtemp()
         self.original_path = None
-        # 临时替换路径
-        TowerBestiary._instance = None
-        bestiary = TowerBestiary()
-        bestiary.bestiary_path = os.path.join(self.temp_dir, "bestiary.json")
-        self.bestiary = bestiary
+        # 启用测试模式并传入临时路径
+        TowerBestiary.enable_test_mode()
+        temp_path = os.path.join(self.temp_dir, "bestiary.json")
+        self.bestiary = TowerBestiary(path=temp_path)
     
     def teardown_method(self):
         """清理临时文件"""
         if self.temp_dir and os.path.exists(self.temp_dir):
             shutil.rmtree(self.temp_dir)
-        TowerBestiary._instance = None
+        TowerBestiary.reset_instance()
     
     def test_bestiary_init(self):
         """测试图鉴初始化"""
@@ -97,9 +96,8 @@ class TestTowerBestiary:
         self.bestiary.record_kill("箭塔")
         self.bestiary.record_damage("箭塔", 100)
         
-        # 重新创建实例应该能读取
-        new_bestiary = TowerBestiary()
-        new_bestiary.bestiary_path = self.bestiary.bestiary_path
+        # 重新创建实例应该能读取 - 使用相同路径
+        new_bestiary = TowerBestiary(path=self.bestiary.bestiary_path)
         
         assert new_bestiary.is_unlocked("箭塔")
         stats = new_bestiary.get_tower_stats("箭塔")

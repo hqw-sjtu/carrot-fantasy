@@ -1,6 +1,6 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-15 08:25 (Hourly Maintenance)
+> Last updated: 2026-04-15 10:25 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
@@ -9,7 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.13.4] - 2026-04-15 08:25
+## [2.13.6] - 2026-04-15 10:25
+### Maintenance | 定时维护
+- 🔧 语法检查: 全部61个Python文件通过
+- ✅ 测试覆盖: 629 测试用例 (全通过)
+- 📦 GitHub Actions CI/CD 工作流正常
+
+### Bugfix | Bug修复
+- 🐛 **防御塔图鉴测试修复** - 修复单例模式导致的测试失败:
+  - 添加 `enable_test_mode()` / `reset_instance()` 类方法
+  - 支持测试模式创建独立实例
+  - 修复8个失败的测试用例
+
+### Quality | 质量保证
+- 🧪 代码行数统计: 17,661行 (61个Python文件)
+- 🔬 单元测试: 629 passed, 6 skipped
+- ✅ 测试稳定性验证通过
+
+---
+
+## [2.13.5] - 2026-04-15 09:35
 ### Maintenance | 定时维护
 - 🔧 语法检查: 全部60个Python文件通过
 - ✅ 测试覆盖: 619 测试用例 (+11 new, 全通过)
@@ -20,6 +39,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🧪 代码行数统计: 17,661行 (60个Python文件)
 - 🎨 特效系统统计: 51个特效类
 - 🔬 单元测试: 619 passed, 6 skipped
+- ✅ 核心功能稳定性验证通过
+
+---
+
+## [2.13.5] - 2026-04-15 09:35
+### Maintenance | 定时维护
+- 🔧 语法检查: 全部61个Python文件通过 (+1 new)
+- ✅ 测试覆盖: 629 测试用例 (+10 new, 全通过)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+
+### Features | 新功能
+- 📖 **防御塔图鉴UI系统** - 工艺品级别:
+  - 滚动式塔类型展示界面
+  - 显示已解锁/未解锁状态
+  - 实时显示击杀数和伤害统计
+  - 键盘导航 (↑/↓ 滚动, ESC 退出)
+  - 支持8种塔类型 (箭塔/炮塔/魔法塔/电塔/冰塔/火塔/毒塔/眩晕塔)
+- 🧪 **图鉴UI测试套件** - 10个测试用例全通过
+
+### Quality | 质量保证
+- 🧪 代码行数统计: 17,700+行 (61个Python文件)
+- 🎨 特效系统统计: 51个特效类
+- 🔬 单元测试: 629 passed, 6 skipped
 - ✅ 核心功能稳定性验证通过
 
 ---
