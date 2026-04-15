@@ -1,11 +1,26 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-15 05:25 (Hourly Maintenance)
+> Last updated: 2026-04-15 08:25 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.13.4] - 2026-04-15 08:25
+### Maintenance | 定时维护
+- 🔧 语法检查: 全部60个Python文件通过
+- ✅ 测试覆盖: 619 测试用例 (+11 new, 全通过)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+
+### Quality | 质量保证
+- 🧪 代码行数统计: 17,661行 (60个Python文件)
+- 🎨 特效系统统计: 51个特效类
+- 🔬 单元测试: 619 passed, 6 skipped
+- ✅ 核心功能稳定性验证通过
 
 ---
 
