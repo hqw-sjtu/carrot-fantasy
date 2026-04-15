@@ -1,11 +1,34 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-15 10:25 (Hourly Maintenance)
+> Last updated: 2026-04-15 12:33 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.13.8] - 2026-04-15 12:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 全部63个Python文件通过 (+1 new)
+- ✅ 测试覆盖: 644 测试用例 (+12 new, 全通过)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+
+### Features | 新功能
+- ✨ **波次预览系统 (Wave Preview)** - 工艺品级别:
+  - 每波开始前5秒显示怪物信息
+  - 难度系数显示 (1.0x ~ 2.0x)
+  - 淡入淡出动画效果
+  - Boss波次特殊标识
+  - 玩家可提前做好防御准备
+- 🧪 **波次预览测试套件** - 12个测试用例全通过
+
+### Quality | 质量保证
+- 🧪 代码行数统计: 18,178行 (63个Python文件)
+- 🔬 单元测试: 637+ passed, 6 skipped
+- ✅ 核心功能稳定性验证通过
 
 ---
 
