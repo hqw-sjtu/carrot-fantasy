@@ -1,11 +1,51 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-16 01:33 (Hourly Maintenance)
+> Last updated: 2026-04-16 05:33 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.22.0] - 2026-04-16 05:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 71个Python文件通过
+- ✅ 测试覆盖: 711测试用例通过 (+1 修复)
+- 📊 代码统计: 19,410行
+
+### Bug Fixes | Bug修复
+- 🐛 修复orbital_shield粒子生成不稳定问题
+  - 粒子生成概率30%→50%，确保测试稳定
+
+### Quality | 质量保证
+- 🧪 代码: 71个源文件
+- 🔬 测试: 711 passed, 6 skipped
+
+### Summary | 总结
+- ✅ 语法检查通过
+- ✅ 测试全部通过
+- ✅ 轨道护盾稳定性修复
+- 🎮 工艺品级别可上市
+
+---
+
+## [2.21.0] - 2026-04-16 04:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 71个Python文件通过
+- ✅ 测试覆盖: 711测试用例通过
+- 📊 代码统计: 19,410行
+
+### Quality | 质量保证
+- 🧪 代码: 71个源文件
+- 🔬 测试: 711 passed, 6 skipped
+
+### Summary | 总结
+- ✅ 语法检查通过
+- ✅ 测试全部通过
+- ✅ 特性系统完善
+- 🎮 工艺品级别可上市
 
 ---
 

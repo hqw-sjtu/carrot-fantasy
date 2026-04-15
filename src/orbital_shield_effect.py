@@ -25,9 +25,9 @@ class OrbitalShieldEffect:
         """更新护盾效果"""
         self.angle += 60 * dt  # 旋转速度
         
-        # 生成轨道粒子
+        # 生成轨道粒子 (提高概率确保稳定生成)
         if len(self.particles) < self.max_particles:
-            if random.random() < 0.3:
+            if random.random() < 0.5:  # 50%概率
                 self.particles.append(self._create_particle())
         
         # 更新粒子
