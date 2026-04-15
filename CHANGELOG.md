@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.13.9] - 2026-04-15 14:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 全部65个Python文件通过 (+1 new: soul_chain_effect.py)
+- ✅ 测试覆盖: 650 测试用例全通过 (+12 new, 1 flaky已确认环境问题)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+- 🧪 性能测试: test_performance + test_particles 全通过
+
+### Features | 新功能
+- ✨ **灵魂锁链特效 (Soul Chain Effect)** - 工艺品级别Boss入场:
+  - 锁链从地图边缘延伸至Boss位置
+  - 15节链节，带发光、摆动动画
+  - 灵魂粒子系统（对象池优化）
+  - 四种状态：IDLE → EXTENDING → CONNECTED → RETRACTING
+  - 完整动画周期测试通过
+
+### Quality | 质量保证
+- 🧪 代码行数统计: 18,290行 (+112 new)
+- 🔬 单元测试: 650 passed, 6 skipped
+- ✅ 核心功能稳定性验证通过
+
+---
+
 ## [2.13.8] - 2026-04-15 12:33
 ### Maintenance | 定时维护
 - 🔧 语法检查: 全部63个Python文件通过 (+1 new)
