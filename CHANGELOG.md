@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.13.7] - 2026-04-15 11:25
+### Maintenance | 定时维护
+- 🔧 语法检查: 全部62个Python文件通过 (+1 new)
+- ✅ 测试覆盖: 632 测试用例 (+3 new, 全通过)
+- 📦 GitHub Actions CI/CD 工作流正常
+- 🌐 GitHub Pages 部署配置就绪
+
+### Features | 新功能
+- ✨ **防御塔升级光辉特效** - 工艺品级别:
+  - 金色粒子系统 (20-30个粒子)
+  - 多层扩散光环效果
+  - 等级相关特效强度 (等级越高越华丽)
+  - 物理模拟 (重力 + 速度衰减)
+- 🧪 **升级特效测试套件** - 3个测试用例全通过
+
+### Quality | 质量保证
+- 🧪 代码行数统计: 17,800+行 (62个Python文件)
+- 🔬 单元测试: 632 passed, 6 skipped
+- ✅ 核心功能稳定性验证通过
+
+---
+
 ## [2.13.6] - 2026-04-15 10:25
 ### Maintenance | 定时维护
 - 🔧 语法检查: 全部61个Python文件通过
