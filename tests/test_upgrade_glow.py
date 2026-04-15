@@ -5,13 +5,18 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 import unittest
 import pygame
-import math
-
-pygame.init()
-screen = pygame.display.set_mode((800, 600))
 
 
 class TestTowerUpgradeGlow(unittest.TestCase):
+    
+    def setUp(self):
+        """每个测试前重新初始化pygame"""
+        pygame.init()
+        self.screen = pygame.display.set_mode((800, 600))
+    
+    def tearDown(self):
+        """每个测试后清理"""
+        pygame.quit()
     
     def test_glow_creation(self):
         from tower_upgrade_glow import TowerUpgradeGlow
@@ -45,7 +50,7 @@ class TestTowerUpgradeGlow(unittest.TestCase):
         
         # 更新并绘制（不报错）
         manager.update(0.016)
-        manager.draw(screen)
+        manager.draw(self.screen)
         
         manager.clear()
         self.assertEqual(len(manager.effects), 0)

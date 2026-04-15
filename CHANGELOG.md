@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.20.0] - 2026-04-16 03:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 71个Python文件通过
+- ✅ 测试覆盖: 711测试用例通过 (+1 fixed)
+- 📊 代码统计: 19,xxx行
+
+### Bug Fixes | Bug修复
+- 🐛 修复test_upgrade_glow.py headless模式兼容问题
+  - 添加setUp/tearDown正确管理pygame显示
+  - 确保每个测试独立初始化/清理
+
+### Quality | 质量保证
+- 🧪 代码: 71个源文件
+- 🔬 测试: 711 passed, 6 skipped
+
+### Summary | 总结
+- ✅ 语法检查通过
+- ✅ 测试稳定性提升
+- ✅ headless兼容修复
+
+---
+
 ## [2.19.0] - 2026-04-16 01:33
 ### Maintenance | 定时维护
 - 🔧 语法检查: 70个Python文件通过 (+1 new)
