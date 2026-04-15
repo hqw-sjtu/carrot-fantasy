@@ -35,9 +35,13 @@ jobs:
       run: |
         python -m py_compile src/*.py
     
-    - name: Run core tests
+    - name: Run all tests
       run: |
-        python -m pytest tests/test_core.py tests/test_config.py tests/test_towers.py -v --tb=short 2>/dev/null || true
+        python -m pytest tests/ -v --tb=short --ignore=tests/test_integration.py 2>/dev/null || true
+    
+    - name: Run performance tests
+      run: |
+        python -m pytest tests/test_particle_system.py tests/test_particle_performance.py -v --tb=short 2>/dev/null || true
     
     - name: Verify imports
       run: |
