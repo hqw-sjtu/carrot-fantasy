@@ -1,11 +1,36 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-16 00:33 (Hourly Maintenance)
+> Last updated: 2026-04-16 01:33 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.19.0] - 2026-04-16 01:33
+### Maintenance | 定时维护
+- 🔧 语法检查: 70个Python文件通过 (+1 new)
+- ✅ 测试覆盖: 710测试用例通过 (+19 new)
+- 📊 代码统计: 19,828行 (+600)
+
+### Features | 新功能
+- ✨ **防御塔充能系统 (Tower Charge System)** - 工艺品级别:
+  - 充能效果: 攻击时累积充能
+  - 爆发特效: 充满时释放环形爆发
+  - 充能条: 防御塔头顶显示充能进度
+  - 多元素颜色: 火/冰/雷/毒/默认
+
+### Quality | 质量保证
+- 🧪 代码: 19,828行
+- 🔬 测试: 710 passed, 6 skipped
+
+### Summary | 总结
+- ✅ 无语法错误
+- ✅ 充能系统完整
+- ✅ 19个新测试用例通过
+- ✅ 兼容现有系统
 
 ---
 
