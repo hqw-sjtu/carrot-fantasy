@@ -1,11 +1,37 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-16 12:33 (Hourly Maintenance)
+> Last updated: 2026-04-16 13:33 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.27.0] - 2026-04-16 13:33
+### Feature | 新功能
+- ✨ 道具掉落系统 (Item Drop System)
+  - 7种道具类型:金币/生命之心/加速符/力量符/冰霜符/护盾/技能书
+  - 击败怪物随机掉落,Boss必定掉落
+  - 物理效果:重力/弹跳/浮动动画
+  - 鼠标点击收集,带收集特效
+
+### Maintenance | 定时维护
+- 🔧 语法检查: 74个Python文件通过
+- ✅ 测试覆盖: 755测试用例通过 (+10 新增)
+- 📊 代码统计: 20,246行
+
+### Quality | 质量保证
+- 🧪 代码: 74个源文件
+- 🔬 测试: 755 passed, 6 skipped
+- 📦 GitHub Pages已部署
+
+### Summary | 总结
+- ✅ 语法检查通过
+- ✅ 测试全部通过
+- ✅ 道具掉落系统
+- 🎮 工艺品级别可上市
 
 ---
 
