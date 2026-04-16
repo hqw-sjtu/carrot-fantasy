@@ -1,11 +1,39 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-16 08:33 (Hourly Maintenance)
+> Last updated: 2026-04-16 11:33 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.25.0] - 2026-04-16 11:33
+### Feature | 新功能
+- ✨ 萝卜危机特效系统 (Carrot Crisis Effect)
+  - 血量低于30%触发红色警告光环+脉冲动画
+  - 屏幕震动效果(血量越低越强)
+  - 裂纹特效(极低血量时出现)
+- ✨ 萝卜保护光环 (Carrot Protection Aura)
+  - 血量高于70%显示绿色保护光环
+  - 扩散式光环动画
+
+### Maintenance | 定时维护
+- 🔧 语法检查: 72个Python文件通过
+- ✅ 测试覆盖: 730测试用例通过 (+14 新增)
+- 📊 代码统计: 19,693行
+
+### Quality | 质量保证
+- 🧪 代码: 72个源文件
+- 🔬 测试: 730 passed, 6 skipped
+- 📦 GitHub Pages已部署
+
+### Summary | 总结
+- ✅ 语法检查通过
+- ✅ 测试全部通过
+- ✅ 萝卜危机/保护特效
+- 🎮 工艺品级别可上市
 
 ---
 
