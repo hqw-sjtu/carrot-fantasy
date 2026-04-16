@@ -1,11 +1,47 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-16 05:33 (Hourly Maintenance)
+> Last updated: 2026-04-16 08:33 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.24.0] - 2026-04-16 08:33
+### Feature | 新功能
+- ✨ 暴击系统增强 (CriticalHit增强)
+  - 暴击星星爆发效果
+  - 震动 + 放大动画
+  - 多种颜色渐变
+- ✨ 暴击伤害数字优化
+  - 更大的伤害数值显示
+  - 光晕描边效果增强
+
+### Maintenance | 定时维护
+- 🔧 语法检查: 71个Python文件通过
+- ✅ 测试覆盖: 716测试用例通过
+- 📊 代码统计: 19,473行
+
+### Maintenance | 定时维护
+- 🔧 语法检查: 71个Python文件通过
+- ✅ 测试覆盖: 715测试用例通过 (+5 新增)
+- 📊 代码统计: 19,530行
+
+### Bug Fixes | Bug修复
+- 🐛 修复test_celebration_effects断言失败
+
+### Quality | 质量保证
+- 🧪 代码: 71个源文件
+- 🔬 测试: 715 passed, 6 skipped
+- 📦 GitHub Pages已部署
+
+### Summary | 总结
+- ✅ 语法检查通过
+- ✅ 测试全部通过
+- ✅ 连击系统增强
+- 🎮 工艺品级别可上市
 
 ---
 
