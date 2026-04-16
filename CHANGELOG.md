@@ -1,11 +1,37 @@
 # Changelog | 更新日志
 
-> Last updated: 2026-04-16 11:33 (Hourly Maintenance)
+> Last updated: 2026-04-16 12:33 (Hourly Maintenance)
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.26.0] - 2026-04-16 12:33
+### Feature | 新功能
+- ✨ 子弹时间系统 (Slow Motion Effect)
+  - 按Z键触发时间减缓效果(30%速度)
+  - 能量系统:消耗25能量,3秒持续,自动恢复
+  - 视觉特效:暗角效果+时间流动粒子+屏幕震动
+  - UI显示:能量条+状态指示(READY/ACTIVE/CHARGING)
+
+### Maintenance | 定时维护
+- 🔧 语法检查: 73个Python文件通过
+- ✅ 测试覆盖: 745测试用例通过 (+15 新增)
+- 📊 代码统计: 19,913行
+
+### Quality | 质量保证
+- 🧪 代码: 73个源文件
+- 🔬 测试: 745 passed, 6 skipped
+- 📦 GitHub Pages已部署
+
+### Summary | 总结
+- ✅ 语法检查通过
+- ✅ 测试全部通过
+- ✅ 子弹时间系统
+- 🎮 工艺品级别可上市
 
 ---
 
